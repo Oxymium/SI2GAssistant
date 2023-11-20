@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "817519557907",
+    "project_id": "si2gassistant",
+    "storage_bucket": "si2gassistant.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:817519557907:android:95d5b4ae556f22c88deee6",
+        "android_client_info": {
+          "package_name": "com.oxymium.si2gassistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "817519557907-btdu7epfggigf5960dnprsnhdh04ovln.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.oxymium.si2gassistant",
+            "certificate_hash": "3c583ba0917be44f0f754d2b5ed2f431b94af48c"
+          }
+        },
+        {
+          "client_id": "817519557907-frn0fuf1as9p71mpc1tjlbv8bja62hl4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfhw-8F0bzlqfz7_ga5eUXZ38jVqo1_WE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "817519557907-frn0fuf1as9p71mpc1tjlbv8bja62hl4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
