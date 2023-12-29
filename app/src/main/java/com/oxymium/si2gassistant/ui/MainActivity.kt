@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -14,12 +15,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        installSplashScreen() // needs to be called before setContent()
         setContent {
             Si2GAssistantTheme {
                 val navHostController = rememberNavController()
-                NavHostController(
-                    navHostController = navHostController,
+
+                App(
+                    navController = navHostController
                 )
+
             }
         }
     }

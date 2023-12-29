@@ -2,7 +2,10 @@ package com.oxymium.si2gassistant.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oxymium.si2gassistant.domain.entities.Academy
+import com.oxymium.si2gassistant.domain.entities.BugTicket
 import com.oxymium.si2gassistant.domain.repository.AcademyRepository
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

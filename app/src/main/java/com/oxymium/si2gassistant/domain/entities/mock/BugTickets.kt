@@ -2,8 +2,8 @@ package com.oxymium.si2gassistant.domain.entities.mock
 
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import com.oxymium.si2gassistant.domain.entities.BugTicket
-import com.oxymium.si2gassistant.ui.theme.BugTicketCategory
-import com.oxymium.si2gassistant.ui.theme.BugTicketPriority
+import com.oxymium.si2gassistant.domain.entities.BugTicketCategory
+import com.oxymium.si2gassistant.domain.entities.BugTicketPriority
 import kotlin.random.Random
 
 // Jan 1st 2020
@@ -22,6 +22,7 @@ fun provideRandomBugTicket(
         LoremIpsum(4).values.joinToString(""),
         LoremIpsum(10).values.joinToString(""),
         ALL_ACADEMIES.random().shortTitle,
+        "",
         Random.nextLong(dateInMillis, secondDateInMillis),
         isResolved,
         Random.nextLong(dateInMillis, secondDateInMillis),

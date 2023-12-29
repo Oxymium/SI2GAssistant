@@ -5,3 +5,5 @@ data class Academy(
     val title: String,
     val shortTitle: String
 )
+
+{ constructor() : this("", "", "") }

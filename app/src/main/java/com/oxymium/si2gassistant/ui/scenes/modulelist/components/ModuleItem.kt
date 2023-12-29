@@ -22,7 +22,7 @@ fun ModuleItem(module: Module) {
         Column(
             modifier = Modifier
         ) {
-            Text(text = module.id)
+            Text(text = module.id ?: "00")
         }
     }
 }

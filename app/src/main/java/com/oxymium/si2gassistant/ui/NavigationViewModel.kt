@@ -7,36 +7,55 @@ import com.oxymium.si2gassistant.ui.scenes.AppScreens
 import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
 import com.oxymium.si2gassistant.ui.scenes.NavigationState
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class NavigationViewModel: ViewModel() {
 
-    private val _state = MutableSharedFlow<NavigationState>(0)
-    val state: SharedFlow<NavigationState> get() = _state
+    private val _state = MutableStateFlow(NavigationState())
+    private val _route = MutableStateFlow<String?>(null)
+    private val _screen = MutableStateFlow<String?>(null)
 
-    fun updateState(value: NavigationState){
+    val state = combine(
+        _state, _route, _screen
+    ) { state, route, screen ->
+
+        state.copy(
+            navigationRoute = route,
+            navigationScreen = screen
+        )
+
+    }.stateIn(viewModelScope, SharingStarted.Lazily, NavigationState())
+
+    private fun updateScreen(appScreens: AppScreens) {
         viewModelScope.launch {
-            _state.emit(value)
+            _screen.emit(appScreens.name)
         }
     }
 
+
     fun onEvent(navigationEvent: NavigationEvent) {
         when (navigationEvent) {
-
-            NavigationEvent.OnSplashButtonClicked -> updateState(
-                NavigationState(AppScreens.LOGIN_SCREEN.name)
-            )
-            NavigationEvent.OnLoginButtonClicked -> updateState(
-                NavigationState(AppRoutes.SUPER_USER_ROUTE.name)
+            NavigationEvent.OnSplashStartButtonClicked -> updateScreen(AppScreens.LOGIN_SCREEN)
+            is NavigationEvent.OnLoginButtonClick ->  
+                _state.value = state.value.copy(
+                    currentUser = navigationEvent.user
             )
 
-            NavigationEvent.OnBugTicketsButtonClicked -> updateState(
-                NavigationState(AppScreens.GREETINGS_SCREEN.name)
-            )
-            NavigationEvent.OnGreetingsButtonClicked -> updateState(
-                NavigationState(AppScreens.BUG_TICKETS_SCREEN.name)
-            )
+            NavigationEvent.OnLogoutButtonClick -> { }
+
+            NavigationEvent.OnGreetingsButtonClick -> updateScreen(AppScreens.GREETINGS_SCREEN)
+            NavigationEvent.OnMetricsButtonClick -> updateScreen(AppScreens.METRICS_SCREEN)
+            NavigationEvent.OnPersonsButtonClick -> updateScreen(AppScreens.PERSONS_SCREEN)
+            NavigationEvent.OnBugTicketsButtonClick -> updateScreen(AppScreens.BUG_TICKETS_SCREEN)
+            NavigationEvent.OnReportBugButtonClick -> updateScreen(AppScreens.REPORT_BUG_SCREEN)
+            NavigationEvent.OnSubmitPersonButtonClick -> updateScreen(AppScreens.SUBMIT_PERSON_SCREEN)
+            NavigationEvent.OnSubmitSuggestionButtonClick -> updateScreen(AppScreens.SUBMIT_SUGGESTION_SCREEN)
+            NavigationEvent.OnSuggestionsButtonClick -> updateScreen(AppScreens.SUGGESTIONS_SCREEN)
+
         }
 
     }

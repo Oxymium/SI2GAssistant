@@ -1,16 +1,15 @@
 package com.oxymium.si2gassistant.domain.entities
 
 import com.google.firebase.firestore.PropertyName
-import com.oxymium.si2gassistant.ui.theme.BugTicketCategory
-import com.oxymium.si2gassistant.ui.theme.BugTicketPriority
 
 data class BugTicket(
-    val id: String?,
-    val priority: BugTicketPriority,
-    val category: BugTicketCategory,
+    var id: String? = null,
+    val priority: BugTicketPriority? = null,
+    val category: BugTicketCategory? = null,
     val shortDescription: String?,
     val description: String?,
     val academy: String?,
+    val submittedBy: String?,
     val submittedDate: Long?,
     @PropertyName("resolved")
     val isResolved: Boolean,
@@ -21,8 +20,9 @@ data class BugTicket(
 {
     constructor() : this(
         null,
-        BugTicketPriority.CRITICAL,
-        BugTicketCategory.GLITCH,
+        null,
+        null,
+        null,
         null,
         null,
         null,

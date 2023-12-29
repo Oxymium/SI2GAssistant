@@ -1,138 +1,95 @@
 package com.oxymium.si2gassistant.ui
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composition
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.oxymium.si2gassistant.domain.entities.User
+import com.oxymium.si2gassistant.ui.routes.LoginNavGraph
+import com.oxymium.si2gassistant.ui.routes.NormalUserNavGraph
+import com.oxymium.si2gassistant.ui.routes.SuperUserNavGraph
 import com.oxymium.si2gassistant.ui.scenes.AppRoutes
 import com.oxymium.si2gassistant.ui.scenes.AppScreens
 import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
 import com.oxymium.si2gassistant.ui.scenes.NavigationState
+import com.oxymium.si2gassistant.ui.scenes.academylist.AcademiesScreen
+import com.oxymium.si2gassistant.ui.scenes.academylist.AcademyViewModel
+import com.oxymium.si2gassistant.ui.scenes.bottomnavigationbar.BottomNavigationBar
 import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketViewModel
 import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketsScreen
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsScreen
+import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsViewModel
 import com.oxymium.si2gassistant.ui.scenes.login.LoginScreen
 import com.oxymium.si2gassistant.ui.scenes.login.LoginViewModel
+import com.oxymium.si2gassistant.ui.scenes.metrics.MetricsScreen
 import com.oxymium.si2gassistant.ui.scenes.splash.SplashScreen
 import org.koin.androidx.compose.koinViewModel
 
+val LocalUserContext = compositionLocalOf<User?> { User() }
+
 @Composable
-fun NavHostController(navHostController: NavHostController) {
+fun App(navController: NavHostController) {
 
     val navigationViewModel = koinViewModel<NavigationViewModel>()
-    val navigationState = navigationViewModel.state.collectAsState(initial = null)
-    // Handle navigation
-    when (navigationState.value?.navigationRoute) {
-        // SPLASH -> LOGIN
-        AppScreens.LOGIN_SCREEN.name -> {
-            navHostController.navigate(AppScreens.LOGIN_SCREEN.name)
-            navigationViewModel.updateState(NavigationState((null)))
-        }
-        // LOGIN -> SUPER USER
-        AppRoutes.SUPER_USER_ROUTE.name -> {
-            navHostController.navigate(AppRoutes.SUPER_USER_ROUTE.name)
-            navigationViewModel.updateState(NavigationState((null)))
-        }
-        // GREETINGS
-        AppScreens.GREETINGS_SCREEN.name -> {
-            navHostController.navigate(AppScreens.GREETINGS_SCREEN.name)
-            navigationViewModel.updateState(NavigationState((null)))
-        }
-        // BUG TICKETS
-        AppScreens.BUG_TICKETS_SCREEN.name -> {
-            navHostController.navigate(AppScreens.BUG_TICKETS_SCREEN.name)
-            navigationViewModel.updateState(NavigationState((null)))
-        }
-    }
+    val navigationState = navigationViewModel.state.collectAsState()
 
-    NavHost(
-        navController = navHostController,
-        startDestination = AppRoutes.LOGIN_ROUTE.name
+    CompositionLocalProvider(
+        LocalUserContext provides navigationState.value.currentUser
     ) {
-        // -----------
-        // LOGIN ROUTE
-        // -----------
-        navigation(
-            route = AppRoutes.LOGIN_ROUTE.name,
-            startDestination = AppScreens.SPLASH_SCREEN.name
-        ) {
-            // SPLASH SCREEN
-            composable(
-                route = AppScreens.SPLASH_SCREEN.name
-            ) {
-                SplashScreen(
-                    navigationViewModel::onEvent
-                )
-            }
-            // LOGIN SCREEN
-            composable(
-                route = AppScreens.LOGIN_SCREEN.name
-            ) {
-                val viewModel = koinViewModel<LoginViewModel>()
-                val state = viewModel.state.collectAsState()
-                LoginScreen(
-                    state.value,
-                    navigationViewModel::onEvent,
-                    viewModel::onEvent
-                )
-            }
-        }
 
-        // ---------------
-        // GREETINGS ROUTE
-        // ---------------
-        navigation(
-            route = AppRoutes.GREETINGS_ROUTE.name,
-            startDestination = AppScreens.GREETINGS_SCREEN.name
-        ) {
+        when (navigationState.value.currentUser?.hasAdministrativeRights) {
 
-            // BUG TICKETS SCREEN
-            composable(
-                route = AppScreens.GREETINGS_SCREEN.name
-            ) {
-                GreetingsScreen()
-            }
-        }
+            // LOGIN BLOCK
+            null -> LoginNavGraph(
+                navController = navController,
+                navigationEvent = navigationViewModel::onEvent
+            )
 
-        // ----------------
-        // BUG TICKET ROUTE
-        // ----------------
-        navigation(
-            route = AppRoutes.BUG_TICKETS_ROUTE.name,
-            startDestination = AppScreens.BUG_TICKETS_SCREEN.name
-        ) {
+            // NORMAL USER BLOCK
+            false -> NormalUserNavGraph(
+                navController = navController,
+                navigationEvent = navigationViewModel::onEvent,
+                navigationState = navigationState.value
+            )
 
-            // BUG TICKETS SCREEN
-            composable(
-                route = AppScreens.BUG_TICKETS_SCREEN.name
-            ) {
-                BugTicketsScreen()
-            }
+            // SUPER USER BLOCK
+            true -> SuperUserNavGraph(
+                navController = navController,
+                navigationEvent = navigationViewModel::onEvent,
+                navigationState = navigationState.value
+            )
         }
 
     }
-}
 
-@Composable
-fun Scaffold(
-    navHostController: NavHostController,
-    navigationEvent: (NavigationEvent) -> Unit
-) {
-    Scaffold(
-        bottomBar = {
-            BottomNavigationBar(
-                navController = navHostController,
-                navigationEvent
-            )
-        },
-        content = {
-            GreetingsScreen(modifier = Modifier.padding(it))
-        }
-    )
+    when (navigationState.value.navigationScreen) {
+
+        AppScreens.GREETINGS_SCREEN.name -> navController.navigate(AppScreens.GREETINGS_SCREEN.name)
+        // LOGIN SCREEN
+        AppScreens.LOGIN_SCREEN.name -> navController.navigate(AppScreens.LOGIN_SCREEN.name)
+        // METRICS SCREEN
+        AppScreens.METRICS_SCREEN.name -> navController.navigate(AppScreens.METRICS_SCREEN.name)
+        // PERSONS SCREEN
+        AppScreens.PERSONS_SCREEN.name -> navController.navigate(AppScreens.PERSONS_SCREEN.name)
+        // BUG TICKETS SCREEN
+        AppScreens.BUG_TICKETS_SCREEN.name -> navController.navigate(AppScreens.BUG_TICKETS_SCREEN.name)
+        // REPORT BUG TICKET SCREEN
+        AppScreens.REPORT_BUG_SCREEN.name -> navController.navigate(AppScreens.REPORT_BUG_SCREEN.name)
+        // SUBMIT PERSON SCREEN
+        AppScreens.SUBMIT_PERSON_SCREEN.name -> navController.navigate(AppScreens.SUBMIT_PERSON_SCREEN.name)
+        // SUBMIT SUGGESTION SCREEN
+        AppScreens.SUBMIT_SUGGESTION_SCREEN.name -> navController.navigate(AppScreens.SUBMIT_SUGGESTION_SCREEN.name)
+        // SUGGESTIONS SCREEN
+        AppScreens.SUGGESTIONS_SCREEN.name -> navController.navigate(AppScreens.SUGGESTIONS_SCREEN.name)
+
+    }
+
 }
