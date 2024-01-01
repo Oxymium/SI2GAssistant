@@ -58,8 +58,8 @@ fun PersonsScreen_NuPreview(){
     Si2GAssistantTheme {
         val previewState = SubmitPersonState(
             persons = listOf(
-                Person("", "", "Jean", "Michel", "1, 5, 7", "Rouen", ""),
-                Person("", "", "Marie", "Paul", "2, 5, 6, 9", "Grenoble", "")
+                Person("", "", "Jean", "Michel", "1, 5, 7", "Rouen", "","", ""),
+                Person("", "", "Marie", "Paul", "2, 5, 6, 9", "Grenoble", "", "", "")
             )
         )
         PersonsScreen_Nu(

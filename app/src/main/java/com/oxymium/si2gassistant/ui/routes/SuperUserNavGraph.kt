@@ -64,6 +64,7 @@ fun SuperUserNavGraph(
                         val state = viewModel.state.collectAsState()
                         GreetingsScreen(
                             state.value,
+                            viewModel::onEvent,
                             navigationEvent = navigationEvent
                         )
                     }
@@ -75,7 +76,8 @@ fun SuperUserNavGraph(
                         val viewModel = koinViewModel<MetricsViewModel>()
                         val state = viewModel.state.collectAsState()
                         MetricsScreen(
-                            state.value
+                            state.value,
+                            viewModel::onEvent
                         )
                     }
 

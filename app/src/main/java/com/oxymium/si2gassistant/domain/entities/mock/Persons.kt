@@ -20,6 +20,15 @@ val LASTNAMES = listOf(
     "Perez", "Roberts", "Turner", "Phillips", "Campbell", "Parker", "Evans", "Edwards", "Collins", "Stewart"
 )
 
+val ROLES = listOf(
+    "Administrator",
+    "Manager",
+    "Supervisor",
+    "Director",
+    "Coordinator",
+    "Executive"
+)
+
 fun generateRandomValidatedModules(): String? {
     val maxModule = 8
     // Generate a random subset of modules
@@ -35,12 +44,14 @@ fun provideRandomPerson(): Person {
 
     return Person(
         null,
-        "",
+        ROLES.random(),
         FIRSTNAMES.random(),
         LASTNAMES.random(),
         generateRandomValidatedModules(),
         ALL_ACADEMIES.random().shortTitle,
-        ""
+        "",
+        FIRSTNAMES.random(),
+        LASTNAMES.random()
     )
 
 }

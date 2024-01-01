@@ -37,6 +37,7 @@ class FirebaseFirestoreSuggestionsImpl(val firebaseFirestore: FirebaseFirestore)
                 listener.remove()
             }
     }
+
     override suspend fun submitSuggestion(suggestion: Suggestion): Deferred<String?> {
         val result = CompletableDeferred<String?>()
         firebaseFirestore

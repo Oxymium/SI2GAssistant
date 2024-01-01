@@ -38,9 +38,11 @@ import com.oxymium.si2gassistant.domain.entities.BugTicketCategory
 import com.oxymium.si2gassistant.domain.entities.BugTicketPriority
 import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugEvent
 import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugState
+import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Orange500
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
+import com.oxymium.si2gassistant.utils.CapitalizeFirstLetter
 import com.skydoves.orchestra.spinner.Spinner
 import com.skydoves.orchestra.spinner.SpinnerProperties
 
@@ -72,14 +74,15 @@ fun ReportBugScreenTest(
             properties = SpinnerProperties(
                 color = Color.White,
                 textAlign = TextAlign.Center,
-                dividerColor = Color.Black,
+                dividerColor = MenuAccent,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 spinnerPadding = 16.dp,
-                spinnerBackgroundColor = MaterialTheme.colors.onBackground,
+                spinnerBackgroundColor = Neutral,
             ),
             onSpinnerItemSelected = { index, item ->
-                setSelectedItem1(item)
+                val capitalizedCategory = CapitalizeFirstLetter.capitalizeFirstLetter(item)
+                setSelectedItem1(capitalizedCategory)
                 event.invoke(ReportBugEvent.OnBugCategorySelected(BugTicketCategory.valueOf(item)))
             }
         )
@@ -111,14 +114,15 @@ fun ReportBugScreenTest(
             properties = SpinnerProperties(
                 color = Color.White,
                 textAlign = TextAlign.Center,
-                dividerColor = Color.Black,
+                dividerColor = MenuAccent,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 spinnerPadding = 16.dp,
-                spinnerBackgroundColor = MaterialTheme.colors.onBackground,
+                spinnerBackgroundColor = Neutral,
             ),
             onSpinnerItemSelected = { index, item ->
-                setSelectedItem2(item)
+                val capitalizedPriority = CapitalizeFirstLetter.capitalizeFirstLetter(item)
+                setSelectedItem2(capitalizedPriority)
                 event.invoke(ReportBugEvent.OnBugPrioritySelected(BugTicketPriority.valueOf(item)))
             }
         )
@@ -145,7 +149,7 @@ fun ReportBugScreenTest(
                     .fillMaxWidth(),
                 value = shortDescription,
                 onValueChange = {
-                    shortDescription = it.filter { char -> !char.isWhitespace() }.take(100)
+                    shortDescription = it.take(100)
                     event.invoke(ReportBugEvent.OnShortDescriptionChanged(shortDescription))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -190,7 +194,7 @@ fun ReportBugScreenTest(
                     .fillMaxWidth(),
                 value = description,
                 onValueChange = {
-                    description = it.filter { char -> !char.isWhitespace() }.take(100)
+                    description = it.take(500)
                     event.invoke(ReportBugEvent.OnDescriptionChanged(description))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(

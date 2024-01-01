@@ -12,5 +12,6 @@ object FirebaseFirestoreCollections {
 
 object FirebaseFirestoreFields {
     const val ACADEMY_ID = "academyId"
+    const val USER_ID = "userId"
     const val MAIL = "mail"
 }

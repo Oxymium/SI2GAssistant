@@ -44,9 +44,9 @@ fun PersonsScreen(
 @Composable
 fun PersonsScreenPreview() {
     val personListPreview = listOf(
-        Person("10","110000", "", "", "", "", ""),
-        Person("10","110000", "", "", "", "", ""),
-        Person("10","110000", "", "", "", "", "")
+        Person("10", "","110000", "", "", "", "", "", ""),
+        Person("10","","110000", "", "", "", "", "", ""),
+        Person("10","","110000", "", "", "", "", "", "")
         )
     val statePreview = PersonListState(personList = personListPreview)
     Si2GAssistantTheme {

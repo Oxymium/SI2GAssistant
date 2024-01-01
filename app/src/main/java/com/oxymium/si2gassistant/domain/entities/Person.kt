@@ -7,7 +7,21 @@ data class Person(
     val lastname: String?,
     val validatedModules: String?,
     var academy: String?,
-    val user: String?
+    val userId: String?,
+    val userFirstname: String?,
+    val userLastname: String?
 )
 
-{ constructor() : this(null, null, null, null, null,null, null) }
+{
+    constructor() : this(
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+    )
+}

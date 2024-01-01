@@ -6,6 +6,7 @@ import com.google.firebase.firestore.PropertyName
 // APP USER
 // --------
 class User(
+    var id: String?,
     val mail: String?,
     val academy: String?,
     val firstname: String?,
@@ -14,4 +15,14 @@ class User(
     val hasAdministrativeRights: Boolean
 )
 
-{ constructor() : this(null, null, null, null, false) }
+{
+    constructor() :
+            this(
+                null,
+                null,
+                null,
+                null,
+                null,
+                false
+            )
+}

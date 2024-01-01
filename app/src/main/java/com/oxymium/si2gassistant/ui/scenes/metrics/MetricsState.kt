@@ -13,5 +13,7 @@ data class MetricsState(
     val modules: List<Module>? = null,
     val users: List<User>? = null,
     val persons: List<Person>? = null,
-    val suggestions: List<Suggestion>? = null
+    val suggestions: List<Suggestion>? = null,
+    val isOverallMetricsScreen: Boolean = true, // default
+    val isBugTicketMetricsScreen: Boolean = false
 )

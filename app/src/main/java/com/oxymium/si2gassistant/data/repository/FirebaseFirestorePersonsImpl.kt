@@ -37,10 +37,10 @@ class FirebaseFirestorePersonsImpl(val firebaseFirestore: FirebaseFirestore): Pe
         }
     }
 
-    override fun getAllPersonsByAcademyId(academyId: String): Flow<List<Person>> = callbackFlow {
+    override fun getAllPersonsByAcademyId(userId: String): Flow<List<Person>> = callbackFlow {
         val personsCollection = firebaseFirestore
             .collection(FirebaseFirestoreCollections.PERSONS)
-            .whereEqualTo(FirebaseFirestoreFields.ACADEMY_ID, academyId)
+            .whereEqualTo(FirebaseFirestoreFields.USER_ID, userId)
         val listener = personsCollection
             .addSnapshotListener { querySnapshot, exception ->
                 print(exception?.message.toString())
@@ -64,10 +64,10 @@ class FirebaseFirestorePersonsImpl(val firebaseFirestore: FirebaseFirestore): Pe
         }
     }
 
-    override fun getAllPersonsByUser(mail: String): Flow<List<Person>> = callbackFlow {
+    override fun getAllPersonsByUserId(userId: String): Flow<List<Person>> = callbackFlow {
         val personsCollection = firebaseFirestore
             .collection(FirebaseFirestoreCollections.PERSONS)
-            .whereEqualTo("user", mail)
+            .whereEqualTo("userId", userId)
         val listener = personsCollection
             .addSnapshotListener { querySnapshot, exception ->
                 print(exception?.message.toString())
@@ -97,6 +97,21 @@ class FirebaseFirestorePersonsImpl(val firebaseFirestore: FirebaseFirestore): Pe
             .collection(FirebaseFirestoreCollections.PERSONS)
             .document()// auto-generates ID
             .set(person)
+            .addOnSuccessListener {
+                result.complete("SUCCESS")
+            }
+            .addOnFailureListener {
+                result.complete("FAILURE")
+            }
+        return result
+    }
+
+    override suspend fun updatePersonModules(person: Person): Deferred<String?> {
+        val result = CompletableDeferred<String?>()
+        firebaseFirestore
+            .collection(FirebaseFirestoreCollections.PERSONS)
+            .document(person.id ?: "")
+            .update("validatedModules", person.validatedModules)
             .addOnSuccessListener {
                 result.complete("SUCCESS")
             }

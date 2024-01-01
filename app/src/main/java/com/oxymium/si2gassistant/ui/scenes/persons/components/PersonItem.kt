@@ -90,7 +90,7 @@ fun PersonItem(
 @Preview(showBackground = true)
 @Composable
 fun PersonItemPreview(){
-    val personPreview = Person(null, null, "Nicolas", "Doe", "1, 3, 7", "Grenoble", null)
+    val personPreview = Person(null, null, "Nicolas", "Doe", "1, 3, 7", "Grenoble", "", null, null)
     Si2GAssistantTheme {
         PersonItem(person = personPreview) {
         }

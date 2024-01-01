@@ -338,7 +338,7 @@ fun BottomNavigationBar(
 @Composable
 fun BottomNavigationPreview() {
     Si2GAssistantTheme {
-        val previewState = NavigationState(currentUser = User("", "", "", "", false))
+        val previewState = NavigationState(currentUser = User("", "","", "", "", false))
         BottomNavigationBar(
             navController = null,
             {},

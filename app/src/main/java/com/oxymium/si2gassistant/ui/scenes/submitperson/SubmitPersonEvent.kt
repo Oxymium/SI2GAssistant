@@ -17,4 +17,6 @@ sealed interface SubmitPersonEvent {
     data class OnSelectedPerson(val person: Person): SubmitPersonEvent
     data object DismissPersonDetailsSheet: SubmitPersonEvent
 
+    data class OnPersonModulesUpdateButtonClicked(val modules: String): SubmitPersonEvent
+
 }

@@ -31,8 +31,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.Person
+import com.oxymium.si2gassistant.domain.entities.mock.ALL_ACADEMIES
+import com.oxymium.si2gassistant.domain.entities.mock.FIRSTNAMES
+import com.oxymium.si2gassistant.domain.entities.mock.LASTNAMES
+import com.oxymium.si2gassistant.domain.entities.mock.ROLES
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonEvent
-import com.oxymium.si2gassistant.ui.theme.GreenTer
+import com.oxymium.si2gassistant.ui.theme.Black
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.NotValidatedModule
 import com.oxymium.si2gassistant.ui.theme.Person1
@@ -40,14 +44,9 @@ import com.oxymium.si2gassistant.ui.theme.Person2
 import com.oxymium.si2gassistant.ui.theme.Person3
 import com.oxymium.si2gassistant.ui.theme.Person4
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
-import com.oxymium.si2gassistant.ui.theme.Suggestions1
-import com.oxymium.si2gassistant.ui.theme.Suggestions2
-import com.oxymium.si2gassistant.ui.theme.Suggestions3
-import com.oxymium.si2gassistant.ui.theme.Suggestions4
 import com.oxymium.si2gassistant.ui.theme.ValidatedModule
+import com.oxymium.si2gassistant.ui.theme.White
 import com.oxymium.si2gassistant.ui.theme.White75
-
-import com.oxymium.si2gassistant.utils.CapitalizeFirstLetter
 
 @Composable
 fun PersonItemTest(
@@ -60,149 +59,228 @@ fun PersonItemTest(
     val colorIndex = index % colors.size // modulo
     val backgroundColor = colors[colorIndex] // colorIndex to get color from list
 
-    Box(
-        contentAlignment = Alignment.BottomStart,
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
-            .background(
-                color = backgroundColor,
-                shape = MaterialTheme.shapes.medium
-            )
-            .clickable { event.invoke(SubmitPersonEvent.OnSelectedPerson(person)) }
     ) {
 
+        // USER
         Box(
             modifier = Modifier
-                .rotate(180f)
-                .matchParentSize()
+                .fillMaxWidth()
                 .wrapContentHeight()
+                .padding(1.dp)
         ) {
-            Image(
-                modifier = Modifier,
-                painter = painterResource(id = R.drawable.grid_hexagons_items),
-                colorFilter = ColorFilter.tint(White75),
-                contentDescription = ""
-            )
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .background(
+                        color = backgroundColor,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+            ){
+
+                // ATTACHED USER
+                Box(
+                    modifier = Modifier
+                        .padding(4.dp)
+                ) {
+
+                    Text(
+                        text = "${person.userFirstname} ${person.userLastname}",
+                        color = White,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(4.dp)
+                    )
+
+                }
+
+            }
         }
 
-        Column(
+        // PERSON
+        Box(
+            contentAlignment = Alignment.BottomStart,
             modifier = Modifier
-                .wrapContentWidth()
+                .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(8.dp)
+                .background(
+                    color = backgroundColor,
+                    shape = MaterialTheme.shapes.medium
+                )
+                .clickable { event.invoke(SubmitPersonEvent.OnSelectedPerson(person)) }
         ) {
 
-            Row {
-                Icon(
+            Box(
+                modifier = Modifier
+                    .rotate(180f)
+                    .matchParentSize()
+                    .wrapContentHeight()
+            ) {
+                Image(
                     modifier = Modifier,
-                    painter = painterResource(R.drawable.ic_account),
-                    contentDescription = "",
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    painter = painterResource(id = R.drawable.grid_hexagons_items),
+                    colorFilter = ColorFilter.tint(White75),
+                    contentDescription = ""
                 )
+            }
+
+            Column(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .wrapContentHeight()
+                    .padding(8.dp)
+            ) {
+
+                Row {
+                    Icon(
+                        modifier = Modifier,
+                        painter = painterResource(R.drawable.ic_account),
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+
+                    Text(
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .padding(horizontal = 8.dp),
+                        text = person.role ?: "",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Start
+                    )
+                }
 
                 Text(
                     modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(horizontal = 8.dp),
-                    text = person.role ?: "",
+                        .padding(2.dp)
+                        .fillMaxWidth(),
+                    text = person.firstname.toString(),
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Start
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center
                 )
-            }
-
-            Text(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .fillMaxWidth(),
-                text = person.firstname.toString(),
-                color = Color.White,
-                fontStyle = FontStyle.Italic,
-                textAlign = TextAlign.Center
-            )
 
 
-            Text(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .fillMaxWidth(),
-                text = person.lastname.toString(),
-                color = Color.White,
-                fontStyle = FontStyle.Italic,
-                textAlign = TextAlign.Center
-            )
+                Text(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .fillMaxWidth(),
+                    text = person.lastname.toString(),
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center
+                )
 
-            Box(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .fillMaxWidth()
-            ) {
                 Box(
                     modifier = Modifier
                         .padding(2.dp)
-                        .wrapContentSize()
-                        .background(White75, RoundedCornerShape(20.dp))
-                        .align(Alignment.Center)
+                        .fillMaxWidth()
                 ) {
-                    Text(
+
+                    Box(
                         modifier = Modifier
                             .padding(4.dp)
-                            .align(Alignment.Center),
-                        text = person.academy.toString(),
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+                            .wrapContentSize()
+                            .background(White75, RoundedCornerShape(20.dp))
+                            .align(Alignment.Center)
+                    ) {
 
-            Box(
-                modifier = Modifier
-                    .padding(1.dp)
-                    .align(Alignment.CenterHorizontally)
-            ) {
-
-                Row(
-                    modifier = Modifier
-                ){
-                    val validatedModulesList = person.validatedModules?.split(", ")?.map { it.trim() }
-
-                    for (i in 1..8) {
-                        val moduleNumber = i.toString()
-                        val isInValidatedList = validatedModulesList?.contains(moduleNumber) == true
-
-                        Box(
+                        Text(
                             modifier = Modifier
-                                .padding(1.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    color = Neutral,
-                                )
-                        ) {
-                            Text(
-                                text = moduleNumber,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .background(if (isInValidatedList) ValidatedModule else NotValidatedModule)
-                                    .padding(6.dp)
-                            )
-                        }
+                                .padding(8.dp)
+                                .align(Alignment.Center),
+                            text = person.academy.toString(),
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
                     }
-
                 }
+
             }
 
         }
+
+        // VALIDATED MODULES
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(1.dp)
+        ) {
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .background(
+                        color = backgroundColor,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+            ){
+
+                val validatedModulesList = person.validatedModules?.split(", ")?.map { it.trim() }
+
+                for (i in 1..8) {
+                    val moduleNumber = i.toString()
+                    val isInValidatedList = validatedModulesList?.contains(moduleNumber) == true
+
+                    Box(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .background(
+                                color = White
+                            )
+                    ) {
+                        
+                        Box(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .background(
+                                    color = backgroundColor
+                                )
+                        ) {
+
+                            Text(
+                                text = moduleNumber,
+                                color = White,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .background(color = if (isInValidatedList) ValidatedModule else NotValidatedModule)
+                                    .padding(4.dp)
+                            )
+
+                        }
+
+                    }
+                }
+
+            }
+        }
+
     }
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PersonItemTestPreview() {
     Si2GAssistantTheme {
-        val randomPerson = Person("", "Compta", "Jean", "Tesla", "1, 2, 3, 5", "Grenoble", "")
+        val randomPerson = Person(
+            "",
+            ROLES.random(),
+            FIRSTNAMES.random(),
+            LASTNAMES.random(),
+            "1, 2, 3, 5",
+            ALL_ACADEMIES.random().shortTitle,
+            "",
+            FIRSTNAMES.random(),
+            LASTNAMES.random()
+            )
         PersonItemTest(
             index = (1..4).random(),
             person = randomPerson

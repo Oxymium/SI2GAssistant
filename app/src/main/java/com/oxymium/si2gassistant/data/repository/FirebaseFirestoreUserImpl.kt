@@ -50,6 +50,7 @@ class FirebaseFirestoreUserImpl(
 
                 val user: User? = querySnapshot?.toObject(User::class.java)
                 if (user != null) {
+                    user.id = uid // attach id to User
                     trySend(UserState.Success(user)).isSuccess // Success
                 } else {
                     trySend(UserState.Error(Exception("User not found"))) // failure if User doesn't exist

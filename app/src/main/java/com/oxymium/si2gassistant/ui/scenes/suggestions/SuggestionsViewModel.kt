@@ -29,7 +29,7 @@ class SuggestionsViewModel(
     ) { state, suggestions, filter ->
         state.copy(
             suggestions = when (filter) {
-                SuggestionFilter.DefaultValue -> suggestions
+                SuggestionFilter.DefaultValue -> suggestions.sortedBy { it.submittedDate }.reversed() // order chronologically by default
                 is SuggestionFilter.Search -> suggestions.filter {
                     it.body?.contains(filter.search ?: "", ignoreCase = true) == true ||
                             it.subject?.contains(filter.search ?: "", ignoreCase = true) == true ||

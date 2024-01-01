@@ -3,6 +3,7 @@ package com.oxymium.si2gassistant.ui.scenes.greetings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,6 +32,7 @@ import com.oxymium.si2gassistant.ui.LocalUserContext
 import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
+import com.oxymium.si2gassistant.ui.theme.NeutralLighter
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.White
 import com.oxymium.si2gassistant.utils.DateUtils
@@ -38,6 +41,7 @@ import java.util.Calendar
 @Composable
 fun GreetingsScreen(
     state: GreetingsState,
+    event: (GreetingsEvent) -> Unit,
     navigationEvent: (NavigationEvent) -> Unit,
 ) {
 
@@ -83,7 +87,6 @@ fun GreetingsScreen(
 
             }
 
-
             // GREETINGS TEXT
             Box(
                 modifier = Modifier
@@ -104,6 +107,7 @@ fun GreetingsScreen(
 
                     val todayInMillis =
                         DateUtils.convertMillisToDate(Calendar.getInstance().timeInMillis)
+
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally),
@@ -115,8 +119,14 @@ fun GreetingsScreen(
 
                     Text(
                         modifier = Modifier
-                            .align(Alignment.CenterHorizontally),
+                            .padding(8.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .background(
+                                color = NeutralLighter,
+                                shape = RoundedCornerShape(8.dp)
+                            ),
                         text = "Welcome, ${user?.firstname} ${user?.lastname}",
+                        textAlign = TextAlign.Center,
                         color = Color.White,
                         fontSize = 32.sp,
                         fontWeight = FontWeight.Bold
@@ -144,6 +154,82 @@ fun GreetingsScreen(
 
             }
 
+            if (user?.hasAdministrativeRights == true) {
+
+                // DEBUG BUTTONS
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                ) {
+
+                    Row() {
+
+                        // Random bug ticket
+                        Button(
+                            modifier = Modifier,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MenuAccent
+                            ),
+                            onClick = { event.invoke(GreetingsEvent.OnRandomBugTicketButtonClicked) }
+                        ) {
+
+                            Icon(
+                                modifier = Modifier
+                                    .background(MenuAccent)
+                                    .size(24.dp),
+                                painter = painterResource(id = R.drawable.ic_dice_multiple),
+                                contentDescription = "Logout button",
+                                tint = White
+                            )
+
+                        }
+
+                        // Random suggestion
+                        Button(
+                            modifier = Modifier,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MenuAccent
+                            ),
+                            onClick = { event.invoke(GreetingsEvent.OnRandomSuggestionButtonClicked) }
+                        ) {
+
+                            Icon(
+                                modifier = Modifier
+                                    .background(MenuAccent)
+                                    .size(24.dp),
+                                painter = painterResource(id = R.drawable.ic_dice_multiple),
+                                contentDescription = "Logout button",
+                                tint = White
+                            )
+
+                        }
+
+                        // Random person
+                        Button(
+                            modifier = Modifier,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MenuAccent
+                            ),
+                            onClick = { event.invoke(GreetingsEvent.OnRandomPersonButtonClicked) }
+                        ) {
+
+                            Icon(
+                                modifier = Modifier
+                                    .background(MenuAccent)
+                                    .size(24.dp),
+                                painter = painterResource(id = R.drawable.ic_dice_multiple),
+                                contentDescription = "Logout button",
+                                tint = White
+                            )
+
+                        }
+
+                    }
+
+                }
+
+            }
+
         }
 
     }
@@ -155,6 +241,9 @@ fun GreetingsScreen(
 fun GreetingsScreenPreview() {
     Si2GAssistantTheme {
         val greetingsState = GreetingsState()
-        GreetingsScreen(state = greetingsState) { }
+        GreetingsScreen(
+            state = greetingsState,
+            {}
+        ) { }
     }
 }

@@ -2,7 +2,6 @@ package com.oxymium.si2gassistant.ui.scenes.metrics
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.oxymium.si2gassistant.domain.entities.Auth
 import com.oxymium.si2gassistant.domain.repository.AcademyRepository
 import com.oxymium.si2gassistant.domain.repository.BugTicketRepository
 import com.oxymium.si2gassistant.domain.repository.ModuleRepository
@@ -20,7 +19,7 @@ class MetricsViewModel(
     private val userRepository: UserRepository,
     private val personRepository: PersonRepository,
     private val suggestionRepository: SuggestionRepository
-    ): ViewModel() {
+): ViewModel() {
 
     init {
         getAllBugTickets()
@@ -97,6 +96,26 @@ class MetricsViewModel(
                 _state.emit(newState)
             }
         }
+    }
+
+    fun onEvent(metricsScreenEvent: MetricsScreenEvent) {
+        when (metricsScreenEvent) {
+            MetricsScreenEvent.OnBugTicketsButtonClick -> {
+                val newState = state.value.copy(
+                    isBugTicketMetricsScreen = true,
+                    isOverallMetricsScreen = false
+                )
+                _state.value = newState
+            }
+            MetricsScreenEvent.OnOverallMetricsButtonClick -> {
+                val newState = state.value.copy(
+                    isBugTicketMetricsScreen = false,
+                    isOverallMetricsScreen = true
+                )
+                _state.value = newState
+            }
+        }
+
     }
 
 }

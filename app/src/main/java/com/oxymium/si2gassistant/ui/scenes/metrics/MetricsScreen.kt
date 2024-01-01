@@ -1,193 +1,127 @@
 package com.oxymium.si2gassistant.ui.scenes.metrics
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.mock.ALL_ACADEMIES
 import com.oxymium.si2gassistant.domain.entities.mock.ALL_MODULES
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomBugTicket
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomSuggestion
+import com.oxymium.si2gassistant.ui.scenes.metrics.components.BugTicketsMetricsScreen
+import com.oxymium.si2gassistant.ui.scenes.metrics.components.OverallMetricsScreen
+import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
+import com.oxymium.si2gassistant.ui.theme.PriorityCritical
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
+import com.oxymium.si2gassistant.ui.theme.White
 
 @Composable
 fun MetricsScreen(
-    state: MetricsState
+    state: MetricsState,
+    event: (MetricsScreenEvent) -> Unit
 ) {
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                color = Neutral
+                color = White
             )
     ) {
 
-        // -----------
-        // BUG TICKETS
-        // -----------
+        // METRICS MENU
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = Neutral,
+                    shape = RoundedCornerShape(
+                        bottomStart = 20.dp,
+                        bottomEnd = 20.dp
+                    )
+                )
+        ) {
 
-        val bugTicketListSize = state.bugTicketList?.size ?: 0
-        val bugTicketListMostCategory = state.bugTicketList?.groupingBy { it.category }?.eachCount()?.maxByOrNull { it.value }?.key
-        val bugTicketListMostPriority = state.bugTicketList?.groupingBy { it.priority }?.eachCount()?.maxByOrNull { it.value }?.key
-        val bugTicketListResolved = state.bugTicketList?.count { it.isResolved } ?: 0
-        val percentageResolved = if (bugTicketListSize > 0) {
-            (bugTicketListResolved.toDouble() / bugTicketListSize * 100).toInt()
-        }else {
-            0
-        }
-        
-        Text(
-            text = "Total amount of bug tickets reported",
-            color = Color.White
-        )
+            // BUTTON: OVERALL METRICS
+            Button(
+                modifier = Modifier
+                    .padding(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (state.isOverallMetricsScreen) MenuAccent else White
+                ),
+                onClick = { event.invoke(MetricsScreenEvent.OnOverallMetricsButtonClick) }
+            ) {
 
-        Text(
-            modifier = Modifier.
-            align(Alignment.End),
-            text = "$bugTicketListSize",
-            color = Color.White
-        )
+                Icon(
+                    modifier = Modifier
+                        .background(if (state.isOverallMetricsScreen) MenuAccent else White)
+                        .size(24.dp),
+                    painter = painterResource(id = R.drawable.ic_bug),
+                    contentDescription = null,
+                    tint = if (state.isOverallMetricsScreen) White else Neutral
+                )
+            }
 
-        Text(
-            text  = "Most represented category",
-            color = Color.White
-        )
+            // BUTTON: BUG TICKETS
+            Button(
+                modifier = Modifier
+                    .padding(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (state.isBugTicketMetricsScreen) MenuAccent else White
+                ),
+                onClick = { event.invoke(MetricsScreenEvent.OnBugTicketsButtonClick) }
+            ) {
 
-        Text(
-            modifier = Modifier.
-            align(Alignment.End),
-            text = "$bugTicketListMostCategory",
-            color = Color.White
-        )
+                Icon(
+                    modifier = Modifier
+                        .background(if (state.isBugTicketMetricsScreen) MenuAccent else White)
+                        .size(24.dp),
+                    painter = painterResource(id = R.drawable.ic_bug),
+                    contentDescription = null,
+                    tint = if (state.isBugTicketMetricsScreen) White else Neutral
+                )
+            }
 
-        Text(
-            text  = "Most represented priority",
-            color = Color.White
-        )
-
-        Text(
-            modifier = Modifier.
-            align(Alignment.End),
-            text = "$bugTicketListMostPriority",
-            color = Color.White
-        )
-
-        Text(
-            text  = "Resolved tickets",
-            color = Color.White
-        )
-
-        Text(
-            modifier = Modifier.
-            align(Alignment.End),
-            text = "$bugTicketListResolved/$bugTicketListSize ($percentageResolved %)",
-            color = Color.White
-        )
-
-        // ---------
-        // ACADEMIES
-        // ---------
-
-        val academyThatProducesTheMostTickets = state.bugTicketList?.groupingBy { it.academy }?.eachCount()?.maxByOrNull { it.value }?.key
-
-
-        Text(
-            text = "Total amount of academies",
-            color = Color.White
-        )
-
-        Text(
-            modifier = Modifier.
-            align(Alignment.End),
-            text = "${state.academies?.size}",
-            color = Color.White
-        )
-        
-        Text(
-            text = "Academy that produces the most tickets",
-            color = Color.White
-        )
-
-        Text(
-            modifier = Modifier.
-            align(Alignment.End),
-            text = "$academyThatProducesTheMostTickets",
-            color = Color.White
-        )
-
-        // -------
-        // MODULES
-        // -------
-
-        Text(
-            text = "Total amount of modules",
-            color = Color.White
-        )
-
-        Text(
-            modifier = Modifier.
-            align(Alignment.End),
-            text = "${state.modules?.size}",
-            color = Color.White
-        )
-
-        // -----
-        // USERS
-        // -----
-
-        Text(
-            text = "Total amount of users",
-            color = Color.White
-        )
-
-        Text(
-            modifier = Modifier.
-            align(Alignment.End),
-            text = "${state.users?.size}",
-            color = Color.White
-        )
-
-
-        // -------
-        // PERSONS
-        // -------
-
-        Text(
-            text = "Total amount of persons",
-            color = Color.White
+            // TITLE
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .fillMaxWidth(),
+                text = if (state.isOverallMetricsScreen) "Overall" else "Bug tickets",
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
             )
 
-        Text(
-            modifier = Modifier.
-            align(Alignment.End),
-            text = "${state.persons?.size}",
-            color = Color.White
-        )
+        }
 
-        // -----------
-        // SUGGESTIONS
-        // -----------
+        if (state.isOverallMetricsScreen) OverallMetricsScreen(state = state)
         
-        Text(
-            text = "Total amount of suggestions",
-            color = Color.White
-        )
+        if (state.isBugTicketMetricsScreen) BugTicketsMetricsScreen(state = state)
 
-        Text(
-            modifier = Modifier.
-            align(Alignment.End),
-            text = "${state.suggestions?.size}",
-            color = Color.White
-        )
 
-    }
+        }
+
 
 }
 
@@ -203,6 +137,6 @@ fun MetricsScreenPreview() {
         suggestions = List(10) { provideRandomSuggestion() }
     )
     Si2GAssistantTheme {
-        MetricsScreen(statePreview)
+        MetricsScreen(statePreview) {}
     }
 }

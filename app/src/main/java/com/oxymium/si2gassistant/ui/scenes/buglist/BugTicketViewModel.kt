@@ -26,7 +26,7 @@ class BugTicketViewModel(private val bugTicketsRepository: BugTicketRepository):
     ) { state, bugTickets, filter, selected ->
         state.copy(
             bugTickets = when (filter) {
-                BugTicketFilter.DefaultValue -> bugTickets
+                BugTicketFilter.DefaultValue -> bugTickets.sortedBy { it.submittedDate }.reversed() // sort by chronological order
                 BugTicketFilter.LowPriority -> bugTickets.filter { it.priority?.name == BugTicketPriority.LOW.name }
                 BugTicketFilter.MediumPriority -> bugTickets.filter { it.priority?.name == BugTicketPriority.MEDIUM.name }
                 BugTicketFilter.HighPriority -> bugTickets.filter { it.priority?.name == BugTicketPriority.HIGH.name }

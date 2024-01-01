@@ -30,7 +30,8 @@ fun SuggestionList(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            reverseLayout = true
         ) {
             itemsIndexed(state.suggestions) { index, suggestion ->
                 SuggestionItem(

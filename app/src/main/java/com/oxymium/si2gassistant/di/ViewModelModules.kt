@@ -24,7 +24,7 @@ val viewModelModules = module {
     viewModel { LoginViewModel( get(), get() ) }
 
     // WM: Greetings
-    viewModel { GreetingsViewModel() }
+    viewModel { GreetingsViewModel( get(), get(), get() ) }
 
     // WM : Metrics
     viewModel { MetricsViewModel( get(), get(), get(), get(), get(), get() ) }

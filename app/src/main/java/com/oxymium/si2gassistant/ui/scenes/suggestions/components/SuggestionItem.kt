@@ -40,8 +40,8 @@ fun SuggestionItem(
     Column(
         modifier = Modifier
             .padding(
-                start = if (index % 2 == 0) 16.dp else 0.dp,
-                end = if (index % 2 == 0) 0.dp else 16.dp
+                start = if (index % 2 == 0) 32.dp else 0.dp,
+                end = if (index % 2 == 0) 0.dp else 32.dp
             ) // modify margin based on even or uneven Index to alternate
             .fillMaxWidth()
             .wrapContentHeight()

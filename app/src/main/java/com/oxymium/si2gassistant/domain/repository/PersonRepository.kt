@@ -10,8 +10,10 @@ interface PersonRepository {
 
     fun getAllPersonsByAcademyId(academyId: String): Flow<List<Person>>
 
-    fun getAllPersonsByUser(mail: String): Flow<List<Person>>
+    fun getAllPersonsByUserId(userId: String): Flow<List<Person>>
 
     suspend fun submitPerson(person: Person): Deferred<String?>
+
+    suspend fun updatePersonModules(person: Person): Deferred<String?>
 
 }

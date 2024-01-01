@@ -6,7 +6,6 @@ import com.oxymium.si2gassistant.data.repository.GLOBAL_USER
 import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
 import com.oxymium.si2gassistant.ui.scenes.submitperson.components.SubmitPersonValidator
-import com.oxymium.si2gassistant.ui.scenes.submitsuggestion.SubmitSuggestionValidator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -27,20 +26,29 @@ class SubmitPersonViewModel(
 
     private fun submitPerson(person: Person) {
         viewModelScope.launch {
-            val personFinalized = state.value.newPerson?.copy(
+            val personFinalized = person.copy(
                 academy = GLOBAL_USER?.academy,
-                user = GLOBAL_USER?.mail
-            ) // attach academy to User
-            personFinalized?.let { personRepository.submitPerson(personFinalized) }
+                userId = GLOBAL_USER?.id,
+                userFirstname = GLOBAL_USER?.firstname,
+                userLastname = GLOBAL_USER?.lastname
+            )
+            personFinalized.let { personRepository.submitPerson(personFinalized) }
+            _person.value = Person() // reset after push
         }
     }
 
     private fun getPersons() {
         viewModelScope.launch {
-            personRepository.getAllPersonsByUser(GLOBAL_USER?.mail!!).collect {
+            personRepository.getAllPersonsByUserId(GLOBAL_USER!!.id!!).collect {
                 val newState = state.value.copy(persons = it)
                 _state.value = newState
             }
+        }
+    }
+
+    private fun updatePersonModules(person: Person) {
+        viewModelScope.launch {
+            personRepository.updatePersonModules(person)
         }
     }
 
@@ -144,6 +152,14 @@ class SubmitPersonViewModel(
 
                 }
             }
+
+            is SubmitPersonEvent.OnPersonModulesUpdateButtonClicked -> {
+                val newPerson = state.value.selectedPerson?.copy(
+                    validatedModules = submitPersonEvent.modules
+                )
+                newPerson?.let { updatePersonModules(newPerson) }
+            }
+
         }
     }
 }

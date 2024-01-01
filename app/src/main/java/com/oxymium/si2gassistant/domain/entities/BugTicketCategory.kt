@@ -1,19 +1,23 @@
 package com.oxymium.si2gassistant.domain.entities
 
 enum class BugTicketCategory {
-    TYPO,
-    GLITCH,
-    UI,
+    NAVIGATION,
+    DESIGN,
+    TYPOGRAPHY,
     PERFORMANCE,
-    SECURITY,
-    OTHER
+    INCONSISTENCY,
+    ACCESSIBILITY,
+    GLITCHES,
+    SECURITY
 }
 
 val ALL_BUG_CATEGORIES = listOf(
-    BugTicketCategory.TYPO,
-    BugTicketCategory.GLITCH,
-    BugTicketCategory.UI,
+    BugTicketCategory.NAVIGATION,
+    BugTicketCategory.DESIGN,
+    BugTicketCategory.TYPOGRAPHY,
     BugTicketCategory.PERFORMANCE,
-    BugTicketCategory.SECURITY,
-    BugTicketCategory.OTHER,
+    BugTicketCategory.INCONSISTENCY,
+    BugTicketCategory.ACCESSIBILITY,
+    BugTicketCategory.GLITCHES,
+    BugTicketCategory.SECURITY
     )

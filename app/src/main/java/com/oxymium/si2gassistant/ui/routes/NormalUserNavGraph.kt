@@ -64,6 +64,7 @@ fun NormalUserNavGraph(
                         val state = viewModel.state.collectAsState()
                         GreetingsScreen(
                             state = state.value,
+                            viewModel::onEvent,
                             navigationEvent = navigationEvent
                         )
                     }
