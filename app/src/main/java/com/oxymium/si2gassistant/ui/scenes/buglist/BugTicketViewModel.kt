@@ -9,6 +9,9 @@ import com.oxymium.si2gassistant.domain.usecase.BugTicketFilter
 import com.oxymium.si2gassistant.domain.usecase.BugTicketListEvent
 import com.oxymium.si2gassistant.domain.usecase.BugTicketListState
 import com.oxymium.si2gassistant.domain.entities.BugTicketPriority
+import com.oxymium.si2gassistant.domain.entities.Result
+import com.oxymium.si2gassistant.loadingInMillis
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -22,26 +25,61 @@ class BugTicketViewModel(private val bugTicketsRepository: BugTicketRepository):
     private val _selected = MutableStateFlow<BugTicket?>(null)
 
     val state = combine(
-        _state, bugTicketsRepository.getAllBugTickets(), _filter, _selected
-    ) { state, bugTickets, filter, selected ->
+        _state, _filter, _selected
+    ) { state, filter, selected ->
         state.copy(
             bugTickets = when (filter) {
-                BugTicketFilter.DefaultValue -> bugTickets.sortedBy { it.submittedDate }.reversed() // sort by chronological order
-                BugTicketFilter.LowPriority -> bugTickets.filter { it.priority?.name == BugTicketPriority.LOW.name }
-                BugTicketFilter.MediumPriority -> bugTickets.filter { it.priority?.name == BugTicketPriority.MEDIUM.name }
-                BugTicketFilter.HighPriority -> bugTickets.filter { it.priority?.name == BugTicketPriority.HIGH.name }
-                BugTicketFilter.CriticalPriority -> bugTickets.filter { it.priority?.name == BugTicketPriority.CRITICAL.name }
-                BugTicketFilter.Resolved -> bugTickets.filter { it.isResolved }
-                is BugTicketFilter.Search -> bugTickets.filter {
+                BugTicketFilter.DefaultValue -> state.bugTickets.sortedBy { it.submittedDate }.reversed() // sort by chronological order
+                BugTicketFilter.LowPriority -> state.bugTickets.filter { it.priority?.name == BugTicketPriority.LOW.name }
+                BugTicketFilter.MediumPriority -> state.bugTickets.filter { it.priority?.name == BugTicketPriority.MEDIUM.name }
+                BugTicketFilter.HighPriority -> state.bugTickets.filter { it.priority?.name == BugTicketPriority.HIGH.name }
+                BugTicketFilter.CriticalPriority -> state.bugTickets.filter { it.priority?.name == BugTicketPriority.CRITICAL.name }
+                BugTicketFilter.Resolved -> state.bugTickets.filter { it.isResolved }
+                is BugTicketFilter.Search -> state.bugTickets.filter {
                     it.academy?.contains(filter.search ?: "", ignoreCase = true) == true ||
                             it.description?.contains(filter.search ?: "", ignoreCase = true) == true ||
                             it.shortDescription?.contains(filter.search ?: "", ignoreCase = true) == true
                 }
             },
-            selectedBugTicket = bugTickets.firstOrNull{ it.id == selected?.id },
+            selectedBugTicket = state.bugTickets.firstOrNull{ it.id == selected?.id },
             isSelectedBugTicketDetailsOpen = selected != null,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), BugTicketListState())
+
+    init {
+        getAllBugTickets()
+    }
+
+    private fun getAllBugTickets() {
+        viewModelScope.launch {
+            bugTicketsRepository.getAllBugTickets().collect {
+                when (it) {
+                    is Result.Failed -> _state.emit(
+                        state.value.copy(
+                            isBugTicketsFailed = true,
+                            bugTicketsFailedMessage = it.errorMessage
+                        )
+                    )
+
+                    is Result.Loading ->  { _state.emit(
+                            state.value.copy(
+                            isBugTicketsLoading = true
+                        )
+                    )
+                        delay(loadingInMillis)
+
+                    }
+
+                    is Result.Success -> _state.emit(
+                        state.value.copy(
+                            isBugTicketsLoading = false,
+                            isBugTicketsFailed = false,
+                            bugTickets = it.data
+                        ))
+                }
+            }
+        }
+    }
 
     private fun resolveBugTicket(bugTicket: BugTicket?) {
         viewModelScope.launch {

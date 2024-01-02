@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomSuggestion
+import com.oxymium.si2gassistant.ui.scenes.loading.LoadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.suggestions.components.SuggestionList
 import com.oxymium.si2gassistant.ui.scenes.suggestions.components.SuggestionSearch
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
@@ -26,9 +28,17 @@ fun SuggestionsScreen(
             event = event
         )
 
-        SuggestionList(
-            state = state
-        )
+        if (state.isSuggestionsLoading) {
+
+            LoadingAnimation()
+
+        } else {
+
+            SuggestionList(
+                state = state
+            )
+
+        }
 
     }
 
@@ -39,7 +49,10 @@ fun SuggestionsScreen(
 fun SuggestionsScreenPreview() {
     Si2GAssistantTheme {
         val previewSuggestions = List(11) { provideRandomSuggestion() }
-        val previewState = SuggestionsState(suggestions = previewSuggestions)
+        val previewState = SuggestionsState(
+            suggestions = previewSuggestions,
+            isSuggestionsLoading = true
+        )
         SuggestionsScreen(
             state = previewState
         ) {}

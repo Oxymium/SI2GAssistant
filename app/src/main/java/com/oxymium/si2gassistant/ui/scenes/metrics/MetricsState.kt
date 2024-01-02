@@ -8,7 +8,7 @@ import com.oxymium.si2gassistant.domain.entities.Suggestion
 import com.oxymium.si2gassistant.domain.entities.User
 
 data class MetricsState(
-    val bugTicketList: List<BugTicket>? = null,
+    val bugTickets: List<BugTicket>? = null,
     val academies: List<Academy>? = null,
     val modules: List<Module>? = null,
     val users: List<User>? = null,

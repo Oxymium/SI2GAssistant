@@ -2,6 +2,7 @@ package com.oxymium.si2gassistant.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oxymium.si2gassistant.domain.entities.BugTicket
+import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.repository.BugTicketRepository
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
@@ -11,22 +12,27 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class FirebaseFirestoreBugTicketsImpl(val firebaseFirestore: FirebaseFirestore):
     BugTicketRepository {
-    override fun getAllBugTickets(): Flow<List<BugTicket>> = callbackFlow {
-        val bugTicketsCollection = firebaseFirestore.collection(FirebaseFirestoreCollections.BUG_TICKETS)
-        val listener = bugTicketsCollection
-            .addSnapshotListener { querySnapshot, exception ->
+
+
+        //
+
+         override fun getAllBugTickets(): Flow<Result<List<BugTicket>>> = callbackFlow {
+             trySend(Result.Loading())
+             val bugTicketsCollection = firebaseFirestore.collection(FirebaseFirestoreCollections.BUG_TICKETS)
+             val listener = bugTicketsCollection
+                 .addSnapshotListener { querySnapshot, exception ->
                 if (exception != null) {
-                    trySend(emptyList()).isSuccess
+                    trySend(Result.Failed(exception.message.toString())).isSuccess
                     return@addSnapshotListener
                 }
                 if (querySnapshot != null) {
-                    val bugTicketList: List<BugTicket> =
+                    val bugTickets: List<BugTicket> =
                         querySnapshot.documents.mapNotNull { document ->
                             val bugTicket = document.toObject(BugTicket::class.java)
                             bugTicket?.id = document.id // assign the reference of the document for the ID
                             bugTicket
                         }
-                    trySend(bugTicketList).isSuccess
+                    trySend(Result.Success(bugTickets)).isSuccess
                 }
             }
         // The callbackFlow will automatically close the listener when the flow is cancelled

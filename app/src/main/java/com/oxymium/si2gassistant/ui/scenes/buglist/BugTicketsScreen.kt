@@ -13,6 +13,7 @@ import com.oxymium.si2gassistant.domain.usecase.BugTicketListState
 import com.oxymium.si2gassistant.ui.scenes.buglist.components.BugTicketBottomSheet
 import com.oxymium.si2gassistant.ui.scenes.buglist.components.BugTicketList
 import com.oxymium.si2gassistant.ui.scenes.buglist.components.BugTicketSearch
+import com.oxymium.si2gassistant.ui.scenes.loading.LoadingAnimation
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -38,10 +39,18 @@ fun BugTicketsScreen(
                 event
             )
 
-            BugTicketList(
-                state = state,
-                event
-            )
+            if (state.isBugTicketsLoading) {
+
+                LoadingAnimation()
+
+            } else {
+
+                BugTicketList(
+                    state = state,
+                    event
+                )
+
+            }
 
         }
     }
@@ -58,7 +67,8 @@ fun BugTicketsScreen(
 fun BugTicketsScreenPreview() {
     Si2GAssistantTheme {
         val previewState = BugTicketListState(
-            bugTickets = List(20) { provideRandomBugTicket() }
+            bugTickets = List(20) { provideRandomBugTicket() },
+            isBugTicketsLoading = false
         )
         BugTicketsScreen(
             state = previewState

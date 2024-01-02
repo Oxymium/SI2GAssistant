@@ -3,7 +3,6 @@ package com.oxymium.si2gassistant.ui.scenes.metrics.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -16,11 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomBugTicket
-import com.oxymium.si2gassistant.domain.entities.mock.provideRandomPerson
 import com.oxymium.si2gassistant.ui.scenes.metrics.MetricsState
 import com.oxymium.si2gassistant.ui.theme.Black
 import com.oxymium.si2gassistant.ui.theme.Metrics1
@@ -269,7 +266,7 @@ fun OverallMetricsScreen(
                 Text(
                     modifier = Modifier
                         .padding(8.dp),
-                    text = "${state.bugTicketList?.size}",
+                    text = "${state.bugTickets?.size}",
                     color = Black,
                     fontWeight = FontWeight.Bold
                 )
@@ -334,7 +331,7 @@ fun OverallMetricsScreen(
 fun OverallMetricsScreenPreview() {
     Si2GAssistantTheme {
         val previewState = MetricsState(
-            bugTicketList = List(20) { provideRandomBugTicket() }
+            bugTickets = List(20) { provideRandomBugTicket() }
         )
         OverallMetricsScreen(
             state = previewState

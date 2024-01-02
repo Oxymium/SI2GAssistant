@@ -46,8 +46,8 @@ fun BugTicketsMetricsScreen(
 
     ) {
 
-        val bugTicketListSize = state.bugTicketList?.size ?: 0
-        val bugTicketListResolved = state.bugTicketList?.count { it.isResolved } ?: 0
+        val bugTicketListSize = state.bugTickets?.size ?: 0
+        val bugTicketListResolved = state.bugTickets?.count { it.isResolved } ?: 0
         val percentageResolved = if (bugTicketListSize > 0) {
             (bugTicketListResolved.toDouble() / bugTicketListSize * 100).toInt()
         } else {
@@ -91,7 +91,7 @@ fun BugTicketsMetricsScreen(
                 Text(
                     modifier = Modifier
                         .padding(8.dp),
-                    text = "${state.bugTicketList?.size}",
+                    text = "${state.bugTickets?.size}",
                     color = Black,
                     fontWeight = FontWeight.Bold
                 )
@@ -151,7 +151,7 @@ fun BugTicketsMetricsScreen(
         // --------
 
         // Group by category and count occurrences
-        val categoryCounts = state.bugTicketList?.groupBy { it.category }?.mapValues { it.value.size }
+        val categoryCounts = state.bugTickets?.groupBy { it.category }?.mapValues { it.value.size }
 
         // Sort categories by count in descending order
         val sortedCategories = categoryCounts?.entries?.sortedByDescending { it.value }
@@ -215,7 +215,7 @@ fun BugTicketsMetricsScreen(
         // --------
 
         // Group by priority and count occurrences
-        val priorityCounts = state.bugTicketList?.groupBy { it.priority }?.mapValues { it.value.size }
+        val priorityCounts = state.bugTickets?.groupBy { it.priority }?.mapValues { it.value.size }
 
         // Sort priorities by count in descending order
         val sortedPriorities = priorityCounts?.entries?.sortedByDescending { it.value }
@@ -279,7 +279,7 @@ fun BugTicketsMetricsScreen(
         // ----------------
 
         // Group by academies and count occurrences
-        val academyCounts = state.bugTicketList?.groupBy { it.academy }?.mapValues { it.value.size }
+        val academyCounts = state.bugTickets?.groupBy { it.academy }?.mapValues { it.value.size }
 
         // Sort academies by count in descending order
         val sortedAcademies = academyCounts?.entries?.sortedByDescending { it.value }
@@ -346,7 +346,7 @@ fun BugTicketsMetricsScreen(
 fun BugTicketsMetricsScreenPreview() {
     Si2GAssistantTheme {
         val previewState = MetricsState(
-            bugTicketList = List (250) { provideRandomBugTicket() }
+            bugTickets = List (250) { provideRandomBugTicket() }
         )
         BugTicketsMetricsScreen(
             state = previewState

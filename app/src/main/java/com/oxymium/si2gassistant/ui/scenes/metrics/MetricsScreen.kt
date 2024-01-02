@@ -1,7 +1,6 @@
 package com.oxymium.si2gassistant.ui.scenes.metrics
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +30,6 @@ import com.oxymium.si2gassistant.ui.scenes.metrics.components.BugTicketsMetricsS
 import com.oxymium.si2gassistant.ui.scenes.metrics.components.OverallMetricsScreen
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
-import com.oxymium.si2gassistant.ui.theme.PriorityCritical
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.White
 
@@ -129,7 +127,7 @@ fun MetricsScreen(
 @Composable
 fun MetricsScreenPreview() {
     val statePreview = MetricsState(
-        bugTicketList =  List(10) { provideRandomBugTicket() },
+        bugTickets =  List(10) { provideRandomBugTicket() },
         academies = ALL_ACADEMIES,
         modules = ALL_MODULES,
         users = null,

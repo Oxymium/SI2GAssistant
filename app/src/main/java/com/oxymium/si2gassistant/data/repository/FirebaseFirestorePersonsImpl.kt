@@ -1,24 +1,33 @@
 package com.oxymium.si2gassistant.data.repository
 
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oxymium.si2gassistant.domain.entities.Person
+import com.oxymium.si2gassistant.domain.entities.Result
+import com.oxymium.si2gassistant.domain.entities.pushError
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 
 class FirebaseFirestorePersonsImpl(val firebaseFirestore: FirebaseFirestore): PersonRepository {
 
-    override fun getAllPersons(): Flow<List<Person>> = callbackFlow {
+    override fun getAllPersons(): Flow<Result<List<Person>>> = callbackFlow {
+
+        trySend(Result.Loading()).isSuccess // Emit Loading state
+
         val personsCollection = firebaseFirestore
             .collection(FirebaseFirestoreCollections.PERSONS)
         val listener = personsCollection
             .addSnapshotListener { querySnapshot, exception ->
                 print(exception?.message.toString())
                 if (exception != null) {
-                    trySend(emptyList()).isSuccess
+                    trySend(Result.Failed(exception.message.toString())).isSuccess
                     return@addSnapshotListener
                 }
                 if (querySnapshot != null) {
@@ -28,7 +37,7 @@ class FirebaseFirestorePersonsImpl(val firebaseFirestore: FirebaseFirestore): Pe
                             person?.id = document.id // assign the reference of the document for the ID
                             person
                         }
-                    trySend(personList).isSuccess
+                    trySend(Result.Success(personList)).isSuccess
                 }
             }
         // The callbackFlow will automatically close the listener when the flow is cancelled
@@ -91,19 +100,27 @@ class FirebaseFirestorePersonsImpl(val firebaseFirestore: FirebaseFirestore): Pe
         }
     }
 
-    override suspend fun submitPerson(person: Person): Deferred<String?> {
-        val result = CompletableDeferred<String?>()
-        firebaseFirestore
-            .collection(FirebaseFirestoreCollections.PERSONS)
-            .document()// auto-generates ID
-            .set(person)
-            .addOnSuccessListener {
-                result.complete("SUCCESS")
-            }
-            .addOnFailureListener {
-                result.complete("FAILURE")
-            }
-        return result
+    override suspend fun submitPerson(person: Person): Flow<Result<Boolean>> = flow {
+        // Loading
+        emit(Result.Loading())
+
+        val result = CompletableDeferred<Boolean>()
+
+        try {
+            firebaseFirestore
+                .collection(FirebaseFirestoreCollections.PERSONS)
+                .document()// auto-generates ID
+                .set(person)
+                .addOnSuccessListener {
+                    // Success
+                    result.complete(true)
+                }
+            // Success
+            emit(Result.Success(true))
+        } catch (e: Exception) {
+            // Failure
+            emit(Result.Failed(e.message ?: pushError, false))
+        }
     }
 
     override suspend fun updatePersonModules(person: Person): Deferred<String?> {

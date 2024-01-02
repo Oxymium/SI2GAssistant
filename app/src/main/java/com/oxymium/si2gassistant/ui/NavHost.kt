@@ -20,8 +20,6 @@ import com.oxymium.si2gassistant.ui.scenes.AppRoutes
 import com.oxymium.si2gassistant.ui.scenes.AppScreens
 import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
 import com.oxymium.si2gassistant.ui.scenes.NavigationState
-import com.oxymium.si2gassistant.ui.scenes.academylist.AcademiesScreen
-import com.oxymium.si2gassistant.ui.scenes.academylist.AcademyViewModel
 import com.oxymium.si2gassistant.ui.scenes.bottomnavigationbar.BottomNavigationBar
 import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketViewModel
 import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketsScreen

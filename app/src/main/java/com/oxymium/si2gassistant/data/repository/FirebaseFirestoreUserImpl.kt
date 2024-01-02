@@ -1,6 +1,7 @@
 package com.oxymium.si2gassistant.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.User
 import com.oxymium.si2gassistant.domain.repository.UserRepository
 import com.oxymium.si2gassistant.domain.usecase.UserState
@@ -12,23 +13,24 @@ class FirebaseFirestoreUserImpl(
     val firebaseFirestore: FirebaseFirestore,
 ): UserRepository {
 
-    override fun getAllUsers(): Flow<List<User>> = callbackFlow {
+    override fun getAllUsers(): Flow<Result<List<User>>> = callbackFlow {
+        trySend(Result.Loading())
         val personsCollection = firebaseFirestore
             .collection(FirebaseFirestoreCollections.USERS)
         val listener = personsCollection
             .addSnapshotListener { querySnapshot, exception ->
                 print(exception?.message.toString())
                 if (exception != null) {
-                    trySend(emptyList()).isSuccess
+                    trySend(Result.Failed(exception.message.toString())).isSuccess
                     return@addSnapshotListener
                 }
                 if (querySnapshot != null) {
-                    val userList: List<User> =
+                    val users: List<User> =
                         querySnapshot.documents.mapNotNull { document ->
                             val user = document.toObject(User::class.java)
                             user
                         }
-                    trySend(userList).isSuccess
+                    trySend(Result.Success(users)).isSuccess
                 }
             }
         // The callbackFlow will automatically close the listener when the flow is cancelled

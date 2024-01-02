@@ -1,12 +1,10 @@
 package com.oxymium.si2gassistant.di
 
 import com.oxymium.si2gassistant.ui.NavigationViewModel
-import com.oxymium.si2gassistant.ui.scenes.academylist.AcademyViewModel
 import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketViewModel
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsViewModel
 import com.oxymium.si2gassistant.ui.scenes.login.LoginViewModel
 import com.oxymium.si2gassistant.ui.scenes.metrics.MetricsViewModel
-import com.oxymium.si2gassistant.ui.scenes.modulelist.ModuleListViewModel
 import com.oxymium.si2gassistant.ui.scenes.persons.PersonListViewModel
 import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugViewModel
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonViewModel
@@ -29,9 +27,6 @@ val viewModelModules = module {
     // WM : Metrics
     viewModel { MetricsViewModel( get(), get(), get(), get(), get(), get() ) }
 
-    // VM: Academies
-    viewModel { AcademyViewModel( get() ) }
-
     // VM: BugTickets
     viewModel { BugTicketViewModel( get() ) }
 
@@ -43,9 +38,6 @@ val viewModelModules = module {
 
     // VM: Persons
     viewModel { PersonListViewModel( get() ) }
-
-    // VM: Modules
-    viewModel { ModuleListViewModel( get() ) }
 
     // VM: SubmitSuggestion
     viewModel { SubmitSuggestionViewModel( get() ) }

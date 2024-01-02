@@ -53,6 +53,11 @@ android {
 
 dependencies {
 
+    // Testing
+    testImplementation ("junit:junit:4.13.2")
+    testImplementation ("org.jetbrains.kotlin:kotlin-test-junit:1.9.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.21")
+
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.1")
@@ -95,5 +100,11 @@ dependencies {
     // Datastore
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
+    // Lottie
+    implementation ("com.airbnb.android:lottie-compose:6.3.0")
+
+    // Mockk
+    testImplementation ("io.mockk:mockk-android:1.13.8")
+    testImplementation ("io.mockk:mockk-agent:1.13.8")
 
 }

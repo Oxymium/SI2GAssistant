@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
+import com.oxymium.si2gassistant.ui.scenes.loading.UploadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonEvent
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonState
 import com.oxymium.si2gassistant.ui.theme.Neutral
@@ -56,7 +57,7 @@ fun SubmitPersonScreenTest(
                 .fillMaxWidth(),
             value = role,
             onValueChange = {
-                role = it.filter { char -> !char.isWhitespace() }.take(100)
+                role = it.take(50)
                 event.invoke(SubmitPersonEvent.OnPersonRoleChanged(role))
             },
             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -99,7 +100,7 @@ fun SubmitPersonScreenTest(
                     .fillMaxWidth(),
                 value = firstname,
                 onValueChange = {
-                    firstname = it.filter { char -> !char.isWhitespace() }.take(100)
+                    firstname = it.take(50)
                     event.invoke(SubmitPersonEvent.OnPersonFirstNameChanged(firstname))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -143,7 +144,7 @@ fun SubmitPersonScreenTest(
                     .fillMaxWidth(),
                 value = lastname,
                 onValueChange = {
-                    lastname = it.filter { char -> !char.isWhitespace() }.take(100)
+                    lastname = it.take(50)
                     event.invoke(SubmitPersonEvent.OnPersonLastNameChanged(lastname))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -175,27 +176,34 @@ fun SubmitPersonScreenTest(
                 color = Color.Red
             )
         }
+        
+        if (state.isPersonSubmitLoading) {
 
-        // PUSH PERSON BUTTON
-        Button(
-            modifier = Modifier
-                .padding(8.dp)
-                .align(Alignment.CenterHorizontally)
-            ,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Neutral
-            ),
-            onClick = { event.invoke(SubmitPersonEvent.OnSubmitPersonButtonClicked) }
-        ) {
+            UploadingAnimation()
 
-            Icon(
+        } else {
+
+            // PUSH PERSON BUTTON
+            Button(
                 modifier = Modifier
-                    .background(Neutral)
-                    .size(24.dp),
-                painter = painterResource(id = R.drawable.ic_cloud_upload),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
+                    .padding(8.dp)
+                    .align(Alignment.CenterHorizontally),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Neutral
+                ),
+                onClick = { event.invoke(SubmitPersonEvent.OnSubmitPersonButtonClicked) }
+            ) {
+
+                Icon(
+                    modifier = Modifier
+                        .background(Neutral)
+                        .size(24.dp),
+                    painter = painterResource(id = R.drawable.ic_cloud_upload),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
         }
 
     }

@@ -19,4 +19,6 @@ sealed interface SubmitPersonEvent {
 
     data class OnPersonModulesUpdateButtonClicked(val modules: String): SubmitPersonEvent
 
+    data class OnPersonModulesSwitchToggle(val moduleId: Int, val isChecked: Boolean): SubmitPersonEvent
+
 }

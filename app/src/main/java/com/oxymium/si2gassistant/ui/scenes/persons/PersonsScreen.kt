@@ -1,15 +1,13 @@
 package com.oxymium.si2gassistant.ui.scenes.persons
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.domain.entities.Person
+import com.oxymium.si2gassistant.domain.entities.mock.provideRandomPerson
+import com.oxymium.si2gassistant.ui.scenes.loading.LoadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.persons.components.PersonList
 import com.oxymium.si2gassistant.ui.scenes.persons.components.PersonListEvent
 import com.oxymium.si2gassistant.ui.scenes.persons.components.PersonListState
@@ -32,10 +30,18 @@ fun PersonsScreen(
             event = event
         )
 
-        PersonList(
-            state = state,
-            event = event
-        )
+        if (state.isPersonsLoading) {
+
+            LoadingAnimation()
+
+        } else {
+
+            PersonList(
+                state = state,
+                event = event
+            )
+
+        }
 
     }
 }
@@ -43,14 +49,13 @@ fun PersonsScreen(
 @Preview(showBackground = true)
 @Composable
 fun PersonsScreenPreview() {
-    val personListPreview = listOf(
-        Person("10", "","110000", "", "", "", "", "", ""),
-        Person("10","","110000", "", "", "", "", "", ""),
-        Person("10","","110000", "", "", "", "", "", "")
-        )
-    val statePreview = PersonListState(personList = personListPreview)
+    val statePreview = PersonListState(
+        persons = List (10) { provideRandomPerson() }
+    )
     Si2GAssistantTheme {
         PersonsScreen(
-            state = statePreview ){}
+            state = statePreview
+        )
+        {}
     }
 }

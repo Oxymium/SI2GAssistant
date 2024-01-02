@@ -2,6 +2,7 @@ package com.oxymium.si2gassistant.ui.scenes.metrics
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.repository.AcademyRepository
 import com.oxymium.si2gassistant.domain.repository.BugTicketRepository
 import com.oxymium.si2gassistant.domain.repository.ModuleRepository
@@ -21,6 +22,9 @@ class MetricsViewModel(
     private val suggestionRepository: SuggestionRepository
 ): ViewModel() {
 
+    private val _state = MutableStateFlow(MetricsState())
+    val state = _state.asStateFlow()
+
     init {
         getAllBugTickets()
         getAllAcademies()
@@ -30,70 +34,98 @@ class MetricsViewModel(
         getAllSuggestions()
     }
 
-    private val _state = MutableStateFlow(MetricsState())
-    val state = _state.asStateFlow()
-
     private fun getAllBugTickets() {
         viewModelScope.launch {
-            bugTicketRepository.getAllBugTickets().collect { bugTicketList ->
-                val newState = state.value.copy(
-                    bugTicketList = bugTicketList
-                )
-                _state.emit(newState)
+            bugTicketRepository.getAllBugTickets().collect {
+                when (it) {
+                    is Result.Failed -> println("failed")
+                    is Result.Loading -> println("loading")
+                    is Result.Success -> _state.emit(
+                        state.value.copy(
+                            bugTickets = it.data
+                        )
+                    )
+                }
             }
         }
     }
 
     private fun getAllAcademies() {
         viewModelScope.launch {
-            academyRepository.getAllAcademies().collect { academies ->
-                val newState = state.value.copy(
-                    academies = academies
-                )
-                _state.emit(newState)
+            academyRepository.getAllAcademies().collect {
+                when (it) {
+                    is Result.Failed -> println("failed")
+                    is Result.Loading -> println("loading")
+                    is Result.Success -> _state.emit(
+                        state.value.copy(
+                            academies = it.data
+                        )
+                    )
+                }
             }
         }
     }
 
     private fun getAllModules() {
         viewModelScope.launch {
-            moduleRepository.getAllModules().collect { modules ->
-                val newState = state.value.copy(
-                    modules = modules
-                )
-                _state.emit(newState)
+            moduleRepository.getAllModules().collect {
+                when (it) {
+                    is Result.Failed -> println("Failed")
+                    is Result.Loading -> println("Loading")
+                    is Result.Success -> _state.emit(
+                        state.value.copy(
+                            modules = it.data
+                        )
+                    )
+                }
             }
         }
     }
 
     private fun getAllUsers() {
         viewModelScope.launch {
-            userRepository.getAllUsers().collect { users ->
-                val newState = state.value.copy(
-                    users = users
-                )
-                _state.emit(newState)
+            userRepository.getAllUsers().collect {
+                when (it) {
+                    is Result.Failed -> println("Failed")
+                    is Result.Loading -> println("Loading")
+                    is Result.Success -> _state.emit(
+                        state.value.copy(
+                            users = it.data
+                        )
+                    )
+                }
+
             }
         }
     }
+
     private fun getAllPersons() {
         viewModelScope.launch {
-            personRepository.getAllPersons().collect { persons ->
-                val newState = state.value.copy(
-                    persons = persons
-                )
-                _state.emit(newState)
+            personRepository.getAllPersons().collect {
+                when (it) {
+                    is Result.Failed -> println("Suggestions: failed")
+                    is Result.Loading -> println("Suggestion: loading")
+                    is Result.Success -> _state.emit(
+                        state.value.copy(
+                            persons = it.data
+                        ))
+                }
+
             }
         }
     }
 
     private fun getAllSuggestions() {
         viewModelScope.launch {
-            suggestionRepository.getAllSuggestions().collect { suggestions ->
-                val newState = state.value.copy(
-                    suggestions = suggestions
-                )
-                _state.emit(newState)
+            suggestionRepository.getAllSuggestions().collect {
+                when (it) {
+                    is Result.Failed -> println("Suggestions: failed")
+                    is Result.Loading -> println("Suggestion: loading")
+                    is Result.Success -> _state.emit(
+                        state.value.copy(
+                            suggestions = it.data
+                        ))
+                }
             }
         }
     }

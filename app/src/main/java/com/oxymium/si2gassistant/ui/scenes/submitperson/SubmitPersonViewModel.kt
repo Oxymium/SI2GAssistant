@@ -3,11 +3,17 @@ package com.oxymium.si2gassistant.ui.scenes.submitperson
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oxymium.si2gassistant.data.repository.GLOBAL_USER
+import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
+import com.oxymium.si2gassistant.loadingInMillis
 import com.oxymium.si2gassistant.ui.scenes.submitperson.components.SubmitPersonValidator
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SubmitPersonViewModel(
@@ -15,15 +21,33 @@ class SubmitPersonViewModel(
 ): ViewModel() {
 
     init {
-        getPersons()
+        //getPersons()
     }
 
     private val _state = MutableStateFlow(SubmitPersonState())
-    val state = _state.asStateFlow()
+    private val _selected = MutableStateFlow<Person?>(null)
+
+    // Reference of validated modules kept to delay the update
+    private val _validatedModules = MutableStateFlow<String?>(String())
+
+    val state = combine(
+        _state, personRepository.getAllPersonsByUserId(GLOBAL_USER!!.id!!), _selected, _validatedModules
+    ) { state, persons, selected, validatedModules ->
+        state.copy(
+            persons = persons,
+            selectedPerson = persons.firstOrNull{ it.id == selected?.id },
+            isSelectedPersonDetailsOpen = selected != null,
+            selectedPersonValidatedModules = validatedModules
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), SubmitPersonState())
 
     private val _person = MutableStateFlow(Person())
     val person = _person.asStateFlow()
-
+    private fun updatePerson(person: Person) {
+        viewModelScope.launch {
+            _person.emit(person)
+        }
+    }
     private fun submitPerson(person: Person) {
         viewModelScope.launch {
             val personFinalized = person.copy(
@@ -32,18 +56,39 @@ class SubmitPersonViewModel(
                 userFirstname = GLOBAL_USER?.firstname,
                 userLastname = GLOBAL_USER?.lastname
             )
-            personFinalized.let { personRepository.submitPerson(personFinalized) }
-            _person.value = Person() // reset after push
-        }
-    }
+            // Await for result
+            personFinalized.let {
+                personRepository.submitPerson(personFinalized).collect {
+                    when (it) {
+                        is Result.Failed -> _state.emit(
+                            state.value.copy(
+                                isPersonSubmitFailure = true,
+                                personSubmitFailureMessage = it.errorMessage
+                            )
+                        )
 
-    private fun getPersons() {
-        viewModelScope.launch {
-            personRepository.getAllPersonsByUserId(GLOBAL_USER!!.id!!).collect {
-                val newState = state.value.copy(persons = it)
-                _state.value = newState
+                        is Result.Loading -> {
+                            _state.emit(
+                                state.value.copy(
+                                    isPersonSubmitLoading = true
+                                )
+                            )
+                            delay(loadingInMillis)
+                        }
+
+                        is Result.Success -> _state.emit(
+                            state.value.copy(
+                                isPersonSubmitFailure = false,
+                                personSubmitFailureMessage = null,
+                                isPersonSubmitLoading = false,
+                            )
+                        )
+                    }
+
+                }
             }
         }
+
     }
 
     private fun updatePersonModules(person: Person) {
@@ -52,28 +97,17 @@ class SubmitPersonViewModel(
         }
     }
 
+    private fun updateValidatedModules(moduleId: Int, isChecked: Boolean) {
+        val currentModules = _validatedModules.value?.split(", ")?.map { it.toInt() }?.toMutableList() ?: mutableListOf()
+        if (isChecked) currentModules.add(moduleId) else currentModules.remove(moduleId)
+        _state.value = state.value.copy(selectedPersonValidatedModules = currentModules.joinToString(", "))
+    }
+
     fun onEvent(submitPersonEvent: SubmitPersonEvent) {
         when (submitPersonEvent) {
-            is SubmitPersonEvent.OnPersonRoleChanged -> {
-                val person = person.value.copy(
-                    role = submitPersonEvent.personRole
-                )
-                _person.value = person
-            }
-
-            is SubmitPersonEvent.OnPersonFirstNameChanged -> {
-                val person = person.value.copy(
-                    firstname = submitPersonEvent.personFirstName
-                )
-                _person.value = person
-            }
-
-            is SubmitPersonEvent.OnPersonLastNameChanged -> {
-                val person = person.value.copy(
-                    lastname = submitPersonEvent.personLastName
-                )
-                _person.value = person
-            }
+            is SubmitPersonEvent.OnPersonRoleChanged -> updatePerson(person.value.copy(role = submitPersonEvent.personRole))
+            is SubmitPersonEvent.OnPersonFirstNameChanged -> updatePerson(person.value.copy(firstname = submitPersonEvent.personFirstName))
+            is SubmitPersonEvent.OnPersonLastNameChanged -> updatePerson(person.value.copy(lastname = submitPersonEvent.personLastName))
 
             SubmitPersonEvent.OnPersonsModeButtonClicked -> {
                 val newState = state.value.copy(
@@ -91,18 +125,13 @@ class SubmitPersonViewModel(
             }
 
             SubmitPersonEvent.DismissPersonDetailsSheet -> {
-                val newState = state.value.copy(
-                    isSelectedPersonDetailsOpen = false
-                )
-                _state.value = newState
+                _selected.value = null
+                _validatedModules.value = null
             }
 
             is SubmitPersonEvent.OnSelectedPerson -> {
-                val newState = state.value.copy(
-                    isSelectedPersonDetailsOpen = true,
-                    selectedPerson = submitPersonEvent.person
-                )
-                _state.value = newState
+                _selected.value = submitPersonEvent.person
+                _validatedModules.value = submitPersonEvent.person.validatedModules // get a reference of validatedModules because we don't want delayed updates
             }
 
             SubmitPersonEvent.OnSubmitPersonButtonClicked -> {
@@ -152,6 +181,8 @@ class SubmitPersonViewModel(
 
                 }
             }
+
+            is SubmitPersonEvent.OnPersonModulesSwitchToggle -> updateValidatedModules(submitPersonEvent.moduleId, submitPersonEvent.isChecked)
 
             is SubmitPersonEvent.OnPersonModulesUpdateButtonClicked -> {
                 val newPerson = state.value.selectedPerson?.copy(

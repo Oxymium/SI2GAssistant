@@ -21,8 +21,10 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -179,9 +181,6 @@ fun PersonBottomSheet(
                 contentDescription = "circle"
             )
 
-            // MODULES
-            val validatedModules: MutableState<List<Int>> = remember { mutableStateOf(state.selectedPerson.validatedModules?.split(", ")?.map { it.toInt() } ?: emptyList()) }
-
             Box(
                 modifier = Modifier
                     .padding(2.dp)
@@ -230,18 +229,12 @@ fun PersonBottomSheet(
                                         uncheckedThumbColor = NotValidatedModule,
                                         checkedThumbColor = ValidatedModule
                                     ),
-                                    checked = i.id?.toInt() in validatedModules.value,
+                                    checked = i.id?.toInt() in (state.selectedPersonValidatedModules
+                                    ?.split(", "
+                                    )?.map { it.toInt() } ?: emptyList()),
                                     onCheckedChange = { isChecked ->
-
                                         val moduleId = i.id?.toInt() ?: return@Switch
-
-                                        // Update the validatedModules list based on the switch state
-                                        validatedModules.value = if (isChecked) {
-                                            validatedModules.value + moduleId
-                                        } else {
-                                            validatedModules.value - moduleId
-                                        }
-
+                                        event.invoke(SubmitPersonEvent.OnPersonModulesSwitchToggle(moduleId, isChecked))
                                     }
                                 )
 
@@ -263,8 +256,8 @@ fun PersonBottomSheet(
                     containerColor = Neutral
                 ),
                 onClick = {
-                    val modulesAsString = validatedModules.value.joinToString(", ") // turn the list back into a String separated by commas
-                    event.invoke(SubmitPersonEvent.OnPersonModulesUpdateButtonClicked(modulesAsString))
+                    val modulesAsString = state.selectedPerson.validatedModules
+                    event.invoke(SubmitPersonEvent.OnPersonModulesUpdateButtonClicked(modulesAsString!!))
                 }
             ) {
 
