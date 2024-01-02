@@ -1,10 +1,10 @@
-package com.oxymium.si2gassistant.domain.usecase
+package com.oxymium.si2gassistant.ui.scenes.splash
 
 import com.oxymium.si2gassistant.domain.entities.Auth
 import com.oxymium.si2gassistant.domain.entities.User
-import com.oxymium.si2gassistant.ui.scenes.login.components.Login
+import com.oxymium.si2gassistant.ui.scenes.splash.components.Login
 
-data class LoginState(
+data class SplashState(
     val auth: Auth? = null,
     val login: Login? = null,
     val user: User? = null,
@@ -16,6 +16,8 @@ data class LoginState(
     val isUserLoading: Boolean = true,
     val userError: String? = null,
     val isUserSuccessful: Boolean = false,
+    val isLogoScreen: Boolean = true, // default
+    val isLoginScreen: Boolean = false
 )
 
 data class AuthError(

@@ -1,4 +1,4 @@
-package com.oxymium.si2gassistant.ui.scenes.login
+package com.oxymium.si2gassistant.ui.scenes.splash
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -30,11 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.Auth
-import com.oxymium.si2gassistant.domain.usecase.LoginEvent
-import com.oxymium.si2gassistant.domain.usecase.LoginState
 import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
-import com.oxymium.si2gassistant.ui.scenes.login.components.LoginMail
-import com.oxymium.si2gassistant.ui.scenes.login.components.LoginPassword
+import com.oxymium.si2gassistant.ui.scenes.splash.components.LoginMail
+import com.oxymium.si2gassistant.ui.scenes.splash.components.LoginPassword
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.NeutralLighter
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
@@ -42,9 +40,9 @@ import com.oxymium.si2gassistant.ui.theme.White
 
 @Composable
 fun LoginScreen(
-    state: LoginState,
+    state: SplashState,
     navigationEvent: (NavigationEvent) -> Unit,
-    event: (LoginEvent) -> Unit
+    event: (SplashEvent) -> Unit
 ) {
 
     if (state.isAuthSuccessful) { navigationEvent.invoke(NavigationEvent.OnLoginButtonClick(state.user)) }
@@ -81,7 +79,7 @@ fun LoginScreen(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Neutral
                     ),
-                    onClick = { event.invoke(LoginEvent.OnClickLoginButton) }
+                    onClick = { event.invoke(SplashEvent.OnClickLoginButton) }
                 ) {
 
                     Icon(
@@ -200,7 +198,7 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     val loginPreview = Auth("mail@mock.test", "Random")
-    val state = LoginState(auth = loginPreview)
+    val state = SplashState(auth = loginPreview)
     Si2GAssistantTheme() {
         LoginScreen(
             state = state,

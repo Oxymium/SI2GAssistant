@@ -9,8 +9,8 @@ import androidx.navigation.navigation
 import com.oxymium.si2gassistant.ui.scenes.AppRoutes
 import com.oxymium.si2gassistant.ui.scenes.AppScreens
 import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
-import com.oxymium.si2gassistant.ui.scenes.login.LoginScreen
-import com.oxymium.si2gassistant.ui.scenes.login.LoginViewModel
+import com.oxymium.si2gassistant.ui.scenes.splash.LoginScreen
+import com.oxymium.si2gassistant.ui.scenes.splash.LoginViewModel
 import com.oxymium.si2gassistant.ui.scenes.splash.SplashScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -22,11 +22,11 @@ fun LoginNavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = AppRoutes.LOGIN_ROUTE.name
+        startDestination = AppRoutes.SPLASH_ROUTE.name
     ) {
 
         navigation(
-            route = AppRoutes.LOGIN_ROUTE.name,
+            route = AppRoutes.SPLASH_ROUTE.name,
             startDestination = AppScreens.SPLASH_SCREEN.name
         ) {
 
@@ -34,24 +34,14 @@ fun LoginNavGraph(
             composable(
                 route = AppScreens.SPLASH_SCREEN.name
             ) {
-                SplashScreen(
-                    navigationEvent = navigationEvent
-                )
-            }
-
-            // SCREEN: LOGIN
-            composable(
-                route = AppScreens.LOGIN_SCREEN.name
-            ) {
                 val viewModel = koinViewModel<LoginViewModel>()
                 val state = viewModel.state.collectAsState()
-                LoginScreen(
+                SplashScreen(
                     state = state.value,
                     navigationEvent = navigationEvent,
                     event = viewModel::onEvent
                 )
             }
-
         }
     }
 }

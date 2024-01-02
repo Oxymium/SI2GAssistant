@@ -5,9 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomPerson
-import com.oxymium.si2gassistant.ui.scenes.loading.LoadingAnimation
+import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.persons.components.PersonList
 import com.oxymium.si2gassistant.ui.scenes.persons.components.PersonListEvent
 import com.oxymium.si2gassistant.ui.scenes.persons.components.PersonListState

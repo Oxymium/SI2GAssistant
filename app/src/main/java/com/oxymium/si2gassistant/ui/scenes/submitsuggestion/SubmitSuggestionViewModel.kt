@@ -3,12 +3,8 @@ package com.oxymium.si2gassistant.ui.scenes.submitsuggestion
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oxymium.si2gassistant.data.repository.GLOBAL_USER
-import com.oxymium.si2gassistant.domain.entities.BugTicket
 import com.oxymium.si2gassistant.domain.entities.Suggestion
 import com.oxymium.si2gassistant.domain.repository.SuggestionRepository
-import com.oxymium.si2gassistant.ui.scenes.login.components.Login
-import com.oxymium.si2gassistant.ui.scenes.login.components.LoginValidator
-import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.oxymium.si2gassistant.ui.scenes.login.components
+package com.oxymium.si2gassistant.ui.scenes.splash.components
 
 object LoginValidator {
 

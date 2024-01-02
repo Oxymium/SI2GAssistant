@@ -1,4 +1,4 @@
-package com.oxymium.si2gassistant.ui.scenes.login.components
+package com.oxymium.si2gassistant.ui.scenes.splash.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,7 +9,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -17,22 +16,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oxymium.si2gassistant.domain.usecase.LoginEvent
-import com.oxymium.si2gassistant.domain.usecase.LoginState
+import com.oxymium.si2gassistant.ui.scenes.splash.SplashEvent
+import com.oxymium.si2gassistant.ui.scenes.splash.SplashState
 import com.oxymium.si2gassistant.ui.theme.Orange500
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.White
 
 @Composable
-fun LoginPassword(
-    state: LoginState,
-    event: (LoginEvent) -> Unit
+fun LoginMail(
+    state: SplashState,
+    event: (SplashEvent) -> Unit
 ) {
 
-    var password by remember { mutableStateOf("") }
+    var mail by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -41,40 +39,40 @@ fun LoginPassword(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(),
-            value = password,
+            value = mail,
             onValueChange = {
-                password = it.filter { char -> !char.isWhitespace() }.take(20)
-                event.invoke(LoginEvent.OnLoginPasswordChanged(password))
+                mail = it.filter { char -> !char.isWhitespace() }.take(40)
+                event.invoke(SplashEvent.OnLoginMailChanged(mail))
                             },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 textColor = Orange500,
                 cursorColor = White,
                 focusedBorderColor = Orange500,
-                unfocusedBorderColor = White,
+                unfocusedBorderColor = White
             ),
             label = {
                 Text(
-                    text = if (state.isPasswordFieldError) "Password input error" else "Password",
-                    color = White
+                    text = if (state.isMailFieldError) "Mail input error" else "Mail",
+                    color = Color.White
                 )
             },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
-                keyboardType = KeyboardType.Password
+                keyboardType = KeyboardType.Email
             ),
-            maxLines = 1,
-            visualTransformation = PasswordVisualTransformation()
+            maxLines = 1
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun LoginPasswordPreview() {
+fun LoginMailPreview() {
     Si2GAssistantTheme {
-        val previewState = LoginState()
-        LoginPassword(
+        val previewState = SplashState()
+        LoginMail(
             state = previewState
-        ) { }
+        ) {
+        }
     }
 }

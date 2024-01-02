@@ -1,34 +1,15 @@
 package com.oxymium.si2gassistant.ui
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Composition
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import com.oxymium.si2gassistant.domain.entities.User
 import com.oxymium.si2gassistant.ui.routes.LoginNavGraph
 import com.oxymium.si2gassistant.ui.routes.NormalUserNavGraph
 import com.oxymium.si2gassistant.ui.routes.SuperUserNavGraph
-import com.oxymium.si2gassistant.ui.scenes.AppRoutes
 import com.oxymium.si2gassistant.ui.scenes.AppScreens
-import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
-import com.oxymium.si2gassistant.ui.scenes.NavigationState
-import com.oxymium.si2gassistant.ui.scenes.bottomnavigationbar.BottomNavigationBar
-import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketViewModel
-import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketsScreen
-import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsScreen
-import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsViewModel
-import com.oxymium.si2gassistant.ui.scenes.login.LoginScreen
-import com.oxymium.si2gassistant.ui.scenes.login.LoginViewModel
-import com.oxymium.si2gassistant.ui.scenes.metrics.MetricsScreen
-import com.oxymium.si2gassistant.ui.scenes.splash.SplashScreen
 import org.koin.androidx.compose.koinViewModel
 
 val LocalUserContext = compositionLocalOf<User?> { User() }
@@ -71,8 +52,8 @@ fun App(navController: NavHostController) {
     when (navigationState.value.navigationScreen) {
 
         AppScreens.GREETINGS_SCREEN.name -> navController.navigate(AppScreens.GREETINGS_SCREEN.name)
-        // LOGIN SCREEN
-        AppScreens.LOGIN_SCREEN.name -> navController.navigate(AppScreens.LOGIN_SCREEN.name)
+        // SPLASH SCREEN
+        AppScreens.SPLASH_SCREEN.name -> navController.navigate(AppScreens.SPLASH_SCREEN.name)
         // METRICS SCREEN
         AppScreens.METRICS_SCREEN.name -> navController.navigate(AppScreens.METRICS_SCREEN.name)
         // PERSONS SCREEN

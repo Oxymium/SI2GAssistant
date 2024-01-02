@@ -29,7 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
-import com.oxymium.si2gassistant.ui.scenes.loading.UploadingAnimation
+import com.oxymium.si2gassistant.ui.scenes.animations.UploadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonEvent
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonState
 import com.oxymium.si2gassistant.ui.theme.Neutral

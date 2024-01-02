@@ -1,4 +1,4 @@
-package com.oxymium.si2gassistant.ui.scenes.login
+package com.oxymium.si2gassistant.ui.scenes.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,13 +6,12 @@ import com.oxymium.si2gassistant.data.repository.GLOBAL_USER
 import com.oxymium.si2gassistant.domain.entities.Auth
 import com.oxymium.si2gassistant.domain.repository.AuthRepository
 import com.oxymium.si2gassistant.domain.repository.UserRepository
-import com.oxymium.si2gassistant.domain.usecase.AuthError
 import com.oxymium.si2gassistant.domain.usecase.FirebaseAuthState
-import com.oxymium.si2gassistant.domain.usecase.LoginEvent
-import com.oxymium.si2gassistant.domain.usecase.LoginState
+import com.oxymium.si2gassistant.ui.scenes.splash.SplashEvent
 import com.oxymium.si2gassistant.domain.usecase.UserState
-import com.oxymium.si2gassistant.ui.scenes.login.components.Login
-import com.oxymium.si2gassistant.ui.scenes.login.components.LoginValidator
+import com.oxymium.si2gassistant.splashScreenDurationInMillis
+import com.oxymium.si2gassistant.ui.scenes.splash.components.Login
+import com.oxymium.si2gassistant.ui.scenes.splash.components.LoginValidator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,11 +22,25 @@ class LoginViewModel(
     private val userRepository: UserRepository
 ): ViewModel() {
 
-    private val _state = MutableStateFlow(LoginState())
+    private val _state = MutableStateFlow(SplashState())
     val state = _state.asStateFlow()
 
     private val _login = MutableStateFlow(Login("", ""))
     private val login = _login.asStateFlow()
+
+    init {
+        displayLogoScreenForGivenDuration() // start coroutine initially with given duration
+    }
+
+    private fun displayLogoScreenForGivenDuration() {
+        viewModelScope.launch {
+            delay(splashScreenDurationInMillis)
+            _state.emit(state.value.copy(
+                isLogoScreen = false,
+                isLoginScreen = true
+            ))
+        }
+    }
 
     private fun getFirebaseAuthWithCredentials(mail: String, password: String) {
         viewModelScope.launch {
@@ -108,10 +121,10 @@ class LoginViewModel(
         }
     }
 
-    fun onEvent(event: LoginEvent) {
+    fun onEvent(event: SplashEvent) {
         when (event) {
 
-            LoginEvent.OnClickLoginButton -> {
+            SplashEvent.OnClickLoginButton -> {
                 val result = LoginValidator.validateLogin(login.value)
                 // Verify if any element is null
                 val errors = listOfNotNull(
@@ -143,9 +156,9 @@ class LoginViewModel(
                 }
             }
 
-            is LoginEvent.OnLoginMailChanged -> _login.value = login.value.copy(email = event.mail)
+            is SplashEvent.OnLoginMailChanged -> _login.value = login.value.copy(email = event.mail)
 
-            is LoginEvent.OnLoginPasswordChanged -> _login.value = login.value.copy(password = event.password)
+            is SplashEvent.OnLoginPasswordChanged -> _login.value = login.value.copy(password = event.password)
 
         }
     }

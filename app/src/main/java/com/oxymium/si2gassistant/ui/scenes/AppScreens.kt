@@ -2,7 +2,6 @@ package com.oxymium.si2gassistant.ui.scenes
 
 enum class AppScreens {
     SPLASH_SCREEN,
-    LOGIN_SCREEN,
     GREETINGS_SCREEN,
     METRICS_SCREEN,
     PERSONS_SCREEN,

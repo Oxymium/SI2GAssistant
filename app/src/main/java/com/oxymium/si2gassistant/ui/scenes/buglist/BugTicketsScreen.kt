@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomBugTicket
@@ -13,9 +12,8 @@ import com.oxymium.si2gassistant.domain.usecase.BugTicketListState
 import com.oxymium.si2gassistant.ui.scenes.buglist.components.BugTicketBottomSheet
 import com.oxymium.si2gassistant.ui.scenes.buglist.components.BugTicketList
 import com.oxymium.si2gassistant.ui.scenes.buglist.components.BugTicketSearch
-import com.oxymium.si2gassistant.ui.scenes.loading.LoadingAnimation
+import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
-import org.koin.androidx.compose.koinViewModel
 
 
 @Composable

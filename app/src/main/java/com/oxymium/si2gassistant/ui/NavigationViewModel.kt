@@ -39,7 +39,7 @@ class NavigationViewModel: ViewModel() {
 
     fun onEvent(navigationEvent: NavigationEvent) {
         when (navigationEvent) {
-            NavigationEvent.OnSplashStartButtonClicked -> updateScreen(AppScreens.LOGIN_SCREEN)
+            NavigationEvent.OnSplashStartButtonClicked -> {} // TODO: REMOVE
             is NavigationEvent.OnLoginButtonClick ->  
                 _state.value = state.value.copy(
                     currentUser = navigationEvent.user
