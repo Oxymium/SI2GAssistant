@@ -33,8 +33,8 @@ import com.oxymium.si2gassistant.ui.scenes.animations.UploadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonEvent
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonState
 import com.oxymium.si2gassistant.ui.theme.Neutral
-import com.oxymium.si2gassistant.ui.theme.Orange500
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
+import com.oxymium.si2gassistant.ui.theme.TextAccent
 
 @Composable
 fun SubmitPersonScreenTest(
@@ -61,9 +61,9 @@ fun SubmitPersonScreenTest(
                 event.invoke(SubmitPersonEvent.OnPersonRoleChanged(role))
             },
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = Orange500,
+                textColor = TextAccent,
                 cursorColor = Color.Black,
-                focusedBorderColor = Orange500,
+                focusedBorderColor = TextAccent,
                 unfocusedBorderColor = Color.Black
             ),
             label = {
@@ -104,9 +104,9 @@ fun SubmitPersonScreenTest(
                     event.invoke(SubmitPersonEvent.OnPersonFirstNameChanged(firstname))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = Orange500,
+                    textColor = TextAccent,
                     cursorColor = Color.Black,
-                    focusedBorderColor = Orange500,
+                    focusedBorderColor = TextAccent,
                     unfocusedBorderColor = Color.Black
                 ),
                 label = {
@@ -148,9 +148,9 @@ fun SubmitPersonScreenTest(
                     event.invoke(SubmitPersonEvent.OnPersonLastNameChanged(lastname))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = Orange500,
+                    textColor = TextAccent,
                     cursorColor = Color.Black,
-                    focusedBorderColor = Orange500,
+                    focusedBorderColor = TextAccent,
                     unfocusedBorderColor = Color.Black
                 ),
                 label = {

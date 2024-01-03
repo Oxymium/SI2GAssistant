@@ -3,7 +3,7 @@ package com.oxymium.si2gassistant.di
 import com.oxymium.si2gassistant.ui.NavigationViewModel
 import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketViewModel
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsViewModel
-import com.oxymium.si2gassistant.ui.scenes.splash.LoginViewModel
+import com.oxymium.si2gassistant.ui.scenes.splash.SplashViewModel
 import com.oxymium.si2gassistant.ui.scenes.metrics.MetricsViewModel
 import com.oxymium.si2gassistant.ui.scenes.persons.PersonListViewModel
 import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugViewModel
@@ -19,7 +19,7 @@ val viewModelModules = module {
     viewModel { NavigationViewModel() }
 
     // VM: FirebaseUser
-    viewModel { LoginViewModel( get(), get() ) }
+    viewModel { SplashViewModel( get(), get() ) }
 
     // WM: Greetings
     viewModel { GreetingsViewModel( get(), get(), get() ) }

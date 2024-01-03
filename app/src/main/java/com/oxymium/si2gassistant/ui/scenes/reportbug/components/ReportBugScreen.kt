@@ -36,12 +36,13 @@ import com.oxymium.si2gassistant.domain.entities.ALL_BUG_CATEGORIES
 import com.oxymium.si2gassistant.domain.entities.ALL_BUG_PRIORITIES
 import com.oxymium.si2gassistant.domain.entities.BugTicketCategory
 import com.oxymium.si2gassistant.domain.entities.BugTicketPriority
+import com.oxymium.si2gassistant.ui.scenes.animations.UploadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugEvent
 import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugState
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
-import com.oxymium.si2gassistant.ui.theme.Orange500
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
+import com.oxymium.si2gassistant.ui.theme.TextAccent
 import com.oxymium.si2gassistant.utils.CapitalizeFirstLetter
 import com.skydoves.orchestra.spinner.Spinner
 import com.skydoves.orchestra.spinner.SpinnerProperties
@@ -120,7 +121,7 @@ fun ReportBugScreenTest(
                 spinnerPadding = 16.dp,
                 spinnerBackgroundColor = Neutral,
             ),
-            onSpinnerItemSelected = { index, item ->
+            onSpinnerItemSelected = { _, item ->
                 val capitalizedPriority = CapitalizeFirstLetter.capitalizeFirstLetter(item)
                 setSelectedItem2(capitalizedPriority)
                 event.invoke(ReportBugEvent.OnBugPrioritySelected(BugTicketPriority.valueOf(item)))
@@ -153,9 +154,9 @@ fun ReportBugScreenTest(
                     event.invoke(ReportBugEvent.OnShortDescriptionChanged(shortDescription))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = Orange500,
+                    textColor = TextAccent,
                     cursorColor = Color.Black,
-                    focusedBorderColor = Orange500,
+                    focusedBorderColor = TextAccent,
                     unfocusedBorderColor = Color.Black
                 ),
                 label = {
@@ -198,9 +199,9 @@ fun ReportBugScreenTest(
                     event.invoke(ReportBugEvent.OnDescriptionChanged(description))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = Orange500,
+                    textColor = TextAccent,
                     cursorColor = Color.Black,
-                    focusedBorderColor = Orange500,
+                    focusedBorderColor = TextAccent,
                     unfocusedBorderColor = Color.Black
                 ),
                 label = {
@@ -228,25 +229,33 @@ fun ReportBugScreenTest(
             )
         }
 
-        // PUSH TICKET BUTTON
-        Button(
-            modifier = Modifier
-                .padding(8.dp)
-                .align(Alignment.CenterHorizontally),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Neutral
-            ),
-            onClick = { event.invoke(ReportBugEvent.OnReportBugButtonClicked) }
-        ) {
+        if (state.isSubmitBugTicketLoading) {
 
-            Icon(
+            UploadingAnimation()
+
+        } else {
+
+            // PUSH TICKET BUTTON
+            Button(
                 modifier = Modifier
-                    .background(Neutral)
-                    .size(24.dp),
-                painter = painterResource(id = R.drawable.ic_cloud_upload),
-                contentDescription = null,
-                tint = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary
-            )
+                    .padding(8.dp)
+                    .align(Alignment.CenterHorizontally),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Neutral
+                ),
+                onClick = { event.invoke(ReportBugEvent.OnReportBugButtonClicked) }
+            ) {
+
+                Icon(
+                    modifier = Modifier
+                        .background(Neutral)
+                        .size(24.dp),
+                    painter = painterResource(id = R.drawable.ic_cloud_upload),
+                    contentDescription = null,
+                    tint = androidx.compose.material3.MaterialTheme.colorScheme.onPrimary
+                )
+
+            }
 
         }
     }

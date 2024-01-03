@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,21 +19,26 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
-import com.oxymium.si2gassistant.domain.entities.BugTicket
 import com.oxymium.si2gassistant.domain.entities.BugTicketPriority
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomBugTicket
 import com.oxymium.si2gassistant.domain.usecase.BugTicketListEvent
 import com.oxymium.si2gassistant.domain.usecase.BugTicketListState
-import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketViewModel
+import com.oxymium.si2gassistant.ui.scenes.animations.UploadingAnimation
+import com.oxymium.si2gassistant.ui.theme.Black
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.NeutralLighter
 import com.oxymium.si2gassistant.ui.theme.PriorityCritical
@@ -42,7 +50,6 @@ import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.UnresolvedBugTicket
 import com.oxymium.si2gassistant.ui.theme.White
 import com.oxymium.si2gassistant.utils.DateUtils
-import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -348,31 +355,85 @@ fun BugTicketBottomSheet(
                             textAlign = TextAlign.Center
                         )
 
-                        // BUTTON: SUBMIT PERSON MODE
-                        Button(
+                        // RESOLVED COMMENT
+                        var resolvedComment by remember { mutableStateOf("") }
+                        Box(
                             modifier = Modifier
-                                .padding(8.dp)
-                                .align(Alignment.CenterHorizontally),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Neutral
-                            ),
-                            onClick = {
-                                event.invoke(
-                                    BugTicketListEvent.OnResolvedDetailsSheetButtonClick(
-                                        state.selectedBugTicket
+                                .padding(horizontal = 8.dp)
+                        ) {
+                            OutlinedTextField(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                value = resolvedComment,
+                                onValueChange = {
+                                    resolvedComment = it.take(100)
+                                    event.invoke(BugTicketListEvent.OnResolvedCommentChanged(resolvedComment))
+                                },
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    textColor = Black,
+                                    cursorColor = White,
+                                    focusedBorderColor = Black,
+                                    unfocusedBorderColor = White
+                                ),
+                                label = {
+                                    Text(
+                                        text = "Resolved comment",
+                                        color = Color.White
                                     )
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    imeAction = ImeAction.Done,
+                                    keyboardType = KeyboardType.Email
+                                ),
+                                minLines = 3,
+                                maxLines = 3
+                            )
+                        }
+
+                        if (state.isResolvedCommentFieldError) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .fillMaxWidth(),
+                                text = "*cannot be empty",
+                                color = White,
+                                textAlign = TextAlign.End
+                            )
+                        }
+
+                        if (state.isUpdateBugTicketLoading) {
+
+                            UploadingAnimation()
+
+                        } else {
+
+                            // BUTTON: SUBMIT PERSON MODE
+                            Button(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Neutral
+                                ),
+                                onClick = {
+                                    event.invoke(
+                                        BugTicketListEvent.OnResolvedDetailsSheetButtonClick(
+                                            state.selectedBugTicket
+                                        )
+                                    )
+                                }
+                            ) {
+
+                                Icon(
+                                    modifier = Modifier
+                                        .background(color = Neutral)
+                                        .size(24.dp),
+                                    painter = painterResource(id = R.drawable.ic_cloud_upload),
+                                    contentDescription = null,
+                                    tint = White
                                 )
                             }
-                        ) {
 
-                            Icon(
-                                modifier = Modifier
-                                    .background(color = Neutral)
-                                    .size(24.dp),
-                                painter = painterResource(id = R.drawable.ic_cloud_upload),
-                                contentDescription = null,
-                                tint = White
-                            )
                         }
 
                     }

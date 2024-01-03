@@ -23,14 +23,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.User
-import com.oxymium.si2gassistant.ui.App
 import com.oxymium.si2gassistant.ui.scenes.AppScreens
 import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
 import com.oxymium.si2gassistant.ui.scenes.NavigationState
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
-import com.oxymium.si2gassistant.ui.theme.NeutralLighter
-import com.oxymium.si2gassistant.ui.theme.Orange500
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.White
 

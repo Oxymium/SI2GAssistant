@@ -3,20 +3,20 @@ package com.oxymium.si2gassistant.ui.scenes.buglist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oxymium.si2gassistant.domain.entities.BugTicket
-import com.oxymium.si2gassistant.domain.entities.mock.provideRandomBugTicket
 import com.oxymium.si2gassistant.domain.repository.BugTicketRepository
 import com.oxymium.si2gassistant.domain.usecase.BugTicketFilter
 import com.oxymium.si2gassistant.domain.usecase.BugTicketListEvent
 import com.oxymium.si2gassistant.domain.usecase.BugTicketListState
-import com.oxymium.si2gassistant.domain.entities.BugTicketPriority
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.loadingInMillis
+import com.oxymium.si2gassistant.ui.scenes.buglist.components.ResolvedCommentaryValidator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class BugTicketViewModel(private val bugTicketsRepository: BugTicketRepository): ViewModel() {
 
@@ -30,11 +30,6 @@ class BugTicketViewModel(private val bugTicketsRepository: BugTicketRepository):
         state.copy(
             bugTickets = when (filter) {
                 BugTicketFilter.DefaultValue -> state.bugTickets.sortedBy { it.submittedDate }.reversed() // sort by chronological order
-                BugTicketFilter.LowPriority -> state.bugTickets.filter { it.priority?.name == BugTicketPriority.LOW.name }
-                BugTicketFilter.MediumPriority -> state.bugTickets.filter { it.priority?.name == BugTicketPriority.MEDIUM.name }
-                BugTicketFilter.HighPriority -> state.bugTickets.filter { it.priority?.name == BugTicketPriority.HIGH.name }
-                BugTicketFilter.CriticalPriority -> state.bugTickets.filter { it.priority?.name == BugTicketPriority.CRITICAL.name }
-                BugTicketFilter.Resolved -> state.bugTickets.filter { it.isResolved }
                 is BugTicketFilter.Search -> state.bugTickets.filter {
                     it.academy?.contains(filter.search ?: "", ignoreCase = true) == true ||
                             it.description?.contains(filter.search ?: "", ignoreCase = true) == true ||
@@ -83,33 +78,42 @@ class BugTicketViewModel(private val bugTicketsRepository: BugTicketRepository):
 
     private fun updateBugTicket(bugTicket: BugTicket) {
         viewModelScope.launch {
-            bugTicketsRepository.updateBugTicket(bugTicket).collect {
-                when (it) {
-                    // FAILURE
-                    is Result.Failed -> _state.emit(
-                        state.value.copy(
-                            isUpdateBugTicketFailure = true,
-                            isUpdateBugTicketFailureMessage = it.errorMessage
+            val bugTicketUpdated = state.value.copy(
+                selectedBugTicket = bugTicket.copy(
+                    isResolved = true,
+                    resolvedDate = Calendar.getInstance().timeInMillis,
+                    resolvedComment = state.value.resolvedComment
+                )
+            )
+            bugTicketUpdated.selectedBugTicket?.let {
+                bugTicketsRepository.updateBugTicket(it).collect { result ->
+                    when (result) {
+                        // FAILURE
+                        is Result.Failed -> _state.emit(
+                            state.value.copy(
+                                isUpdateBugTicketFailure = true,
+                                isUpdateBugTicketFailureMessage = result.errorMessage
+                            )
                         )
-                    )
 
-                    // LOADING
-                    is Result.Loading -> { _state.emit(
+                        // LOADING
+                        is Result.Loading -> { _state.emit(
                             state.value.copy(
                                 isUpdateBugTicketLoading = true
                             )
                         )
-                        delay(loadingInMillis)
-                    }
+                            delay(loadingInMillis)
+                        }
 
-                    // SUCCESS
-                    is Result.Success -> _state.emit(
-                        state.value.copy(
-                            isUpdateBugTicketFailure = false,
-                            isUpdateBugTicketFailureMessage = null,
-                            isUpdateBugTicketLoading = false,
+                        // SUCCESS
+                        is Result.Success -> _state.emit(
+                            state.value.copy(
+                                isUpdateBugTicketFailure = false,
+                                isUpdateBugTicketFailureMessage = null,
+                                isUpdateBugTicketLoading = false,
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
@@ -131,12 +135,48 @@ class BugTicketViewModel(private val bugTicketsRepository: BugTicketRepository):
         when(event) {
             is BugTicketListEvent.SelectBugTicket ->  updateSelectedBugTicket(event.bugTicket)
             BugTicketListEvent.DismissBugTicketDetailsSheet -> updateSelectedBugTicket(null)
-            BugTicketListEvent.OnRefreshButtonClick -> updateBugTicketFilter(BugTicketFilter.DefaultValue) // Refresh
-            BugTicketListEvent.OnLowPriorityButtonClick -> updateBugTicketFilter(BugTicketFilter.LowPriority)
-            BugTicketListEvent.OnMediumPriorityButtonClick -> updateBugTicketFilter(BugTicketFilter.MediumPriority)
-            BugTicketListEvent.OnHighPriorityButtonClick -> updateBugTicketFilter(BugTicketFilter.HighPriority)
-            BugTicketListEvent.OnCriticalPriorityButtonClick -> updateBugTicketFilter(BugTicketFilter.CriticalPriority)
-            is BugTicketListEvent.OnResolvedDetailsSheetButtonClick -> updateBugTicket(event.bugTicket)
+            is BugTicketListEvent.OnResolvedCommentChanged -> _state.value = state.value.copy(resolvedComment = event.resolvedComment)
+            is BugTicketListEvent.OnResolvedDetailsSheetButtonClick -> {
+
+                // Initial reset
+                _state.value = state.value.copy(
+                    isResolvedCommentFieldError = false
+                )
+
+                // Get resolved comment
+                val resolvedComment = state.value.resolvedComment ?: ""
+
+                val result = ResolvedCommentaryValidator.validateResolvedCommentary(resolvedComment)
+
+                // Verify if any element is null
+                val errors = listOfNotNull(
+                    result.resolvedCommentaryError
+                )
+
+                if (errors.isEmpty()) {
+                    _state.value = state.value.copy(
+                        isResolvedCommentFieldError = false
+                    )
+
+                    // Update bug ticket if conditions are met
+                    state.value.copy().let {
+                        state.value.selectedBugTicket?.let { bugTicket ->
+                            updateBugTicket(
+                                bugTicket
+                            )
+                        }
+                    }
+
+                } else {
+
+                    if (!result.resolvedCommentaryError.isNullOrEmpty()) {
+                        _state.value = state.value.copy(
+                            isResolvedCommentFieldError = true
+                        )
+                    }
+
+                }
+            }
             is BugTicketListEvent.OnSearchTextInput -> updateBugTicketFilter(BugTicketFilter.Search(event.search))
         }
     }

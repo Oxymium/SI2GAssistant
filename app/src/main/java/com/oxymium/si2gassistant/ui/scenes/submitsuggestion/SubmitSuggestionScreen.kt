@@ -35,12 +35,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
-import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonEvent
-import com.oxymium.si2gassistant.ui.theme.MenuAccent
+import com.oxymium.si2gassistant.ui.scenes.animations.UploadingAnimation
 import com.oxymium.si2gassistant.ui.theme.Neutral
-import com.oxymium.si2gassistant.ui.theme.Orange500
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
-import com.oxymium.si2gassistant.ui.theme.White
+import com.oxymium.si2gassistant.ui.theme.TextAccent
 
 @Composable
 fun SubmitSuggestionScreen(
@@ -115,9 +113,9 @@ fun SubmitSuggestionScreen(
                     event.invoke(SubmitSuggestionEvent.OnSuggestionSubjectChanged(subject))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = Orange500,
+                    textColor = TextAccent,
                     cursorColor = Color.Black,
-                    focusedBorderColor = Orange500,
+                    focusedBorderColor = TextAccent,
                     unfocusedBorderColor = Color.Black
                 ),
                 label = {
@@ -160,9 +158,9 @@ fun SubmitSuggestionScreen(
                     event.invoke(SubmitSuggestionEvent.OnSuggestionBodyChanged(body))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = Orange500,
+                    textColor = TextAccent,
                     cursorColor = Color.Black,
-                    focusedBorderColor = Orange500,
+                    focusedBorderColor = TextAccent,
                     unfocusedBorderColor = Color.Black
                 ),
                 label = {
@@ -190,25 +188,33 @@ fun SubmitSuggestionScreen(
             )
         }
 
-        // PUSH SUGGESTION BUTTON
-        Button(
-            modifier = Modifier
-                .padding(8.dp)
-                .align(Alignment.CenterHorizontally),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Neutral
-            ),
-            onClick = { event.invoke(SubmitSuggestionEvent.OnSubmitSuggestionButtonClicked) }
-        ) {
+        if (state.isSubmitSuggestionLoading) {
 
-            Icon(
+            UploadingAnimation()
+
+        } else {
+
+            // PUSH SUGGESTION BUTTON
+            Button(
                 modifier = Modifier
-                    .background(Neutral)
-                    .size(24.dp),
-                painter = painterResource(id = R.drawable.ic_cloud_upload),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
+                    .padding(8.dp)
+                    .align(Alignment.CenterHorizontally),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Neutral
+                ),
+                onClick = { event.invoke(SubmitSuggestionEvent.OnSubmitSuggestionButtonClicked) }
+            ) {
+
+                Icon(
+                    modifier = Modifier
+                        .background(Neutral)
+                        .size(24.dp),
+                    painter = painterResource(id = R.drawable.ic_cloud_upload),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
         }
 
     }

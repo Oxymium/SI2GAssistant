@@ -2,6 +2,7 @@ package com.oxymium.si2gassistant.ui.scenes.greetings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomBugTicket
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomPerson
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomSuggestion
@@ -21,19 +22,37 @@ class GreetingsViewModel(
 
     private fun pushRandomBugTicket() {
         viewModelScope.launch {
-            bugTicketRepository.submitBugTicket( provideRandomBugTicket() )
+            bugTicketRepository.submitBugTicket( provideRandomBugTicket() ).collect {
+                when (it) {
+                    is Result.Failed -> Unit
+                    is Result.Loading -> Unit
+                    is Result.Success -> Unit
+                }
+            }
         }
     }
 
     private fun pushRandomSuggestion() {
         viewModelScope.launch {
-            suggestionRepository.submitSuggestion( provideRandomSuggestion() )
+            suggestionRepository.submitSuggestion( provideRandomSuggestion() ).collect {
+                when (it) {
+                    is Result.Failed -> Unit
+                    is Result.Loading -> Unit
+                    is Result.Success -> Unit
+                }
+            }
         }
     }
 
     private fun pushRandomPerson() {
         viewModelScope.launch {
-            personRepository.submitPerson( provideRandomPerson() )
+            personRepository.submitPerson( provideRandomPerson() ).collect {
+                when (it) {
+                    is Result.Failed -> Unit
+                    is Result.Loading -> Unit
+                    is Result.Success -> Unit
+                }
+            }
         }
     }
 

@@ -12,16 +12,26 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,11 +39,11 @@ import androidx.compose.ui.unit.sp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.Auth
 import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
-import com.oxymium.si2gassistant.ui.scenes.splash.components.LoginMail
-import com.oxymium.si2gassistant.ui.scenes.splash.components.LoginPassword
+import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
+import com.oxymium.si2gassistant.ui.theme.TextAccent
 import com.oxymium.si2gassistant.ui.theme.White
 
 @Composable
@@ -71,18 +81,18 @@ fun LoginScreen(
                     modifier = Modifier
                         .align(Alignment.Center),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Neutral
+                        containerColor = MenuAccent
                     ),
                     onClick = { event.invoke(SplashEvent.OnClickLoginButton) }
                 ) {
 
                     Icon(
                         modifier = Modifier
-                            .background(Neutral)
+                            .background(MenuAccent)
                             .size(24.dp),
                         painter = painterResource(id = R.drawable.ic_login_variant),
-                        contentDescription = null,
-                        tint = MenuAccent
+                        contentDescription = "Login button",
+                        tint = White
                     )
                 }
 
@@ -96,15 +106,92 @@ fun LoginScreen(
 
                 Column {
 
-                    LoginMail(
-                        state = state,
-                        event = event
+                    // TITLE
+                    Text(
+                        modifier = Modifier
+                            .padding(
+                                horizontal = 16.dp
+                            )
+                            .fillMaxWidth(),
+                        text = "Login",
+                        color = White,
+                        textAlign = TextAlign.End
                     )
 
-                    LoginPassword(
-                        state = state,
-                        event = event
-                    )
+                    // MAIL
+                    var mail by remember { mutableStateOf("") }
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                    ) {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            value = mail,
+                            onValueChange = {
+                                mail = it.filter { char -> !char.isWhitespace() }.take(40)
+                                event.invoke(SplashEvent.OnLoginMailChanged(mail))
+                            },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                textColor = TextAccent,
+                                cursorColor = White,
+                                focusedBorderColor = TextAccent,
+                                unfocusedBorderColor = White
+                            ),
+                            label = {
+                                androidx.compose.material.Text(
+                                    text = if (state.isMailFieldError) "Mail input error" else "Mail",
+                                    color = Color.White
+                                )
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Done,
+                                keyboardType = KeyboardType.Email
+                            ),
+                            maxLines = 1
+                        )
+                    }
+
+                    // PASSWORD
+                    var password by remember { mutableStateOf("") }
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                    ) {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            value = password,
+                            onValueChange = {
+                                password = it.filter { char -> !char.isWhitespace() }.take(20)
+                                event.invoke(SplashEvent.OnLoginPasswordChanged(password))
+                            },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                textColor = TextAccent,
+                                cursorColor = White,
+                                focusedBorderColor = TextAccent,
+                                unfocusedBorderColor = White,
+                            ),
+                            label = {
+                                androidx.compose.material.Text(
+                                    text = if (state.isPasswordFieldError) "Password input error" else "Password",
+                                    color = White
+                                )
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Done,
+                                keyboardType = KeyboardType.Password
+                            ),
+                            maxLines = 1,
+                            visualTransformation = PasswordVisualTransformation()
+                        )
+                    }
+
+                    // LOADING ANIMATION
+                    if (state.isAuthLoading) {
+
+                        LoadingAnimation()
+                    }
 
                 }
 

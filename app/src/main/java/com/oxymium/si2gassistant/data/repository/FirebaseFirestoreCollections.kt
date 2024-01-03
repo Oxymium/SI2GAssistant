@@ -14,4 +14,7 @@ object FirebaseFirestoreFields {
     const val ACADEMY_ID = "academyId"
     const val USER_ID = "userId"
     const val MAIL = "mail"
+    const val RESOLVED = "resolved"
+    const val RESOLVED_COMMENT = "resolvedComment"
+    const val RESOLVED_DATE = "resolvedDate"
 }

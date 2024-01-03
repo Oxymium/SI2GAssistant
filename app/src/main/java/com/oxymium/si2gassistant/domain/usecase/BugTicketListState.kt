@@ -6,6 +6,9 @@ data class BugTicketListState(
     val bugTickets: List<BugTicket> = emptyList(),
     val selectedBugTicket: BugTicket? = null,
     val isSelectedBugTicketDetailsOpen: Boolean = false,
+    // Resolved comment ---------------------
+    val resolvedComment: String? = null,
+    val isResolvedCommentFieldError: Boolean = false,
     // Bug tickets state --------------------
     val isBugTicketsLoading: Boolean = false,
     val isBugTicketsFailed: Boolean = false,

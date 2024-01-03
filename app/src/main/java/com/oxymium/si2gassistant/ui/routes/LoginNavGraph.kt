@@ -9,8 +9,7 @@ import androidx.navigation.navigation
 import com.oxymium.si2gassistant.ui.scenes.AppRoutes
 import com.oxymium.si2gassistant.ui.scenes.AppScreens
 import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
-import com.oxymium.si2gassistant.ui.scenes.splash.LoginScreen
-import com.oxymium.si2gassistant.ui.scenes.splash.LoginViewModel
+import com.oxymium.si2gassistant.ui.scenes.splash.SplashViewModel
 import com.oxymium.si2gassistant.ui.scenes.splash.SplashScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -34,7 +33,7 @@ fun LoginNavGraph(
             composable(
                 route = AppScreens.SPLASH_SCREEN.name
             ) {
-                val viewModel = koinViewModel<LoginViewModel>()
+                val viewModel = koinViewModel<SplashViewModel>()
                 val state = viewModel.state.collectAsState()
                 SplashScreen(
                     state = state.value,

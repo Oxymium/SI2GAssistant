@@ -6,7 +6,6 @@ import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.pushError
 import com.oxymium.si2gassistant.domain.repository.BugTicketRepository
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -113,7 +112,12 @@ class FirebaseFirestoreBugTicketsImpl(val firebaseFirestore: FirebaseFirestore):
             firebaseFirestore
                 .collection(FirebaseFirestoreCollections.BUG_TICKETS)
                 .document(bugTicket.id ?: "")
-                .update("resolved", true)
+                .update(
+                    FirebaseFirestoreFields.RESOLVED, bugTicket.isResolved,
+                    FirebaseFirestoreFields.RESOLVED_COMMENT, bugTicket.resolvedComment,
+                    FirebaseFirestoreFields.RESOLVED_DATE, bugTicket.resolvedDate
+
+                )
                 .addOnSuccessListener {
                     result.complete(true)
                 }
@@ -123,6 +127,7 @@ class FirebaseFirestoreBugTicketsImpl(val firebaseFirestore: FirebaseFirestore):
             // Failure
             emit(Result.Failed(e.message ?: pushError, false))
         }
+
     }
 
 

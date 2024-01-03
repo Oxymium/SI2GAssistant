@@ -18,15 +18,15 @@ class ReportBugViewModel(
     private val bugTicketRepository: BugTicketRepository
 ): ViewModel() {
 
-    init {
-        getAllBugTicketsByUser()
-    }
-
     private val _state = MutableStateFlow(ReportBugState())
     val state = _state.asStateFlow()
 
     private val _bugTicket = MutableStateFlow(BugTicket())
     private val bugTicket = _bugTicket.asStateFlow()
+
+    init {
+        getAllBugTicketsByUser()
+    }
     private fun createBugTicket(bugTicket: BugTicket) {
         viewModelScope.launch {
             val bugTicketFinalized = bugTicket.copy(

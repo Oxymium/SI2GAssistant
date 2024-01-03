@@ -7,7 +7,6 @@ import com.oxymium.si2gassistant.domain.entities.Auth
 import com.oxymium.si2gassistant.domain.repository.AuthRepository
 import com.oxymium.si2gassistant.domain.repository.UserRepository
 import com.oxymium.si2gassistant.domain.usecase.FirebaseAuthState
-import com.oxymium.si2gassistant.ui.scenes.splash.SplashEvent
 import com.oxymium.si2gassistant.domain.usecase.UserState
 import com.oxymium.si2gassistant.splashScreenDurationInMillis
 import com.oxymium.si2gassistant.ui.scenes.splash.components.Login
@@ -17,7 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class LoginViewModel(
+class SplashViewModel(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository
 ): ViewModel() {

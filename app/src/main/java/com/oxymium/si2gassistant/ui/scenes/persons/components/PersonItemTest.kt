@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -36,8 +34,6 @@ import com.oxymium.si2gassistant.domain.entities.mock.FIRSTNAMES
 import com.oxymium.si2gassistant.domain.entities.mock.LASTNAMES
 import com.oxymium.si2gassistant.domain.entities.mock.ROLES
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonEvent
-import com.oxymium.si2gassistant.ui.theme.Black
-import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.NotValidatedModule
 import com.oxymium.si2gassistant.ui.theme.Person1
 import com.oxymium.si2gassistant.ui.theme.Person2
@@ -69,7 +65,9 @@ fun PersonItemTest(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(1.dp)
+                .padding(
+                    vertical = 2.dp
+                )
         ) {
 
             Row(
@@ -211,7 +209,9 @@ fun PersonItemTest(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(1.dp)
+                .padding(
+                    vertical = 2.dp
+                )
         ) {
 
             Row(
@@ -233,7 +233,8 @@ fun PersonItemTest(
                         modifier = Modifier
                             .padding(4.dp)
                             .background(
-                                color = White
+                                color = White,
+                                shape = RoundedCornerShape(8.dp)
                             )
                     ) {
                         
@@ -250,7 +251,9 @@ fun PersonItemTest(
                                 color = White,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier
-                                    .background(color = if (isInValidatedList) ValidatedModule else NotValidatedModule)
+                                    .background(
+                                        color = if (isInValidatedList) ValidatedModule else NotValidatedModule
+                                    )
                                     .padding(4.dp)
                             )
 

@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.ui.scenes.suggestions.SuggestionsEvent
 import com.oxymium.si2gassistant.ui.scenes.suggestions.SuggestionsState
 import com.oxymium.si2gassistant.ui.theme.Neutral
-import com.oxymium.si2gassistant.ui.theme.Orange500
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
+import com.oxymium.si2gassistant.ui.theme.TextAccent
 import com.oxymium.si2gassistant.ui.theme.White
 
 @Composable
@@ -73,9 +73,9 @@ fun SuggestionSearch(
                         event.invoke(SuggestionsEvent.OnSearchTextInput(search))
                     },
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        textColor = Orange500,
+                        textColor = TextAccent,
                         cursorColor = White,
-                        focusedBorderColor = Orange500,
+                        focusedBorderColor = TextAccent,
                         unfocusedBorderColor = White
                     ),
                     label = {

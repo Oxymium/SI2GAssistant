@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.buglist.components.BugTicketItem
 import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugEvent
 import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugState
@@ -23,25 +24,33 @@ fun BugTicketsScreen(
     event: (ReportBugEvent) -> Unit
 ) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = White)
-    ) {
+    if (state.isBugTicketsLoading) {
 
-        LazyColumn(
+        LoadingAnimation()
+
+    } else {
+
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .background(color = White)
         ) {
-            items(state.bugTickets) { bugTicket ->
-                BugTicketItem(
-                    bugTicket = bugTicket
-                ) {
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(state.bugTickets) { bugTicket ->
+                    BugTicketItem(
+                        bugTicket = bugTicket
+                    ) {
+                    }
                 }
             }
         }
+
     }
 
 }

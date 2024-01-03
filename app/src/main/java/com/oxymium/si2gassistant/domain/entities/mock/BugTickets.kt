@@ -16,7 +16,7 @@ fun provideRandomBugTicket(
     ): BugTicket {
 
     return BugTicket(
-        "",
+        null,
         priority,
         BugTicketCategory.entries.random(),
         LoremIpsum(4).values.joinToString(""),
@@ -25,8 +25,8 @@ fun provideRandomBugTicket(
         "",
         Random.nextLong(dateInMillis, secondDateInMillis),
         isResolved,
-        Random.nextLong(dateInMillis, secondDateInMillis),
-        LoremIpsum(10).values.joinToString(""),
+        if (isResolved) Random.nextLong(dateInMillis, secondDateInMillis) else null,
+        if (isResolved) LoremIpsum(10).values.joinToString("") else null,
         )
 
 }

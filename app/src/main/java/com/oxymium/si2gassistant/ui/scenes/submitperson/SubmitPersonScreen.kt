@@ -29,7 +29,6 @@ import com.oxymium.si2gassistant.ui.scenes.submitperson.components.PersonsScreen
 import com.oxymium.si2gassistant.ui.scenes.submitperson.components.SubmitPersonScreenTest
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
-import com.oxymium.si2gassistant.ui.theme.Orange500
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.White
 
