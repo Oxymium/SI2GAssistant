@@ -20,10 +20,6 @@ class SubmitPersonViewModel(
     private val personRepository: PersonRepository
 ): ViewModel() {
 
-    init {
-        //getPersons()
-    }
-
     private val _state = MutableStateFlow(SubmitPersonState())
     private val _selected = MutableStateFlow<Person?>(null)
 
@@ -31,15 +27,53 @@ class SubmitPersonViewModel(
     private val _validatedModules = MutableStateFlow<String?>(String())
 
     val state = combine(
-        _state, personRepository.getAllPersonsByUserId(GLOBAL_USER!!.id!!), _selected, _validatedModules
-    ) { state, persons, selected, validatedModules ->
+        _state, _selected, _validatedModules
+    ) { state, selected, validatedModules ->
         state.copy(
-            persons = persons,
-            selectedPerson = persons.firstOrNull{ it.id == selected?.id },
+            persons = state.persons,
+            selectedPerson = state.persons.firstOrNull{ it.id == selected?.id },
             isSelectedPersonDetailsOpen = selected != null,
             selectedPersonValidatedModules = validatedModules
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), SubmitPersonState())
+
+    init {
+        getAllPersonsByUserId()
+    }
+
+    private fun getAllPersonsByUserId() {
+        viewModelScope.launch {
+            personRepository.getAllPersonsByUserId(GLOBAL_USER!!.id!!).collect() {
+                when (it) {
+                    // FAILURE
+                    is Result.Failed -> _state.emit(
+                        state.value.copy(
+                            isPersonsFailure = true,
+                            personsFailureMessage = it.errorMessage
+                        )
+                    )
+                    // LOADING
+                    is Result.Loading -> {
+                        _state.emit(
+                            state.value.copy(
+                                isPersonsLoading = true
+                            )
+                        )
+                        delay(loadingInMillis)
+                    }
+                    // SUCCESS
+                    is Result.Success -> _state.emit(
+                        state.value.copy(
+                            isPersonsFailure = false,
+                            personSubmitFailureMessage = null,
+                            isPersonsLoading = false,
+                            persons = it.data
+                        )
+                    )
+                }
+            }
+        }
+    }
 
     private val _person = MutableStateFlow(Person())
     val person = _person.asStateFlow()
@@ -93,7 +127,7 @@ class SubmitPersonViewModel(
 
     private fun updatePersonModules(person: Person) {
         viewModelScope.launch {
-            personRepository.updatePersonModules(person)
+            personRepository.updatePerson(person)
         }
     }
 

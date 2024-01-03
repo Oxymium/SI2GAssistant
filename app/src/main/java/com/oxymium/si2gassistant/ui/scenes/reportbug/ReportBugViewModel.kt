@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oxymium.si2gassistant.data.repository.GLOBAL_USER
 import com.oxymium.si2gassistant.domain.entities.BugTicket
+import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.repository.BugTicketRepository
+import com.oxymium.si2gassistant.loadingInMillis
 import com.oxymium.si2gassistant.ui.scenes.reportbug.components.ReportBugValidator
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -31,15 +34,75 @@ class ReportBugViewModel(
                 academy = GLOBAL_USER?.academy,
                 submittedBy = GLOBAL_USER?.mail
             )
-            bugTicketRepository.createBugTicket(bugTicketFinalized)
+            bugTicketRepository.submitBugTicket(bugTicketFinalized).collect {
+                when (it) {
+
+                    // FAILURE
+                    is Result.Failed -> _state.emit(
+                        state.value.copy(
+                            isSubmitBugTicketFailure = true,
+                            submitBugTicketFailureMessage = it.errorMessage
+                        )
+                    )
+
+                    // LOADING
+                    is Result.Loading -> {
+                        _state.emit(
+                            state.value.copy(
+                                isSubmitBugTicketLoading = true
+                            )
+                        )
+                        delay(loadingInMillis)
+                    }
+
+                    // SUCCESS
+                    is Result.Success -> _state.emit(
+                        state.value.copy(
+                            isSubmitBugTicketFailure = false,
+                            submitBugTicketFailureMessage = null,
+                            isSubmitBugTicketLoading = false
+                        )
+                    )
+
+                }
+            }
         }
     }
 
     private fun getAllBugTicketsByUser() {
         viewModelScope.launch {
             bugTicketRepository.getBugTicketsByUser(GLOBAL_USER?.mail!!).collect {
-                val newState = state.value.copy(bugTickets = it)
-                _state.value = newState
+                when (it) {
+
+                    // FAILURE
+                    is Result.Failed -> _state.emit(
+                        state.value.copy(
+                            isBugTicketsFailure = true,
+                            bugTicketsFailureMessage = it.errorMessage
+                        )
+                    )
+
+                    // LOADING
+                    is Result.Loading -> {
+                        _state.emit(
+                            state.value.copy(
+                                isBugTicketsLoading = true
+                            )
+                        )
+                        delay(loadingInMillis)
+                    }
+
+                    // SUCCESS
+                    is Result.Success -> _state.emit(
+                        state.value.copy(
+                            isBugTicketsFailure = false,
+                            bugTicketsFailureMessage = null,
+                            isBugTicketsLoading = false,
+                            bugTickets = it.data
+                        )
+                    )
+
+                }
             }
         }
     }

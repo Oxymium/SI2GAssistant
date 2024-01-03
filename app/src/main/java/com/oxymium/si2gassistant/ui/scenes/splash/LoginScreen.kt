@@ -12,11 +12,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,8 +31,8 @@ import com.oxymium.si2gassistant.domain.entities.Auth
 import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
 import com.oxymium.si2gassistant.ui.scenes.splash.components.LoginMail
 import com.oxymium.si2gassistant.ui.scenes.splash.components.LoginPassword
+import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
-import com.oxymium.si2gassistant.ui.theme.NeutralLighter
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.White
 
@@ -65,11 +63,7 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .fillMaxHeight(0.15f)
                     .background(
-                        color = NeutralLighter,
-                        shape = RoundedCornerShape(
-                            bottomStart = 135.dp,
-                            bottomEnd = 135.dp
-                        )
+                        color = Neutral,
                     )
             ) {
 
@@ -88,7 +82,7 @@ fun LoginScreen(
                             .size(24.dp),
                         painter = painterResource(id = R.drawable.ic_login_variant),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary
+                        tint = MenuAccent
                     )
                 }
 

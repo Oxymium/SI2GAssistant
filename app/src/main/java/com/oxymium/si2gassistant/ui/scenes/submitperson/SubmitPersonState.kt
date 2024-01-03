@@ -10,12 +10,17 @@ data class SubmitPersonState(
     val submitPersonMode: Boolean = false,
     val personsMode: Boolean = true, // default screen to load
     val isSelectedPersonDetailsOpen: Boolean = false,
+    // Persons state ---------------------
+    val isPersonsLoading: Boolean = false,
+    val isPersonsFailure: Boolean = false,
+    val personsFailureMessage: String? = null,
     // Submit fields -------------------------
     val isRoleFieldError: Boolean = false,
     val isFirstnameFieldError: Boolean = false,
     val isLastnameFieldError: Boolean = false,
-    // ---------------------------------------
+    // Submit Person state ----------------------
     val isPersonSubmitLoading: Boolean = false,
     val isPersonSubmitFailure: Boolean = false,
     val personSubmitFailureMessage: String? = null
+    // -------------------------------------------
 )

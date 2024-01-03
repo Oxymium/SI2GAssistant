@@ -81,18 +81,35 @@ class BugTicketViewModel(private val bugTicketsRepository: BugTicketRepository):
         }
     }
 
-    private fun resolveBugTicket(bugTicket: BugTicket?) {
+    private fun updateBugTicket(bugTicket: BugTicket) {
         viewModelScope.launch {
-            bugTicket?.let {
-                val result = bugTicketsRepository.updateBugTicket(bugTicket).await()
-                when (result) {
-                    "SUCCESS" -> {
-                        val newState = state.value.copy(
-                            selectedBugTicket = bugTicket.copy(isResolved = true)
+            bugTicketsRepository.updateBugTicket(bugTicket).collect {
+                when (it) {
+                    // FAILURE
+                    is Result.Failed -> _state.emit(
+                        state.value.copy(
+                            isUpdateBugTicketFailure = true,
+                            isUpdateBugTicketFailureMessage = it.errorMessage
                         )
-                        _state.emit(newState)
+                    )
+
+                    // LOADING
+                    is Result.Loading -> { _state.emit(
+                            state.value.copy(
+                                isUpdateBugTicketLoading = true
+                            )
+                        )
+                        delay(loadingInMillis)
                     }
-                    "FAILURE" -> {}
+
+                    // SUCCESS
+                    is Result.Success -> _state.emit(
+                        state.value.copy(
+                            isUpdateBugTicketFailure = false,
+                            isUpdateBugTicketFailureMessage = null,
+                            isUpdateBugTicketLoading = false,
+                        )
+                    )
                 }
             }
         }
@@ -119,17 +136,9 @@ class BugTicketViewModel(private val bugTicketsRepository: BugTicketRepository):
             BugTicketListEvent.OnMediumPriorityButtonClick -> updateBugTicketFilter(BugTicketFilter.MediumPriority)
             BugTicketListEvent.OnHighPriorityButtonClick -> updateBugTicketFilter(BugTicketFilter.HighPriority)
             BugTicketListEvent.OnCriticalPriorityButtonClick -> updateBugTicketFilter(BugTicketFilter.CriticalPriority)
-            BugTicketListEvent.GenerateRandomBugTicket -> pushRandomBugTickets()
-            is BugTicketListEvent.OnResolvedDetailsSheetButtonClick -> resolveBugTicket(event.bugTicket)
+            is BugTicketListEvent.OnResolvedDetailsSheetButtonClick -> updateBugTicket(event.bugTicket)
             is BugTicketListEvent.OnSearchTextInput -> updateBugTicketFilter(BugTicketFilter.Search(event.search))
         }
     }
 
-    // TODO: remove after testing
-    // TESTING
-    private fun pushRandomBugTickets(){
-        viewModelScope.launch {
-            bugTicketsRepository.createBugTicket(provideRandomBugTicket()) // don't need implement deferred result for testing
-        }
-    }
 }

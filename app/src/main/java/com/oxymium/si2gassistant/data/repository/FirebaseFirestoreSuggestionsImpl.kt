@@ -3,15 +3,17 @@ package com.oxymium.si2gassistant.data.repository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.Suggestion
+import com.oxymium.si2gassistant.domain.entities.pushError
 import com.oxymium.si2gassistant.domain.repository.SuggestionRepository
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 
 class FirebaseFirestoreSuggestionsImpl(val firebaseFirestore: FirebaseFirestore): SuggestionRepository {
 
+    // GET: ALL
     override fun getAllSuggestions(): Flow<Result<List<Suggestion>>> = callbackFlow {
 
         trySend(Result.Loading()).isSuccess // Emit Loading state
@@ -43,19 +45,27 @@ class FirebaseFirestoreSuggestionsImpl(val firebaseFirestore: FirebaseFirestore)
         }
     }
 
-    override suspend fun submitSuggestion(suggestion: Suggestion): Deferred<String?> {
-        val result = CompletableDeferred<String?>()
-        firebaseFirestore
-            .collection(FirebaseFirestoreCollections.SUGGESTIONS)
-            .document()// auto-generates ID
-            .set(suggestion)
-            .addOnSuccessListener {
-                result.complete("SUCCESS")
-            }
-            .addOnFailureListener {
-                result.complete("FAILURE")
-            }
-        return result
+    // PUSH: SUGGESTION
+    override suspend fun submitSuggestion(suggestion: Suggestion): Flow<Result<Boolean>> = flow {
+        // Loading
+        emit(Result.Loading())
+
+        val result = CompletableDeferred<Boolean>()
+
+        try {
+            firebaseFirestore
+                .collection(FirebaseFirestoreCollections.SUGGESTIONS)
+                .document()// auto-generates ID
+                .set(suggestion)
+                .addOnSuccessListener {
+                    result.complete(true)
+                }
+            // Success
+            emit(Result.Success(true))
+        } catch (e: Exception) {
+            // Failure
+            emit(Result.Failed(e.message ?: pushError, false))
+        }
     }
 
 }

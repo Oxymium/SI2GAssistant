@@ -15,6 +15,4 @@ sealed interface BugTicketListEvent {
 
     data class OnSearchTextInput(val search: String): BugTicketListEvent
 
-    // Testing
-    data object GenerateRandomBugTicket: BugTicketListEvent
 }

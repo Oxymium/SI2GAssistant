@@ -2,20 +2,21 @@ package com.oxymium.si2gassistant.domain.repository
 
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.Person
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.flow.Flow
 
 interface PersonRepository {
 
+    // GET: ALL
     fun getAllPersons(): Flow<Result<List<Person>>>
 
-    fun getAllPersonsByAcademyId(academyId: String): Flow<List<Person>>
+    // GET: ALL BY USER_ID
+    fun getAllPersonsByUserId(userId: String): Flow<Result<List<Person>>>
 
-    fun getAllPersonsByUserId(userId: String): Flow<List<Person>>
-
+    // PUSH: PERSON
     suspend fun submitPerson(person: Person): Flow<Result<Boolean>>
 
-    suspend fun updatePersonModules(person: Person): Deferred<String?>
+    // UPDATE: PERSON
+    suspend fun updatePerson(person: Person): Flow<Result<Boolean>>
 
 }

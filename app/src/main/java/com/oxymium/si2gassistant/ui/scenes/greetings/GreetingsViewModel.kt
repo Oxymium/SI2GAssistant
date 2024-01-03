@@ -21,7 +21,7 @@ class GreetingsViewModel(
 
     private fun pushRandomBugTicket() {
         viewModelScope.launch {
-            bugTicketRepository.createBugTicket( provideRandomBugTicket() )
+            bugTicketRepository.submitBugTicket( provideRandomBugTicket() )
         }
     }
 
