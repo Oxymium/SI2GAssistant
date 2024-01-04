@@ -61,7 +61,7 @@ class GreetingsViewModel(
             GreetingsEvent.OnLogoutButtonClicked -> { println("LOGOUT CLICKED") }
             GreetingsEvent.OnRandomBugTicketButtonClicked -> pushRandomBugTicket() // testing purposes
             GreetingsEvent.OnRandomSuggestionButtonClicked -> pushRandomSuggestion() // testing purposes
-            GreetingsEvent.OnRandomPersonButtonClicked -> pushRandomPerson()
+            GreetingsEvent.OnRandomPersonButtonClicked -> pushRandomPerson() // testing purposes
         }
     }
 }

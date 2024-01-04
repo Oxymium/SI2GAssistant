@@ -1,8 +1,6 @@
 package com.oxymium.si2gassistant.domain.entities.mock
 
-import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import com.oxymium.si2gassistant.domain.entities.Person
-import com.oxymium.si2gassistant.domain.entities.Suggestion
 
 val FIRSTNAMES = listOf(
     "Olivia", "Liam", "Sophia", "Noah", "Emma", "Jackson", "Ava", "Lucas", "Isabella", "Aiden",
@@ -34,7 +32,7 @@ fun generateRandomValidatedModules(): String? {
     // Generate a random subset of modules
     val randomModules = (1..maxModule).shuffled().take((0..maxModule).random())
     return if (randomModules.isNotEmpty()) {
-        randomModules.joinToString(", ")
+        randomModules.joinToString(".")
     } else {
         null
     }

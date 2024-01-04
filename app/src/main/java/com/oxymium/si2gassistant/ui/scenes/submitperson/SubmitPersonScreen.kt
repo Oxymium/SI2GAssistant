@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
-import com.oxymium.si2gassistant.ui.scenes.persons.components.PersonBottomSheet
+import com.oxymium.si2gassistant.ui.scenes.submitperson.components.PersonBottomSheet
 import com.oxymium.si2gassistant.ui.scenes.submitperson.components.PersonsScreen_Nu
 import com.oxymium.si2gassistant.ui.scenes.submitperson.components.SubmitPersonScreenTest
 import com.oxymium.si2gassistant.ui.theme.MenuAccent

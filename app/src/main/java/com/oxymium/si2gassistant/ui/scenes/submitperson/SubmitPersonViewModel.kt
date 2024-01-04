@@ -23,17 +23,13 @@ class SubmitPersonViewModel(
     private val _state = MutableStateFlow(SubmitPersonState())
     private val _selected = MutableStateFlow<Person?>(null)
 
-    // Reference of validated modules kept to delay the update
-    private val _validatedModules = MutableStateFlow<String?>(String())
-
     val state = combine(
-        _state, _selected, _validatedModules
-    ) { state, selected, validatedModules ->
+        _state, _selected
+    ) { state, selected ->
         state.copy(
             persons = state.persons,
             selectedPerson = state.persons.firstOrNull{ it.id == selected?.id },
-            isSelectedPersonDetailsOpen = selected != null,
-            selectedPersonValidatedModules = validatedModules
+            isSelectedPersonDetailsOpen = selected != null
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), SubmitPersonState())
 
@@ -125,17 +121,18 @@ class SubmitPersonViewModel(
 
     }
 
-    private fun updatePersonModules(person: Person) {
+    private fun updatePersonValidatedModules(person: Person) {
         viewModelScope.launch {
-            personRepository.updatePerson(person)
+            personRepository.updatePerson(person).collect {
+                when (it) {
+                    is Result.Failed -> Unit
+                    is Result.Loading -> Unit
+                    is Result.Success -> Unit
+                }
+            }
         }
     }
 
-    private fun updateValidatedModules(moduleId: Int, isChecked: Boolean) {
-        val currentModules = _validatedModules.value?.split(", ")?.map { it.toInt() }?.toMutableList() ?: mutableListOf()
-        if (isChecked) currentModules.add(moduleId) else currentModules.remove(moduleId)
-        _state.value = state.value.copy(selectedPersonValidatedModules = currentModules.joinToString(", "))
-    }
 
     fun onEvent(submitPersonEvent: SubmitPersonEvent) {
         when (submitPersonEvent) {
@@ -160,12 +157,10 @@ class SubmitPersonViewModel(
 
             SubmitPersonEvent.DismissPersonDetailsSheet -> {
                 _selected.value = null
-                _validatedModules.value = null
             }
 
             is SubmitPersonEvent.OnSelectedPerson -> {
                 _selected.value = submitPersonEvent.person
-                _validatedModules.value = submitPersonEvent.person.validatedModules // get a reference of validatedModules because we don't want delayed updates
             }
 
             SubmitPersonEvent.OnSubmitPersonButtonClicked -> {
@@ -216,15 +211,30 @@ class SubmitPersonViewModel(
                 }
             }
 
-            is SubmitPersonEvent.OnPersonModulesSwitchToggle -> updateValidatedModules(submitPersonEvent.moduleId, submitPersonEvent.isChecked)
+            is SubmitPersonEvent.OnPersonModulesSwitchToggle ->  updateValidatedModules(submitPersonEvent.moduleId, submitPersonEvent.isChecked)
 
-            is SubmitPersonEvent.OnPersonModulesUpdateButtonClicked -> {
-                val newPerson = state.value.selectedPerson?.copy(
-                    validatedModules = submitPersonEvent.modules
-                )
-                newPerson?.let { updatePersonModules(newPerson) }
-            }
 
         }
+    }
+
+    private fun updateValidatedModules(moduleId: Int, isChecked: Boolean){
+        val currentValidatedModules = state.value.selectedPerson?.validatedModules
+        val modulesList = currentValidatedModules?.split(".")?.toMutableList() ?: mutableListOf()
+
+        if (isChecked) {
+            // If the switch is checked, add the moduleId to the list if it's not already present
+            if (!modulesList.contains(moduleId.toString())) {
+                modulesList.add(moduleId.toString())
+            }
+        } else {
+            // If the switch is unchecked, remove the moduleId from the list if it's present
+            modulesList.remove(moduleId.toString())
+        }
+        // Join the list back into a string
+        val updatedValidatedModules = modulesList.joinToString(".")
+
+        // Update Person in database with new values
+        state.value.selectedPerson?.copy(validatedModules = updatedValidatedModules)
+            ?.let { person -> updatePersonValidatedModules(person) }
     }
 }

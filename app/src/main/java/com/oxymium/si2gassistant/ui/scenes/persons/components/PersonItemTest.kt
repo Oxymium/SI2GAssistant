@@ -223,7 +223,7 @@ fun PersonItemTest(
                     )
             ){
 
-                val validatedModulesList = person.validatedModules?.split(", ")?.map { it.trim() }
+                val validatedModulesList = person.validatedModules?.split(".")?.map { it.trim() }
 
                 for (i in 1..8) {
                     val moduleNumber = i.toString()

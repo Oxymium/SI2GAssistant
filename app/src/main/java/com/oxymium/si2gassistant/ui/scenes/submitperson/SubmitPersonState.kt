@@ -5,7 +5,6 @@ import com.oxymium.si2gassistant.domain.entities.Person
 data class SubmitPersonState(
     val persons: List<Person> = emptyList(),
     val selectedPerson: Person? = null,
-    val selectedPersonValidatedModules: String? = null,
     val newPerson: Person? = null,
     val submitPersonMode: Boolean = false,
     val personsMode: Boolean = true, // default screen to load

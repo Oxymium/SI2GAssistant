@@ -17,4 +17,5 @@ object FirebaseFirestoreFields {
     const val RESOLVED = "resolved"
     const val RESOLVED_COMMENT = "resolvedComment"
     const val RESOLVED_DATE = "resolvedDate"
+    const val VALIDATED_MODULES = "validatedModules"
 }

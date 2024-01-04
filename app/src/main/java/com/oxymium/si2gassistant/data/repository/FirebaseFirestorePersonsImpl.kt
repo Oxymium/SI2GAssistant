@@ -1,19 +1,15 @@
 package com.oxymium.si2gassistant.data.repository
 
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.pushError
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.tasks.await
 
 class FirebaseFirestorePersonsImpl(val firebaseFirestore: FirebaseFirestore): PersonRepository {
 
@@ -113,7 +109,7 @@ class FirebaseFirestorePersonsImpl(val firebaseFirestore: FirebaseFirestore): Pe
             firebaseFirestore
                 .collection(FirebaseFirestoreCollections.PERSONS)
                 .document(person.id ?: "")
-                .update("validatedModules", person.validatedModules)
+                .update(FirebaseFirestoreFields.VALIDATED_MODULES, person.validatedModules)
                 .addOnSuccessListener {
                     result.complete(true)
                 }
