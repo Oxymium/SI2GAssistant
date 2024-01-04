@@ -1,4 +1,5 @@
 package com.oxymium.si2gassistant
 
-const val splashScreenDurationInMillis = 1000L //5000L default
-const val loadingInMillis = 300L //1500L default
+const val splashScreenDurationInMillis = 3000L
+const val loadingInMillis = 900L
+const val announcementsCycleDuration = 4000L

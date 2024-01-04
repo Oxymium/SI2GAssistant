@@ -2,11 +2,9 @@ package com.oxymium.si2gassistant.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.oxymium.si2gassistant.ui.scenes.AppRoutes
 import com.oxymium.si2gassistant.ui.scenes.AppScreens
 import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
 import com.oxymium.si2gassistant.ui.scenes.NavigationState
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -39,13 +37,16 @@ class NavigationViewModel: ViewModel() {
 
     fun onEvent(navigationEvent: NavigationEvent) {
         when (navigationEvent) {
-            NavigationEvent.OnSplashStartButtonClicked -> {} // TODO: REMOVE
-            is NavigationEvent.OnLoginButtonClick ->  
+            is NavigationEvent.OnLoginButtonClick ->
                 _state.value = state.value.copy(
                     currentUser = navigationEvent.user
             )
 
-            NavigationEvent.OnLogoutButtonClick -> { }
+            NavigationEvent.OnLogoutButtonClick -> {
+                _state.value = state.value.copy(
+                    currentUser = null
+                )
+            }
 
             NavigationEvent.OnGreetingsButtonClick -> updateScreen(AppScreens.GREETINGS_SCREEN)
             NavigationEvent.OnMetricsButtonClick -> updateScreen(AppScreens.METRICS_SCREEN)

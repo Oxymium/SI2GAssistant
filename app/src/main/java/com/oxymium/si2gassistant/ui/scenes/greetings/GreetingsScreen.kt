@@ -3,14 +3,11 @@ package com.oxymium.si2gassistant.ui.scenes.greetings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -28,9 +25,11 @@ import androidx.compose.ui.unit.sp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.ui.LocalUserContext
 import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
+import com.oxymium.si2gassistant.ui.scenes.animations.GreetingsAnimation
+import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
+import com.oxymium.si2gassistant.ui.scenes.greetings.components.AnnouncementFeed
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
-import com.oxymium.si2gassistant.ui.theme.NeutralLighter
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.White
 import com.oxymium.si2gassistant.utils.DateUtils
@@ -45,17 +44,17 @@ fun GreetingsScreen(
 
     val user = LocalUserContext.current
 
-    Surface(
+    Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(
+                color = Neutral
+            )
     ) {
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    color = Neutral
-                )
         ) {
 
             // LOGOUT BUTTON
@@ -70,7 +69,7 @@ fun GreetingsScreen(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MenuAccent
                     ),
-                    onClick = {  }
+                    onClick = { navigationEvent.invoke(NavigationEvent.OnLogoutButtonClick) }
                 ) {
 
                     Icon(
@@ -85,16 +84,21 @@ fun GreetingsScreen(
 
             }
 
+            // GREETINGS ANIMATION
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+            ) {
+                GreetingsAnimation()
+            }
+
+
             // GREETINGS TEXT
             Box(
                 modifier = Modifier
                     .padding(2.dp)
                     .wrapContentSize(Alignment.Center)
                     .align(Alignment.Center)
-                    .background(
-                        color = Neutral,
-                        shape = RoundedCornerShape(20.dp)
-                    )
             ) {
 
                 Column(
@@ -108,30 +112,28 @@ fun GreetingsScreen(
 
                     Text(
                         modifier = Modifier
+                            .padding(12.dp)
                             .align(Alignment.CenterHorizontally),
                         text = todayInMillis,
                         color = Color.White,
-                        fontSize = 24.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         modifier = Modifier
-                            .padding(8.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .background(
-                                color = NeutralLighter,
-                                shape = RoundedCornerShape(8.dp)
-                            ),
+                            .padding(10.dp)
+                            .align(Alignment.CenterHorizontally),
                         text = "Welcome, ${user?.firstname} ${user?.lastname}",
                         textAlign = TextAlign.Center,
                         color = Color.White,
-                        fontSize = 32.sp,
+                        fontSize = 38.sp,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         modifier = Modifier
+                            .padding(10.dp)
                             .align(Alignment.CenterHorizontally),
                         text = "${user?.mail}",
                         color = Color.White,
@@ -141,6 +143,7 @@ fun GreetingsScreen(
 
                     Text(
                         modifier = Modifier
+                            .padding(12.dp)
                             .align(Alignment.CenterHorizontally),
                         text = "${user?.academy}",
                         color = Color.White,
@@ -148,79 +151,47 @@ fun GreetingsScreen(
                         fontWeight = FontWeight.Bold
                     )
 
+
+
                 }
 
             }
 
-            if (user?.hasAdministrativeRights == true) {
+            // ANNOUNCEMENT TAPE
+            Box(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+            ) {
 
-                // DEBUG BUTTONS
-                Box(
+                Column(
                     modifier = Modifier
-                        .align(Alignment.BottomEnd)
+                        .fillMaxWidth()
                 ) {
 
-                    Row() {
+                    // ANNOUNCEMENT FEED
+                    if (state.isAnnouncementsLoading) {
 
-                        // Random bug ticket
-                        Button(
-                            modifier = Modifier,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MenuAccent
-                            ),
-                            onClick = { event.invoke(GreetingsEvent.OnRandomBugTicketButtonClicked) }
-                        ) {
+                        LoadingAnimation(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
 
-                            Icon(
-                                modifier = Modifier
-                                    .background(MenuAccent)
-                                    .size(24.dp),
-                                painter = painterResource(id = R.drawable.ic_dice_multiple),
-                                contentDescription = "Logout button",
-                                tint = White
-                            )
+                    } else {
 
-                        }
+                        Text(
+                            modifier = Modifier
+                                .padding(
+                                    horizontal = 8.dp
+                                ),
+                            text = "Announcement feed",
+                            color = White
+                        )
 
-                        // Random suggestion
-                        Button(
-                            modifier = Modifier,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MenuAccent
-                            ),
-                            onClick = { event.invoke(GreetingsEvent.OnRandomSuggestionButtonClicked) }
-                        ) {
-
-                            Icon(
-                                modifier = Modifier
-                                    .background(MenuAccent)
-                                    .size(24.dp),
-                                painter = painterResource(id = R.drawable.ic_dice_multiple),
-                                contentDescription = "Logout button",
-                                tint = White
-                            )
-
-                        }
-
-                        // Random person
-                        Button(
-                            modifier = Modifier,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MenuAccent
-                            ),
-                            onClick = { event.invoke(GreetingsEvent.OnRandomPersonButtonClicked) }
-                        ) {
-
-                            Icon(
-                                modifier = Modifier
-                                    .background(MenuAccent)
-                                    .size(24.dp),
-                                painter = painterResource(id = R.drawable.ic_dice_multiple),
-                                contentDescription = "Logout button",
-                                tint = White
-                            )
-
-                        }
+                        AnnouncementFeed(
+                            state = state
+                        )
 
                     }
 
@@ -241,7 +212,8 @@ fun GreetingsScreenPreview() {
         val greetingsState = GreetingsState()
         GreetingsScreen(
             state = greetingsState,
+            {},
             {}
-        ) { }
+        )
     }
 }

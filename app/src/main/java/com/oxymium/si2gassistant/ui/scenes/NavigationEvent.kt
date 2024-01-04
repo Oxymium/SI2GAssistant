@@ -4,7 +4,6 @@ import com.oxymium.si2gassistant.domain.entities.User
 
 sealed interface NavigationEvent {
 
-    data object OnSplashStartButtonClicked: NavigationEvent
     data class OnLoginButtonClick(val user: User? = null): NavigationEvent
 
     data object OnLogoutButtonClick: NavigationEvent

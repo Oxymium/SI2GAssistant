@@ -51,6 +51,7 @@ fun App(navController: NavHostController) {
 
     when (navigationState.value.navigationScreen) {
 
+        // GREETINGS SCREEN
         AppScreens.GREETINGS_SCREEN.name -> navController.navigate(AppScreens.GREETINGS_SCREEN.name)
         // SPLASH SCREEN
         AppScreens.SPLASH_SCREEN.name -> navController.navigate(AppScreens.SPLASH_SCREEN.name)

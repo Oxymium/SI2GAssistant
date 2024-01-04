@@ -9,13 +9,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 class FirebaseFirestoreModuleImpl(val firebaseFirestore: FirebaseFirestore): ModuleRepository {
+
+    // GET: ALL
     override fun getAllModules(): Flow<Result<List<Module>>> = callbackFlow {
         trySend(Result.Loading())
         val moduleCollection = firebaseFirestore.collection(FirebaseFirestoreCollections.MODULES)
         val listener = moduleCollection
             .addSnapshotListener { querySnapshot, exception ->
                 if (exception != null) {
-                    trySend(Result.Failed(exception.message.toString())).isSuccess
+                    trySend(Result.Failed(exception.message.toString())).isFailure
                     return@addSnapshotListener
                 }
                 if (querySnapshot != null) {

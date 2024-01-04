@@ -31,7 +31,10 @@ fun PersonsScreen(
 
         if (state.isPersonsLoading) {
 
-            LoadingAnimation()
+            LoadingAnimation(
+                modifier = Modifier
+                    .fillMaxSize()
+            )
 
         } else {
 

@@ -39,7 +39,10 @@ fun BugTicketsScreen(
 
             if (state.isBugTicketsLoading) {
 
-                LoadingAnimation()
+                LoadingAnimation(
+                    modifier = Modifier
+                        .fillMaxSize()
+                )
 
             } else {
 

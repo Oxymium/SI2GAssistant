@@ -6,19 +6,69 @@ import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomBugTicket
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomPerson
 import com.oxymium.si2gassistant.domain.entities.mock.provideRandomSuggestion
+import com.oxymium.si2gassistant.domain.repository.AnnouncementRepository
 import com.oxymium.si2gassistant.domain.repository.BugTicketRepository
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
 import com.oxymium.si2gassistant.domain.repository.SuggestionRepository
+import com.oxymium.si2gassistant.loadingInMillis
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class GreetingsViewModel(
     private val bugTicketRepository: BugTicketRepository,
     private val suggestionRepository: SuggestionRepository,
-    private val personRepository: PersonRepository
+    private val personRepository: PersonRepository,
+    private val announcementRepository: AnnouncementRepository
 ): ViewModel() {
 
-    val state = MutableStateFlow(GreetingsState())
+    private val _state = MutableStateFlow(GreetingsState())
+    val state = _state.asStateFlow()
+
+    init {
+        getAllAnnouncements()
+    }
+
+    private fun getAllAnnouncements() {
+        viewModelScope.launch {
+            announcementRepository.getAllAnnouncements().collect {
+                when (it) {
+                    // FAILURE
+                    is Result.Failed ->
+                        _state.emit(
+                            state.value.copy(
+                                isAnnouncementsFailure = true,
+                                announcementsFailureMessage = it.errorMessage
+                            )
+                        )
+
+                    // LOADING
+                    is Result.Loading -> {
+                        _state.emit(
+                            state.value.copy(
+                                isAnnouncementsLoading = true
+                            )
+                        )
+                        delay(loadingInMillis)
+                    }
+
+                    // SUCCESS
+                    is Result.Success -> {
+                        _state.emit(
+                            state.value.copy(
+                                isAnnouncementsFailure = false,
+                                announcementsFailureMessage = null,
+                                isAnnouncementsLoading = false,
+                                announcements = it.data
+                            )
+                        )
+                    }
+
+                }
+            }
+        }
+    }
 
     private fun pushRandomBugTicket() {
         viewModelScope.launch {
@@ -58,7 +108,6 @@ class GreetingsViewModel(
 
     fun onEvent(event: GreetingsEvent) {
         when (event) {
-            GreetingsEvent.OnLogoutButtonClicked -> { println("LOGOUT CLICKED") }
             GreetingsEvent.OnRandomBugTicketButtonClicked -> pushRandomBugTicket() // testing purposes
             GreetingsEvent.OnRandomSuggestionButtonClicked -> pushRandomSuggestion() // testing purposes
             GreetingsEvent.OnRandomPersonButtonClicked -> pushRandomPerson() // testing purposes

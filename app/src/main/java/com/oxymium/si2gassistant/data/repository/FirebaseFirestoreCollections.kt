@@ -3,6 +3,7 @@ package com.oxymium.si2gassistant.data.repository
 // Firestore's collections' names
 object FirebaseFirestoreCollections {
     const val ACADEMIES = "academies"
+    const val ANNOUNCEMENTS = "announcements"
     const val BUG_TICKETS = "bug_tickets"
     const val SUGGESTIONS = "suggestions"
     const val PERSONS = "persons"

@@ -38,8 +38,7 @@ fun BottomNavigationBar(
     navigationState: NavigationState
 ) {
 
-    val backgroundColor = if (navigationState.navigationScreen == AppScreens.GREETINGS_SCREEN.name ||
-        navigationState.navigationScreen == AppScreens.METRICS_SCREEN.name) Neutral else White
+    val backgroundColor = if (navigationState.navigationScreen == AppScreens.GREETINGS_SCREEN.name) Neutral else White
 
     Column(
         modifier = Modifier

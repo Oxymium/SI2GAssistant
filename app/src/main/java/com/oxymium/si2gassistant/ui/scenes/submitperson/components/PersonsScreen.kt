@@ -40,7 +40,10 @@ fun PersonsScreen_Nu(
 
         if (state.isPersonsLoading) {
 
-            LoadingAnimation()
+            LoadingAnimation(
+                modifier = Modifier
+                    .fillMaxSize()
+            )
 
         } else {
 

@@ -1,6 +1,7 @@
 package com.oxymium.si2gassistant.ui.scenes.suggestions
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,7 +30,10 @@ fun SuggestionsScreen(
 
         if (state.isSuggestionsLoading) {
 
-            LoadingAnimation()
+            LoadingAnimation(
+                modifier = Modifier
+                    .fillMaxSize()
+            )
 
         } else {
 

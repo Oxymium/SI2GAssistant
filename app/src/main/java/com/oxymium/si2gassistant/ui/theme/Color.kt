@@ -2,7 +2,6 @@ package com.oxymium.si2gassistant.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-
 val QueenBlue = Color(0xFF4D7298)
 val GreenTer = Color(0xFF9DC3C2)
 
@@ -15,6 +14,12 @@ val TextAccent = Color(0xFFDA0C81)
 
 val ValidatedModule = Color(0xFF2C6E49)
 val NotValidatedModule = Color(0xFF8C1C13)
+
+val Announcement1 = Color(0xFF47126b)
+val Announcement2 = Color(0xFF571089)
+val Announcement3 = Color(0xFF6411ad)
+val Announcement4 = Color(0xFF6d23b6)
+val Announcement5 = Color(0xFF822faf)
 
 val Metrics1 = Color(0xFF264653)
 val Metrics2 = Color(0xFF2a9d8f)

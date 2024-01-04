@@ -13,6 +13,7 @@ class FirebaseFirestoreUserImpl(
     val firebaseFirestore: FirebaseFirestore,
 ): UserRepository {
 
+    // GET: ALL
     override fun getAllUsers(): Flow<Result<List<User>>> = callbackFlow {
         trySend(Result.Loading())
         val personsCollection = firebaseFirestore
@@ -39,6 +40,7 @@ class FirebaseFirestoreUserImpl(
         }
     }
 
+    // GET: ALL BY USER ID
     override fun getUserByUid(uid: String): Flow<UserState> = callbackFlow {
         trySend(UserState.Loading) // loading first
         val usersCollection = firebaseFirestore.collection(FirebaseFirestoreCollections.USERS)

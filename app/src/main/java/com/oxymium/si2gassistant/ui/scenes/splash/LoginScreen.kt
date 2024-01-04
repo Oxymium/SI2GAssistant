@@ -190,7 +190,11 @@ fun LoginScreen(
                     // LOADING ANIMATION
                     if (state.isAuthLoading) {
 
-                        LoadingAnimation()
+                        LoadingAnimation(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+
                     }
 
                 }
