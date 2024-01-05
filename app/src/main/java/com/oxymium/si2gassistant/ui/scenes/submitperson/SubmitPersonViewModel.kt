@@ -6,8 +6,9 @@ import com.oxymium.si2gassistant.data.repository.GLOBAL_USER
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
+import com.oxymium.si2gassistant.domain.states.SubmitPersonState
 import com.oxymium.si2gassistant.loadingInMillis
-import com.oxymium.si2gassistant.ui.scenes.submitperson.components.SubmitPersonValidator
+import com.oxymium.si2gassistant.domain.validators.SubmitPersonValidator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,14 +25,19 @@ class SubmitPersonViewModel(
     private val _selected = MutableStateFlow<Person?>(null)
 
     val state = combine(
-        _state, _selected
+        _state,
+        _selected
     ) { state, selected ->
         state.copy(
             persons = state.persons,
             selectedPerson = state.persons.firstOrNull{ it.id == selected?.id },
             isSelectedPersonDetailsOpen = selected != null
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), SubmitPersonState())
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000L),
+        SubmitPersonState()
+    )
 
     init {
         getAllPersonsByUserId()
@@ -130,50 +136,54 @@ class SubmitPersonViewModel(
     }
 
 
-    fun onEvent(submitPersonEvent: SubmitPersonEvent) {
-        when (submitPersonEvent) {
-            is SubmitPersonEvent.OnPersonRoleChanged ->
-                _person.value = person.value.copy(
-                    role = submitPersonEvent.personRole
-                )
+    fun onEvent(event: SubmitPersonEvent) {
+        when (event) {
+            is SubmitPersonEvent.OnPersonRoleChange -> {
+                _person.value =
+                    person.value.copy(
+                        role = event.personRole
+                    )
+            }
 
-            is SubmitPersonEvent.OnPersonFirstNameChanged ->
-                _person.value = person.value.copy(
-                    firstname = submitPersonEvent.personFirstName
-                )
+            is SubmitPersonEvent.OnPersonFirstNameChange -> {
+                _person.value =
+                    person.value.copy(
+                        firstname = event.personFirstName
+                    )
+            }
 
-            is SubmitPersonEvent.OnPersonLastNameChanged ->
-                _person.value = person.value.copy(
-                    lastname = submitPersonEvent.personLastName
+            is SubmitPersonEvent.OnPersonLastNameChange -> {
+                _person.value =
+                    person.value.copy(
+                        lastname = event.personLastName
                 )
+            }
 
-            SubmitPersonEvent.OnPersonsModeButtonClicked ->
-                _state.value = state.value.copy(
-                    submitPersonMode = false,
-                    personsMode = true
-                )
+            SubmitPersonEvent.OnPersonsModeButtonClick -> {
+                _state.value =
+                    state.value.copy(
+                        submitPersonMode = false,
+                        personsMode = true
+                    )
+            }
 
-            SubmitPersonEvent.OnSubmitPersonModeButtonClicked ->
-                _state.value = state.value.copy(
-                    submitPersonMode = true,
-                    personsMode = false
+            SubmitPersonEvent.OnSubmitPersonModeButtonClick -> {
+                _state.value =
+                    state.value.copy(
+                        submitPersonMode = true,
+                        personsMode = false
                 )
+            }
 
             SubmitPersonEvent.DismissPersonDetailsSheet -> {
                 _selected.value = null
             }
 
-            is SubmitPersonEvent.OnSelectedPerson -> {
-                _selected.value = submitPersonEvent.person
+            is SubmitPersonEvent.OnPersonSelect -> {
+                _selected.value = event.person
             }
 
-            SubmitPersonEvent.OnSubmitPersonButtonClicked -> {
-                // Initial reset
-                _state.value = state.value.copy(
-                    isRoleFieldError = false,
-                    isFirstnameFieldError = false,
-                    isLastnameFieldError = false
-                )
+            SubmitPersonEvent.OnSubmitPersonButtonClick -> {
 
                 val result = SubmitPersonValidator.validatePerson(person.value)
 
@@ -211,7 +221,7 @@ class SubmitPersonViewModel(
                 }
             }
 
-            is SubmitPersonEvent.OnPersonModulesSwitchToggle ->  updateValidatedModules(submitPersonEvent.moduleId, submitPersonEvent.isChecked)
+            is SubmitPersonEvent.OnPersonModulesSwitchToggle ->  updateValidatedModules(event.moduleId, event.isChecked)
 
 
         }
@@ -237,4 +247,5 @@ class SubmitPersonViewModel(
         state.value.selectedPerson?.copy(validatedModules = updatedValidatedModules)
             ?.let { person -> updatePersonValidatedModules(person) }
     }
+
 }

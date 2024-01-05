@@ -12,16 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
-import com.oxymium.si2gassistant.ui.scenes.buglist.components.BugTicketItem
-import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugEvent
-import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugState
+import com.oxymium.si2gassistant.ui.scenes.bugtickets.components.BugTicketItem
+import com.oxymium.si2gassistant.domain.states.ReportBugState
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.White
 
 @Composable
 fun BugTicketsScreen(
-    state: ReportBugState,
-    event: (ReportBugEvent) -> Unit
+    state: ReportBugState
 ) {
 
     if (state.isBugTicketsLoading) {
@@ -65,6 +63,6 @@ fun BugTicketsScreenPreview() {
         val statePreview = ReportBugState()
         BugTicketsScreen(
             state = statePreview
-        ) {}
+        )
     }
 }

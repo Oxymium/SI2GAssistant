@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
+import com.oxymium.si2gassistant.domain.states.SubmitPersonState
 import com.oxymium.si2gassistant.ui.scenes.submitperson.components.PersonBottomSheet
 import com.oxymium.si2gassistant.ui.scenes.submitperson.components.PersonsScreen_Nu
 import com.oxymium.si2gassistant.ui.scenes.submitperson.components.SubmitPersonScreenTest
@@ -64,7 +65,7 @@ fun SubmitPersonScreen(
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (state.personsMode) MenuAccent else White
             ),
-            onClick = { event.invoke(SubmitPersonEvent.OnPersonsModeButtonClicked) }
+            onClick = { event.invoke(SubmitPersonEvent.OnPersonsModeButtonClick) }
         ) {
 
             Icon(
@@ -84,7 +85,7 @@ fun SubmitPersonScreen(
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (state.submitPersonMode) MenuAccent else White
             ),
-            onClick = { event.invoke(SubmitPersonEvent.OnSubmitPersonModeButtonClicked) }
+            onClick = { event.invoke(SubmitPersonEvent.OnSubmitPersonModeButtonClick) }
         ) {
 
             Icon(

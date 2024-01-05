@@ -11,12 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oxymium.si2gassistant.domain.entities.mock.provideRandomPerson
+import com.oxymium.si2gassistant.domain.mock.provideRandomPerson
 import com.oxymium.si2gassistant.ui.scenes.animations.FailureScreen
 import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
-import com.oxymium.si2gassistant.ui.scenes.persons.components.PersonItemTest
+import com.oxymium.si2gassistant.ui.scenes.persons.components.PersonItem
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonEvent
-import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonState
+import com.oxymium.si2gassistant.domain.states.SubmitPersonState
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.White
 
@@ -55,7 +55,7 @@ fun PersonsScreen_Nu(
             ) {
                 itemsIndexed(state.persons) { index, person ->
 
-                    PersonItemTest(
+                    PersonItem(
                         index = index,
                         person = person,
                         event = event

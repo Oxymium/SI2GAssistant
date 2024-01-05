@@ -2,6 +2,7 @@ package com.oxymium.si2gassistant.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oxymium.si2gassistant.domain.entities.Announcement
+import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreCollections
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.repository.AnnouncementRepository
 import kotlinx.coroutines.channels.awaitClose

@@ -1,6 +1,7 @@
 package com.oxymium.si2gassistant.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreCollections
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.User
 import com.oxymium.si2gassistant.domain.repository.UserRepository
@@ -42,7 +43,8 @@ class FirebaseFirestoreUserImpl(
     // GET: ALL BY USER ID
     override fun getUserByUid(uid: String): Flow<Result<User>> = callbackFlow {
         trySend(Result.Loading()) // loading first
-        val usersCollection = firebaseFirestore.collection(FirebaseFirestoreCollections.USERS)
+        val usersCollection = firebaseFirestore
+            .collection(FirebaseFirestoreCollections.USERS)
         val listener = usersCollection
             .document(uid)
             .addSnapshotListener { querySnapshot, exception ->

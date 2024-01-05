@@ -6,6 +6,8 @@ import com.oxymium.si2gassistant.data.repository.GLOBAL_USER
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.Suggestion
 import com.oxymium.si2gassistant.domain.repository.SuggestionRepository
+import com.oxymium.si2gassistant.domain.states.SubmitSuggestionState
+import com.oxymium.si2gassistant.domain.validators.SubmitSuggestionValidator
 import com.oxymium.si2gassistant.loadingInMillis
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,19 +65,19 @@ class SubmitSuggestionViewModel(
 
     fun onEvent(submitSuggestionEvent: SubmitSuggestionEvent) {
         when (submitSuggestionEvent) {
-            is SubmitSuggestionEvent.OnSuggestionSubjectChanged -> {
+            is SubmitSuggestionEvent.OnSuggestionSubjectChange -> {
                 val suggestion = suggestion.value.copy(
                     subject = submitSuggestionEvent.suggestionSubject
                 )
                 _suggestion.value = suggestion
             }
-            is SubmitSuggestionEvent.OnSuggestionBodyChanged -> {
+            is SubmitSuggestionEvent.OnSuggestionBodyChange -> {
                 val suggestion = suggestion.value.copy(
                     body = submitSuggestionEvent.suggestionBody
                 )
                 _suggestion.value = suggestion
             }
-            SubmitSuggestionEvent.OnSubmitSuggestionButtonClicked -> {
+            SubmitSuggestionEvent.OnSubmitSuggestionButtonClick -> {
 
                 // Initial reset
                 _state.value = state.value.copy(

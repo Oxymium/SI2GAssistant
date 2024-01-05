@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.oxymium.si2gassistant.ui.NavigationEvent
+import com.oxymium.si2gassistant.ui.navigation.NavigationEvent
 import com.oxymium.si2gassistant.ui.scenes.splash.SplashViewModel
 import com.oxymium.si2gassistant.ui.scenes.splash.SplashScreen
 import org.koin.androidx.compose.koinViewModel

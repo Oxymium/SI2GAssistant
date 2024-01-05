@@ -23,6 +23,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oxymium.si2gassistant.domain.states.PersonListState
+import com.oxymium.si2gassistant.ui.scenes.persons.PersonsEvent
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.TextAccent
@@ -31,7 +33,7 @@ import com.oxymium.si2gassistant.ui.theme.White
 @Composable
 fun PersonSearch(
     state: PersonListState,
-    event: (PersonListEvent) -> Unit
+    event: (PersonsEvent) -> Unit
 ) {
 
     Row(
@@ -69,7 +71,7 @@ fun PersonSearch(
                     value = search,
                     onValueChange = {
                         search = it.filter { char -> !char.isWhitespace() }.take(20)
-                        event.invoke(PersonListEvent.OnSearchTextInput(search))
+                        event.invoke(PersonsEvent.OnSearchTextChange(search))
                     },
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         textColor = TextAccent,

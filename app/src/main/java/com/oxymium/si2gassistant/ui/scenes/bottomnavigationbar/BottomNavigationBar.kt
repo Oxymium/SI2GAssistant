@@ -24,7 +24,7 @@ import androidx.navigation.NavController
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.User
 import com.oxymium.si2gassistant.ui.routes.AppScreens
-import com.oxymium.si2gassistant.ui.NavigationState
+import com.oxymium.si2gassistant.domain.states.NavigationState
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme

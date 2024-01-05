@@ -22,10 +22,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
-import com.oxymium.si2gassistant.domain.entities.mock.ALL_ACADEMIES
-import com.oxymium.si2gassistant.domain.entities.mock.ALL_MODULES
-import com.oxymium.si2gassistant.domain.entities.mock.provideRandomBugTicket
-import com.oxymium.si2gassistant.domain.entities.mock.provideRandomSuggestion
+import com.oxymium.si2gassistant.domain.mock.ALL_ACADEMIES
+import com.oxymium.si2gassistant.domain.mock.ALL_MODULES
+import com.oxymium.si2gassistant.domain.mock.provideRandomBugTicket
+import com.oxymium.si2gassistant.domain.mock.provideRandomSuggestion
+import com.oxymium.si2gassistant.domain.states.MetricsState
 import com.oxymium.si2gassistant.ui.scenes.metrics.components.BugTicketsMetricsScreen
 import com.oxymium.si2gassistant.ui.scenes.metrics.components.OverallMetricsScreen
 import com.oxymium.si2gassistant.ui.theme.MenuAccent

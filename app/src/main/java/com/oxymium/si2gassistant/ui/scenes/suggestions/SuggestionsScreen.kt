@@ -6,7 +6,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.oxymium.si2gassistant.domain.entities.mock.provideRandomSuggestion
+import com.oxymium.si2gassistant.domain.mock.provideRandomSuggestion
+import com.oxymium.si2gassistant.domain.states.SuggestionsState
 import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.suggestions.components.SuggestionList
 import com.oxymium.si2gassistant.ui.scenes.suggestions.components.SuggestionSearch

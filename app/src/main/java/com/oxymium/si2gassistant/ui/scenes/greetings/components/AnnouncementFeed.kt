@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.announcementsCycleDuration
 import com.oxymium.si2gassistant.domain.entities.Announcement
-import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsState
+import com.oxymium.si2gassistant.domain.states.GreetingsState
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import kotlinx.coroutines.delay
 

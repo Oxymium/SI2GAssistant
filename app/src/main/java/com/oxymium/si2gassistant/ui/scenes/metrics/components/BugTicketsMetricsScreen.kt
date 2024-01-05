@@ -17,8 +17,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oxymium.si2gassistant.domain.entities.mock.provideRandomBugTicket
-import com.oxymium.si2gassistant.ui.scenes.metrics.MetricsState
+import com.oxymium.si2gassistant.domain.mock.provideRandomBugTicket
+import com.oxymium.si2gassistant.domain.states.MetricsState
 import com.oxymium.si2gassistant.ui.theme.Black
 import com.oxymium.si2gassistant.ui.theme.Metrics1
 import com.oxymium.si2gassistant.ui.theme.Metrics2

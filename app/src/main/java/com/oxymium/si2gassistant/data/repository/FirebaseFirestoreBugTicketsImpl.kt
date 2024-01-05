@@ -2,6 +2,8 @@ package com.oxymium.si2gassistant.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.oxymium.si2gassistant.domain.entities.BugTicket
+import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreCollections
+import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreFields
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.pushError
 import com.oxymium.si2gassistant.domain.repository.BugTicketRepository
@@ -52,7 +54,7 @@ class FirebaseFirestoreBugTicketsImpl(val firebaseFirestore: FirebaseFirestore):
 
         val personsCollection = firebaseFirestore
             .collection(FirebaseFirestoreCollections.BUG_TICKETS)
-            .whereEqualTo("submittedBy", mail)
+            .whereEqualTo(FirebaseFirestoreFields.SUBMITTED_BY, mail)
 
         val listener = personsCollection
             .addSnapshotListener { querySnapshot, exception ->

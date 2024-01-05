@@ -10,12 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oxymium.si2gassistant.domain.states.PersonListState
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 
 @Composable
 fun PersonList(
-    state: PersonListState,
-    event: (PersonListEvent) -> Unit
+    state: PersonListState
 ) {
 
     Column(
@@ -31,7 +31,7 @@ fun PersonList(
         ) {
             itemsIndexed(state.persons) { index, person ->
 
-                PersonItemTest(
+                PersonItem(
                     index = index,
                     person = person
                 ) { }

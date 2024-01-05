@@ -38,7 +38,7 @@ import com.oxymium.si2gassistant.domain.entities.BugTicketCategory
 import com.oxymium.si2gassistant.domain.entities.BugTicketPriority
 import com.oxymium.si2gassistant.ui.scenes.animations.UploadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugEvent
-import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugState
+import com.oxymium.si2gassistant.domain.states.ReportBugState
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
@@ -84,7 +84,7 @@ fun ReportBugScreenTest(
             onSpinnerItemSelected = { index, item ->
                 val capitalizedCategory = CapitalizeFirstLetter.capitalizeFirstLetter(item)
                 setSelectedItem1(capitalizedCategory)
-                event.invoke(ReportBugEvent.OnBugCategorySelected(BugTicketCategory.valueOf(item)))
+                event.invoke(ReportBugEvent.OnBugCategorySelect(BugTicketCategory.valueOf(item)))
             }
         )
 
@@ -124,7 +124,7 @@ fun ReportBugScreenTest(
             onSpinnerItemSelected = { _, item ->
                 val capitalizedPriority = CapitalizeFirstLetter.capitalizeFirstLetter(item)
                 setSelectedItem2(capitalizedPriority)
-                event.invoke(ReportBugEvent.OnBugPrioritySelected(BugTicketPriority.valueOf(item)))
+                event.invoke(ReportBugEvent.OnBugPrioritySelect(BugTicketPriority.valueOf(item)))
             }
         )
 
@@ -151,7 +151,7 @@ fun ReportBugScreenTest(
                 value = shortDescription,
                 onValueChange = {
                     shortDescription = it.take(100)
-                    event.invoke(ReportBugEvent.OnShortDescriptionChanged(shortDescription))
+                    event.invoke(ReportBugEvent.OnShortDescriptionChange(shortDescription))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = TextAccent,
@@ -196,7 +196,7 @@ fun ReportBugScreenTest(
                 value = description,
                 onValueChange = {
                     description = it.take(500)
-                    event.invoke(ReportBugEvent.OnDescriptionChanged(description))
+                    event.invoke(ReportBugEvent.OnDescriptionChange(description))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = TextAccent,
@@ -243,7 +243,7 @@ fun ReportBugScreenTest(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Neutral
                 ),
-                onClick = { event.invoke(ReportBugEvent.OnReportBugButtonClicked) }
+                onClick = { event.invoke(ReportBugEvent.OnReportBugButtonClick) }
             ) {
 
                 Icon(

@@ -23,8 +23,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.oxymium.si2gassistant.R
-import com.oxymium.si2gassistant.ui.LocalUserContext
-import com.oxymium.si2gassistant.ui.NavigationEvent
+import com.oxymium.si2gassistant.domain.states.GreetingsState
+import com.oxymium.si2gassistant.ui.navigation.LocalUserContext
+import com.oxymium.si2gassistant.ui.navigation.NavigationEvent
 import com.oxymium.si2gassistant.ui.scenes.animations.GreetingsAnimation
 import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.greetings.components.AnnouncementFeed

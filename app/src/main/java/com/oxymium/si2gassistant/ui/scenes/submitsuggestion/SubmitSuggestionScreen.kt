@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
+import com.oxymium.si2gassistant.domain.states.SubmitSuggestionState
 import com.oxymium.si2gassistant.ui.scenes.animations.UploadingAnimation
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
@@ -110,7 +111,7 @@ fun SubmitSuggestionScreen(
                 value = subject,
                 onValueChange = {
                     subject = it.take(40)
-                    event.invoke(SubmitSuggestionEvent.OnSuggestionSubjectChanged(subject))
+                    event.invoke(SubmitSuggestionEvent.OnSuggestionSubjectChange(subject))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = TextAccent,
@@ -155,7 +156,7 @@ fun SubmitSuggestionScreen(
                 value = body,
                 onValueChange = {
                     body = it.take(500)
-                    event.invoke(SubmitSuggestionEvent.OnSuggestionBodyChanged(body))
+                    event.invoke(SubmitSuggestionEvent.OnSuggestionBodyChange(body))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = TextAccent,
@@ -202,7 +203,7 @@ fun SubmitSuggestionScreen(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Neutral
                 ),
-                onClick = { event.invoke(SubmitSuggestionEvent.OnSubmitSuggestionButtonClicked) }
+                onClick = { event.invoke(SubmitSuggestionEvent.OnSubmitSuggestionButtonClick) }
             ) {
 
                 Icon(

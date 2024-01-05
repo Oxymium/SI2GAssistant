@@ -7,10 +7,12 @@ import com.oxymium.si2gassistant.domain.entities.Auth
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.repository.AuthRepository
 import com.oxymium.si2gassistant.domain.repository.UserRepository
+import com.oxymium.si2gassistant.domain.states.AuthError
+import com.oxymium.si2gassistant.domain.states.SplashState
 import com.oxymium.si2gassistant.loadingInMillis
 import com.oxymium.si2gassistant.splashScreenDurationInMillis
-import com.oxymium.si2gassistant.ui.scenes.splash.components.Login
-import com.oxymium.si2gassistant.ui.scenes.splash.components.LoginValidator
+import com.oxymium.si2gassistant.domain.validators.Login
+import com.oxymium.si2gassistant.domain.validators.LoginValidator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,10 +36,12 @@ class SplashViewModel(
     private fun displayLogoScreenForGivenDuration() {
         viewModelScope.launch {
             delay(splashScreenDurationInMillis)
-            _state.emit(state.value.copy(
+            _state.emit(
+                state.value.copy(
                 isLogoScreen = false,
                 isLoginScreen = true
-            ))
+                )
+            )
         }
     }
 
@@ -134,13 +138,7 @@ class SplashViewModel(
     fun onEvent(event: SplashEvent) {
         when (event) {
 
-            SplashEvent.OnClickLoginButton -> {
-                // Reset
-                _state.value = state.value.copy(
-                    isMailFieldError = false,
-                    isPasswordFieldError = false,
-                    login = null
-                )
+            SplashEvent.OnLoginButtonClick -> {
 
                 val result = LoginValidator.validateLogin(login.value)
                 // Verify if any element is null
@@ -173,10 +171,21 @@ class SplashViewModel(
                 }
             }
 
-            is SplashEvent.OnLoginMailChanged -> _login.value = login.value.copy(email = event.mail)
+            is SplashEvent.OnLoginMailChange -> {
+                _login.value =
+                    login.value.copy(
+                        email = event.mail
+                    )
+            }
 
-            is SplashEvent.OnLoginPasswordChanged -> _login.value = login.value.copy(password = event.password)
+            is SplashEvent.OnLoginPasswordChange -> {
+                _login.value =
+                    login.value.copy(
+                        password = event.password
+                    )
+            }
 
         }
+
     }
 }

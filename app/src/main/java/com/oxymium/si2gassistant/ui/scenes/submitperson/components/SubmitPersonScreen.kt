@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.ui.scenes.animations.UploadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonEvent
-import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonState
+import com.oxymium.si2gassistant.domain.states.SubmitPersonState
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.TextAccent
@@ -58,7 +58,7 @@ fun SubmitPersonScreenTest(
             value = role,
             onValueChange = {
                 role = it.take(50)
-                event.invoke(SubmitPersonEvent.OnPersonRoleChanged(role))
+                event.invoke(SubmitPersonEvent.OnPersonRoleChange(role))
             },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 textColor = TextAccent,
@@ -101,7 +101,7 @@ fun SubmitPersonScreenTest(
                 value = firstname,
                 onValueChange = {
                     firstname = it.take(50)
-                    event.invoke(SubmitPersonEvent.OnPersonFirstNameChanged(firstname))
+                    event.invoke(SubmitPersonEvent.OnPersonFirstNameChange(firstname))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = TextAccent,
@@ -145,7 +145,7 @@ fun SubmitPersonScreenTest(
                 value = lastname,
                 onValueChange = {
                     lastname = it.take(50)
-                    event.invoke(SubmitPersonEvent.OnPersonLastNameChanged(lastname))
+                    event.invoke(SubmitPersonEvent.OnPersonLastNameChange(lastname))
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = TextAccent,
@@ -191,7 +191,7 @@ fun SubmitPersonScreenTest(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Neutral
                 ),
-                onClick = { event.invoke(SubmitPersonEvent.OnSubmitPersonButtonClicked) }
+                onClick = { event.invoke(SubmitPersonEvent.OnSubmitPersonButtonClick) }
             ) {
 
                 Icon(

@@ -9,8 +9,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.oxymium.si2gassistant.ui.NavigationEvent
-import com.oxymium.si2gassistant.ui.NavigationState
+import com.oxymium.si2gassistant.ui.navigation.NavigationEvent
+import com.oxymium.si2gassistant.domain.states.NavigationState
 import com.oxymium.si2gassistant.ui.scenes.bottomnavigationbar.BottomNavigationBar
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsScreen
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsViewModel

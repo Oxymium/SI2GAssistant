@@ -6,8 +6,9 @@ import com.oxymium.si2gassistant.data.repository.GLOBAL_USER
 import com.oxymium.si2gassistant.domain.entities.BugTicket
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.repository.BugTicketRepository
+import com.oxymium.si2gassistant.domain.states.ReportBugState
 import com.oxymium.si2gassistant.loadingInMillis
-import com.oxymium.si2gassistant.ui.scenes.reportbug.components.ReportBugValidator
+import com.oxymium.si2gassistant.domain.validators.ReportBugValidator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -107,44 +108,44 @@ class ReportBugViewModel(
         }
     }
 
-    fun onEvent(reportBugEvent: ReportBugEvent) {
-        when (reportBugEvent) {
-            is ReportBugEvent.OnBugCategorySelected -> {
+    fun onEvent(event: ReportBugEvent) {
+        when (event) {
+            is ReportBugEvent.OnBugCategorySelect -> {
                 val bugTicket = bugTicket.value.copy(
-                    category = reportBugEvent.bugTicketCategory
+                    category = event.bugTicketCategory
                 )
                 _bugTicket.value = bugTicket
             }
 
-            is ReportBugEvent.OnBugPrioritySelected -> {
+            is ReportBugEvent.OnBugPrioritySelect -> {
                 val bugTicket = bugTicket.value.copy(
-                    priority = reportBugEvent.bugTicketPriority
+                    priority = event.bugTicketPriority
                 )
                 _bugTicket.value = bugTicket
             }
 
-            is ReportBugEvent.OnShortDescriptionChanged -> {
+            is ReportBugEvent.OnShortDescriptionChange -> {
                 val bugTicket = bugTicket.value.copy(
-                    shortDescription = reportBugEvent.shortDescription
+                    shortDescription = event.shortDescription
                 )
                 _bugTicket.value = bugTicket
             }
 
-            is ReportBugEvent.OnDescriptionChanged -> {
+            is ReportBugEvent.OnDescriptionChange -> {
                 val bugTicket = bugTicket.value.copy(
-                    description = reportBugEvent.description
+                    description = event.description
                 )
                 _bugTicket.value = bugTicket
             }
 
-            ReportBugEvent.OnBugTicketsModeButtonClicked -> {
+            ReportBugEvent.OnBugTicketsModeButtonClick -> {
                 val newState = state.value.copy(
                     bugTicketsMode = true,
                     submitBugTicketMode = false
                 )
                 _state.value = newState
             }
-            ReportBugEvent.OnReportBugModeButtonClicked -> {
+            ReportBugEvent.OnReportBugModeButtonClick -> {
                 val newState = state.value.copy(
                     bugTicketsMode = false,
                     submitBugTicketMode = true
@@ -152,15 +153,7 @@ class ReportBugViewModel(
                 _state.value = newState
             }
 
-            ReportBugEvent.OnReportBugButtonClicked -> {
-
-                // Initial reset
-                _state.value = state.value.copy(
-                    isCategoryFieldError = false,
-                    isPriorityFieldError = false,
-                    isShortDescriptionFieldError = false,
-                    isDescriptionFieldError = false
-                )
+            ReportBugEvent.OnReportBugButtonClick -> {
 
                 val result = ReportBugValidator.validateBugTicket(bugTicket.value)
 

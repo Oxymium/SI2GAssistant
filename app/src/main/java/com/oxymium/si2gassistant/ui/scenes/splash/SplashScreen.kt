@@ -6,7 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.oxymium.si2gassistant.ui.NavigationEvent
+import com.oxymium.si2gassistant.domain.states.SplashState
+import com.oxymium.si2gassistant.ui.navigation.NavigationEvent
 import com.oxymium.si2gassistant.ui.scenes.splash.components.LogoScreen
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme

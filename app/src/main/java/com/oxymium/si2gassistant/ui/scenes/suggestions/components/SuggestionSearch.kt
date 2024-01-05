@@ -23,7 +23,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.ui.scenes.suggestions.SuggestionsEvent
-import com.oxymium.si2gassistant.ui.scenes.suggestions.SuggestionsState
+import com.oxymium.si2gassistant.domain.states.SuggestionsState
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.TextAccent
@@ -70,7 +70,7 @@ fun SuggestionSearch(
                     value = search,
                     onValueChange = {
                         search = it.filter { char -> !char.isWhitespace() }.take(20)
-                        event.invoke(SuggestionsEvent.OnSearchTextInput(search))
+                        event.invoke(SuggestionsEvent.OnSearchTextChange(search))
                     },
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         textColor = TextAccent,

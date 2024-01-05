@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.Suggestion
-import com.oxymium.si2gassistant.domain.entities.mock.provideRandomSuggestion
+import com.oxymium.si2gassistant.domain.mock.provideRandomSuggestion
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.Suggestions1
 import com.oxymium.si2gassistant.ui.theme.Suggestions2

@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
+import com.oxymium.si2gassistant.domain.states.ReportBugState
 import com.oxymium.si2gassistant.ui.scenes.reportbug.components.BugTicketsScreen
 import com.oxymium.si2gassistant.ui.scenes.reportbug.components.ReportBugScreenTest
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
@@ -61,7 +62,7 @@ fun ReportBugScreen(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (state.bugTicketsMode) MenuAccent else White
                 ),
-                onClick = { event.invoke(ReportBugEvent.OnBugTicketsModeButtonClicked) }
+                onClick = { event.invoke(ReportBugEvent.OnBugTicketsModeButtonClick) }
             ) {
 
                 Icon(
@@ -81,7 +82,7 @@ fun ReportBugScreen(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (state.submitBugTicketMode) MenuAccent else White
                 ),
-                onClick = { event.invoke(ReportBugEvent.OnReportBugModeButtonClicked) }
+                onClick = { event.invoke(ReportBugEvent.OnReportBugModeButtonClick) }
             ) {
 
                 Icon(
@@ -108,8 +109,7 @@ fun ReportBugScreen(
 
         if (state.bugTicketsMode) {
             BugTicketsScreen(
-                state = state,
-                event = event
+                state = state
             )
         }
 

@@ -22,9 +22,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
-import com.oxymium.si2gassistant.domain.entities.mock.ALL_MODULES
+import com.oxymium.si2gassistant.domain.mock.ALL_MODULES
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonEvent
-import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonState
+import com.oxymium.si2gassistant.domain.states.SubmitPersonState
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.NeutralLighter
 import com.oxymium.si2gassistant.ui.theme.NotValidatedModule

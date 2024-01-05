@@ -38,7 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.Auth
-import com.oxymium.si2gassistant.ui.NavigationEvent
+import com.oxymium.si2gassistant.domain.states.SplashState
+import com.oxymium.si2gassistant.ui.navigation.NavigationEvent
 import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
@@ -86,7 +87,7 @@ fun LoginScreen(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MenuAccent
                         ),
-                        onClick = { event.invoke(SplashEvent.OnClickLoginButton) }
+                        onClick = { event.invoke(SplashEvent.OnLoginButtonClick) }
                     ) {
 
                         Icon(
@@ -135,7 +136,7 @@ fun LoginScreen(
                             value = mail,
                             onValueChange = {
                                 mail = it.filter { char -> !char.isWhitespace() }.take(40)
-                                event.invoke(SplashEvent.OnLoginMailChanged(mail))
+                                event.invoke(SplashEvent.OnLoginMailChange(mail))
                             },
                             colors = TextFieldDefaults.outlinedTextFieldColors(
                                 textColor = White,
@@ -182,7 +183,7 @@ fun LoginScreen(
                             value = password,
                             onValueChange = {
                                 password = it.filter { char -> !char.isWhitespace() }.take(20)
-                                event.invoke(SplashEvent.OnLoginPasswordChanged(password))
+                                event.invoke(SplashEvent.OnLoginPasswordChange(password))
                             },
                             colors = TextFieldDefaults.outlinedTextFieldColors(
                                 textColor = White,

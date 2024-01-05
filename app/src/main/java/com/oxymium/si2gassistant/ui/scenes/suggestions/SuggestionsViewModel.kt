@@ -4,10 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.Suggestion
-import com.oxymium.si2gassistant.domain.entities.mock.provideRandomSuggestion
+import com.oxymium.si2gassistant.domain.mock.provideRandomSuggestion
 import com.oxymium.si2gassistant.domain.repository.SuggestionRepository
+import com.oxymium.si2gassistant.domain.states.SuggestionsState
 import com.oxymium.si2gassistant.loadingInMillis
-import com.oxymium.si2gassistant.ui.scenes.suggestions.components.SuggestionFilter
+import com.oxymium.si2gassistant.domain.filters.SuggestionFilter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -100,8 +101,10 @@ class SuggestionsViewModel(
 
     fun onEvent(event: SuggestionsEvent) {
         when (event) {
-            is SuggestionsEvent.OnSearchTextInput -> updateSuggestionFilter(SuggestionFilter.Search(event.search))
-            SuggestionsEvent.OnRandomSuggestionButtonClicked -> pushRandomSuggestion(provideRandomSuggestion())
+            is SuggestionsEvent.OnSearchTextChange -> updateSuggestionFilter(SuggestionFilter.Search(event.search))
+            SuggestionsEvent.OnRandomSuggestionButtonClick -> pushRandomSuggestion(
+                provideRandomSuggestion()
+            )
 
         }
 

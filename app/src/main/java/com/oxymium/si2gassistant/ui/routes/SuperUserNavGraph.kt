@@ -9,16 +9,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.oxymium.si2gassistant.ui.NavigationEvent
-import com.oxymium.si2gassistant.ui.NavigationState
+import com.oxymium.si2gassistant.ui.navigation.NavigationEvent
+import com.oxymium.si2gassistant.domain.states.NavigationState
 import com.oxymium.si2gassistant.ui.scenes.bottomnavigationbar.BottomNavigationBar
-import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketViewModel
-import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketsScreen
+import com.oxymium.si2gassistant.ui.scenes.bugtickets.BugTicketsViewModel
+import com.oxymium.si2gassistant.ui.scenes.bugtickets.BugTicketsScreen
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsScreen
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsViewModel
 import com.oxymium.si2gassistant.ui.scenes.metrics.MetricsScreen
 import com.oxymium.si2gassistant.ui.scenes.metrics.MetricsViewModel
-import com.oxymium.si2gassistant.ui.scenes.persons.PersonListViewModel
+import com.oxymium.si2gassistant.ui.scenes.persons.PersonsViewModel
 import com.oxymium.si2gassistant.ui.scenes.persons.PersonsScreen
 import com.oxymium.si2gassistant.ui.scenes.suggestions.SuggestionsScreen
 import com.oxymium.si2gassistant.ui.scenes.suggestions.SuggestionsViewModel
@@ -83,7 +83,7 @@ fun SuperUserNavGraph(
                     composable(
                         route = AppScreens.PERSONS_SCREEN.name
                     ) {
-                        val viewModel = koinViewModel<PersonListViewModel>()
+                        val viewModel = koinViewModel<PersonsViewModel>()
                         val state = viewModel.state.collectAsState()
                         PersonsScreen(
                             state = state.value,
@@ -95,7 +95,7 @@ fun SuperUserNavGraph(
                     composable(
                         route = AppScreens.BUG_TICKETS_SCREEN.name
                     ) {
-                        val viewModel = koinViewModel<BugTicketViewModel>()
+                        val viewModel = koinViewModel<BugTicketsViewModel>()
                         val state = viewModel.state.collectAsState()
                         BugTicketsScreen(
                             state = state.value,

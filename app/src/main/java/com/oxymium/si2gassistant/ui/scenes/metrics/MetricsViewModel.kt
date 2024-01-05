@@ -9,6 +9,7 @@ import com.oxymium.si2gassistant.domain.repository.ModuleRepository
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
 import com.oxymium.si2gassistant.domain.repository.SuggestionRepository
 import com.oxymium.si2gassistant.domain.repository.UserRepository
+import com.oxymium.si2gassistant.domain.states.MetricsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -40,11 +41,13 @@ class MetricsViewModel(
                 when (it) {
                     is Result.Failed -> println("failed")
                     is Result.Loading -> println("loading")
-                    is Result.Success -> _state.emit(
-                        state.value.copy(
-                            bugTickets = it.data
-                        )
+                    is Result.Success ->
+                        _state.emit(
+                            state.value.copy(
+                                bugTickets = it.data
+                            )
                     )
+
                 }
             }
         }
@@ -56,11 +59,13 @@ class MetricsViewModel(
                 when (it) {
                     is Result.Failed -> println("failed")
                     is Result.Loading -> println("loading")
-                    is Result.Success -> _state.emit(
-                        state.value.copy(
+                    is Result.Success ->
+                        _state.emit(
+                            state.value.copy(
                             academies = it.data
-                        )
+                            )
                     )
+
                 }
             }
         }
@@ -72,11 +77,13 @@ class MetricsViewModel(
                 when (it) {
                     is Result.Failed -> println("Failed")
                     is Result.Loading -> println("Loading")
-                    is Result.Success -> _state.emit(
-                        state.value.copy(
-                            modules = it.data
-                        )
+                    is Result.Success ->
+                        _state.emit(
+                            state.value.copy(
+                                modules = it.data
+                            )
                     )
+
                 }
             }
         }
@@ -88,13 +95,14 @@ class MetricsViewModel(
                 when (it) {
                     is Result.Failed -> println("Failed")
                     is Result.Loading -> println("Loading")
-                    is Result.Success -> _state.emit(
-                        state.value.copy(
-                            users = it.data
+                    is Result.Success ->
+                        _state.emit(
+                            state.value.copy(
+                                users = it.data
                         )
                     )
-                }
 
+                }
             }
         }
     }
@@ -105,12 +113,14 @@ class MetricsViewModel(
                 when (it) {
                     is Result.Failed -> println("Suggestions: failed")
                     is Result.Loading -> println("Suggestion: loading")
-                    is Result.Success -> _state.emit(
-                        state.value.copy(
+                    is Result.Success ->
+                        _state.emit(
+                            state.value.copy(
                             persons = it.data
-                        ))
-                }
+                            )
+                        )
 
+                }
             }
         }
     }
@@ -121,31 +131,35 @@ class MetricsViewModel(
                 when (it) {
                     is Result.Failed -> println("Suggestions: failed")
                     is Result.Loading -> println("Suggestion: loading")
-                    is Result.Success -> _state.emit(
-                        state.value.copy(
-                            suggestions = it.data
-                        ))
+                    is Result.Success ->
+                        _state.emit(
+                            state.value.copy(
+                                suggestions = it.data
+                            )
+                        )
+
                 }
             }
         }
     }
 
-    fun onEvent(metricsScreenEvent: MetricsScreenEvent) {
-        when (metricsScreenEvent) {
+    fun onEvent(event: MetricsScreenEvent) {
+        when (event) {
+
             MetricsScreenEvent.OnBugTicketsButtonClick -> {
-                val newState = state.value.copy(
+                _state.value = state.value.copy(
                     isBugTicketMetricsScreen = true,
                     isOverallMetricsScreen = false
                 )
-                _state.value = newState
             }
+
             MetricsScreenEvent.OnOverallMetricsButtonClick -> {
-                val newState = state.value.copy(
+                _state.value = state.value.copy(
                     isBugTicketMetricsScreen = false,
                     isOverallMetricsScreen = true
                 )
-                _state.value = newState
             }
+
         }
 
     }

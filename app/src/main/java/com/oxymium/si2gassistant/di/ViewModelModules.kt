@@ -1,11 +1,11 @@
 package com.oxymium.si2gassistant.di
 
-import com.oxymium.si2gassistant.ui.NavigationViewModel
-import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketViewModel
+import com.oxymium.si2gassistant.ui.navigation.NavigationViewModel
+import com.oxymium.si2gassistant.ui.scenes.bugtickets.BugTicketsViewModel
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsViewModel
 import com.oxymium.si2gassistant.ui.scenes.splash.SplashViewModel
 import com.oxymium.si2gassistant.ui.scenes.metrics.MetricsViewModel
-import com.oxymium.si2gassistant.ui.scenes.persons.PersonListViewModel
+import com.oxymium.si2gassistant.ui.scenes.persons.PersonsViewModel
 import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugViewModel
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonViewModel
 import com.oxymium.si2gassistant.ui.scenes.submitsuggestion.SubmitSuggestionViewModel
@@ -22,13 +22,13 @@ val viewModelModules = module {
     viewModel { SplashViewModel( get(), get() ) }
 
     // WM: Greetings
-    viewModel { GreetingsViewModel( get(), get(), get(), get() ) }
+    viewModel { GreetingsViewModel( get() ) }
 
     // WM : Metrics
     viewModel { MetricsViewModel( get(), get(), get(), get(), get(), get() ) }
 
     // VM: BugTickets
-    viewModel { BugTicketViewModel( get() ) }
+    viewModel { BugTicketsViewModel( get() ) }
 
     // VM: SubmitPerson
     viewModel { SubmitPersonViewModel( get() ) }
@@ -37,7 +37,7 @@ val viewModelModules = module {
     viewModel { ReportBugViewModel( get() ) }
 
     // VM: Persons
-    viewModel { PersonListViewModel( get() ) }
+    viewModel { PersonsViewModel( get() ) }
 
     // VM: SubmitSuggestion
     viewModel { SubmitSuggestionViewModel( get() ) }
