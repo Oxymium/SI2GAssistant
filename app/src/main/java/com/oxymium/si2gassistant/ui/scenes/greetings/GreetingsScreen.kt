@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.ui.LocalUserContext
-import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
+import com.oxymium.si2gassistant.ui.NavigationEvent
 import com.oxymium.si2gassistant.ui.scenes.animations.GreetingsAnimation
 import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.greetings.components.AnnouncementFeed
@@ -38,7 +38,6 @@ import java.util.Calendar
 @Composable
 fun GreetingsScreen(
     state: GreetingsState,
-    event: (GreetingsEvent) -> Unit,
     navigationEvent: (NavigationEvent) -> Unit,
 ) {
 
@@ -212,8 +211,6 @@ fun GreetingsScreenPreview() {
         val greetingsState = GreetingsState()
         GreetingsScreen(
             state = greetingsState,
-            {},
-            {}
-        )
+        ) {}
     }
 }

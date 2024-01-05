@@ -18,7 +18,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-class BugTicketViewModel(private val bugTicketsRepository: BugTicketRepository): ViewModel() {
+class BugTicketViewModel(
+    private val bugTicketsRepository: BugTicketRepository
+): ViewModel() {
 
     private val _state = MutableStateFlow(BugTicketListState())
     private val _filter = MutableStateFlow<BugTicketFilter>(BugTicketFilter.DefaultValue)
@@ -33,7 +35,9 @@ class BugTicketViewModel(private val bugTicketsRepository: BugTicketRepository):
                 is BugTicketFilter.Search -> state.bugTickets.filter {
                     it.academy?.contains(filter.search ?: "", ignoreCase = true) == true ||
                             it.description?.contains(filter.search ?: "", ignoreCase = true) == true ||
-                            it.shortDescription?.contains(filter.search ?: "", ignoreCase = true) == true
+                            it.shortDescription?.contains(filter.search ?: "", ignoreCase = true) == true ||
+                            it.category?.name?.contains(filter.search ?: "", ignoreCase = true) == true ||
+                            it.priority?.name?.contains(filter.search ?: "", ignoreCase = true) == true
                 }
             },
             selectedBugTicket = state.bugTickets.firstOrNull{ it.id == selected?.id },

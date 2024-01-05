@@ -4,7 +4,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.User
 import com.oxymium.si2gassistant.domain.repository.UserRepository
-import com.oxymium.si2gassistant.domain.usecase.UserState
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -41,28 +40,31 @@ class FirebaseFirestoreUserImpl(
     }
 
     // GET: ALL BY USER ID
-    override fun getUserByUid(uid: String): Flow<UserState> = callbackFlow {
-        trySend(UserState.Loading) // loading first
+    override fun getUserByUid(uid: String): Flow<Result<User>> = callbackFlow {
+        trySend(Result.Loading()) // loading first
         val usersCollection = firebaseFirestore.collection(FirebaseFirestoreCollections.USERS)
         val listener = usersCollection
             .document(uid)
             .addSnapshotListener { querySnapshot, exception ->
                 if (exception != null) {
-                    trySend(UserState.Error(exception)).isSuccess
+                    trySend(Result.Failed(exception.message.toString()))
                     return@addSnapshotListener
                 }
-
-                val user: User? = querySnapshot?.toObject(User::class.java)
-                if (user != null) {
-                    user.id = uid // attach id to User
-                    trySend(UserState.Success(user)).isSuccess // Success
-                } else {
-                    trySend(UserState.Error(Exception("User not found"))) // failure if User doesn't exist
+                if (querySnapshot != null) {
+                    val user: User? = querySnapshot.toObject(User::class.java)
+                    if (user != null) {
+                        user.id = uid // attach id to User
+                        trySend(Result.Success(user))
+                    } else {
+                        trySend(Result.Failed("User not found")) // failure if User doesn't exist
+                    }
                 }
             }
+
         awaitClose {
             listener.remove()
         }
     }
+
 
 }

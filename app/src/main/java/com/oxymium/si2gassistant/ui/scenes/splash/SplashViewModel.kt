@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oxymium.si2gassistant.data.repository.GLOBAL_USER
 import com.oxymium.si2gassistant.domain.entities.Auth
+import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.repository.AuthRepository
 import com.oxymium.si2gassistant.domain.repository.UserRepository
-import com.oxymium.si2gassistant.domain.usecase.FirebaseAuthState
-import com.oxymium.si2gassistant.domain.usecase.UserState
+import com.oxymium.si2gassistant.loadingInMillis
 import com.oxymium.si2gassistant.splashScreenDurationInMillis
 import com.oxymium.si2gassistant.ui.scenes.splash.components.Login
 import com.oxymium.si2gassistant.ui.scenes.splash.components.LoginValidator
@@ -43,45 +43,46 @@ class SplashViewModel(
 
     private fun getFirebaseAuthWithCredentials(mail: String, password: String) {
         viewModelScope.launch {
-            authRepository.getFirebaseAuthWithCredentials(mail, password)
-                .collect { firebaseUserState ->
-                    when (firebaseUserState) {
+            authRepository.getFirebaseAuthWithCredentials(mail, password).collect {
+                    when (it) {
 
-                        // LOADING
-                        FirebaseAuthState.Loading -> {
-                            val newState = state.value.copy(
-                                isAuthLoading = true,
-                                isAuthSuccessful = false,
-                                authError = AuthError(isError = false, "")
+                        // FAILURE
+                        is Result.Failed -> {
+                            _state.emit(
+                                state.value.copy(
+                                    isAuthLoading = false, // loading complete
+                                    isAuthSuccessful = false,
+                                    authError = AuthError(isError = true, it.errorMessage)
+                                )
                             )
-                            _state.emit(newState)
                             delay(900L)
                         }
 
-                        // FAILURE
-                        is FirebaseAuthState.Failure -> {
-                            val newState = state.value.copy(
-                                isAuthLoading = false, // loading complete
-                                isAuthSuccessful = false,
-                                authError = AuthError(true, firebaseUserState.exception.message)
+                        // LOADING
+                        is Result.Loading -> {
+                            _state.emit(
+                                state.value.copy(
+                                    isAuthLoading = true,
+                                    isAuthSuccessful = false,
+                                    authError = AuthError(isError = false, null)
+                                )
                             )
-                            _state.emit(newState)
-                            delay(900L)
+                            delay(loadingInMillis)
                         }
 
                         // SUCCESS
-                        is FirebaseAuthState.Success -> {
-                            val newState = state.value.copy(
-                                isAuthLoading = false,
-                                isAuthSuccessful = true,
-                                auth = Auth(firebaseUserState.firebaseUser?.displayName ?: "", firebaseUserState.firebaseUser?.email ?: ""),
+                        is Result.Success -> {
+                            _state.emit(
+                                state.value.copy(
+                                    isAuthLoading = false,
+                                    isAuthSuccessful = true,
+                                    auth = Auth( it.data?.displayName ?: "", it.data?.email ?: ""),
+                                )
                             )
-                            _state.emit(newState)
-                            delay(900L)
+                            delay(loadingInMillis)
                             // Retrieve Firebase Firebase User based on Auth mail
-                            firebaseUserState.firebaseUser?.uid?.let { uid -> getFirebaseFirestoreUserWithUid(uid) }
+                            it.data?.uid?.let { uid -> getFirebaseFirestoreUserWithUid(uid)  }
                         }
-                        null -> TODO()
                     }
                 }
         }
@@ -89,30 +90,40 @@ class SplashViewModel(
 
     private fun getFirebaseFirestoreUserWithUid(uid: String) {
         viewModelScope.launch {
-            userRepository.getUserByUid(uid).collect { userState ->
-                when (userState) {
+            userRepository.getUserByUid(uid).collect {
+                when (it) {
+
+                    // FAILURE
+                    is Result.Failed -> _state.emit(
+                        state.value.copy(
+                            isUserLoading = false,
+                            isUserSuccessful = false,
+                            userError = it.errorMessage
+                        )
+                    )
 
                     // LOADING
-                    UserState.Loading -> _state.value = state.value.copy(
-                        isUserLoading = true,
-                        isUserSuccessful = false,
+                    is Result.Loading -> {
+                        _state.emit(
+                            state.value.copy(
+                                isUserLoading = true,
+                                isUserSuccessful = false
+                        )
                     )
-
-                    // ERROR
-                    is UserState.Error -> _state.value = state.value.copy(
-                        isUserLoading = false,
-                        isUserSuccessful = false,
-                        userError = userState.exception.message
-                    )
+                        delay(loadingInMillis)
+                    }
 
                     // SUCCESS
-                    is UserState.Success -> {
-                        _state.value = state.value.copy(
-                            isUserLoading = false,
-                            isUserSuccessful = true,
-                            user = userState.user
+                    is Result.Success -> {
+                        _state.emit(
+                            state.value.copy(
+                                isUserLoading = false,
+                                isUserSuccessful = true,
+                                user = it.data
+                            )
                         )
-                        GLOBAL_USER = userState.user // TODO remove global variable
+
+                        GLOBAL_USER = it.data // push user as global variable
                     }
 
                 }
@@ -124,6 +135,13 @@ class SplashViewModel(
         when (event) {
 
             SplashEvent.OnClickLoginButton -> {
+                // Reset
+                _state.value = state.value.copy(
+                    isMailFieldError = false,
+                    isPasswordFieldError = false,
+                    login = null
+                )
+
                 val result = LoginValidator.validateLogin(login.value)
                 // Verify if any element is null
                 val errors = listOfNotNull(

@@ -9,7 +9,6 @@ import com.oxymium.si2gassistant.domain.entities.User
 import com.oxymium.si2gassistant.ui.routes.LoginNavGraph
 import com.oxymium.si2gassistant.ui.routes.NormalUserNavGraph
 import com.oxymium.si2gassistant.ui.routes.SuperUserNavGraph
-import com.oxymium.si2gassistant.ui.scenes.AppScreens
 import org.koin.androidx.compose.koinViewModel
 
 val LocalUserContext = compositionLocalOf<User?> { User() }
@@ -46,29 +45,6 @@ fun App(navController: NavHostController) {
                 navigationState = navigationState.value
             )
         }
-
-    }
-
-    when (navigationState.value.navigationScreen) {
-
-        // GREETINGS SCREEN
-        AppScreens.GREETINGS_SCREEN.name -> navController.navigate(AppScreens.GREETINGS_SCREEN.name)
-        // SPLASH SCREEN
-        AppScreens.SPLASH_SCREEN.name -> navController.navigate(AppScreens.SPLASH_SCREEN.name)
-        // METRICS SCREEN
-        AppScreens.METRICS_SCREEN.name -> navController.navigate(AppScreens.METRICS_SCREEN.name)
-        // PERSONS SCREEN
-        AppScreens.PERSONS_SCREEN.name -> navController.navigate(AppScreens.PERSONS_SCREEN.name)
-        // BUG TICKETS SCREEN
-        AppScreens.BUG_TICKETS_SCREEN.name -> navController.navigate(AppScreens.BUG_TICKETS_SCREEN.name)
-        // REPORT BUG TICKET SCREEN
-        AppScreens.REPORT_BUG_SCREEN.name -> navController.navigate(AppScreens.REPORT_BUG_SCREEN.name)
-        // SUBMIT PERSON SCREEN
-        AppScreens.SUBMIT_PERSON_SCREEN.name -> navController.navigate(AppScreens.SUBMIT_PERSON_SCREEN.name)
-        // SUBMIT SUGGESTION SCREEN
-        AppScreens.SUBMIT_SUGGESTION_SCREEN.name -> navController.navigate(AppScreens.SUBMIT_SUGGESTION_SCREEN.name)
-        // SUGGESTIONS SCREEN
-        AppScreens.SUGGESTIONS_SCREEN.name -> navController.navigate(AppScreens.SUGGESTIONS_SCREEN.name)
 
     }
 

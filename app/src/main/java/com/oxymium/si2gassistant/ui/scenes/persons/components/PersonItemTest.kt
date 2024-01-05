@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -217,10 +219,6 @@ fun PersonItemTest(
             Row(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .background(
-                        color = backgroundColor,
-                        shape = RoundedCornerShape(8.dp)
-                    )
             ){
 
                 val validatedModulesList = person.validatedModules?.split(".")?.map { it.trim() }
@@ -231,7 +229,6 @@ fun PersonItemTest(
 
                     Box(
                         modifier = Modifier
-                            .padding(4.dp)
                             .background(
                                 color = White,
                                 shape = RoundedCornerShape(8.dp)
@@ -240,9 +237,12 @@ fun PersonItemTest(
                         
                         Box(
                             modifier = Modifier
-                                .padding(4.dp)
+                                .padding(
+                                    horizontal = 8.dp
+                                )
                                 .background(
-                                    color = backgroundColor
+                                    color = backgroundColor,
+                                    shape = CircleShape
                                 )
                         ) {
 
@@ -250,10 +250,14 @@ fun PersonItemTest(
                                 text = moduleNumber,
                                 color = White,
                                 fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
                                 modifier = Modifier
-                                    .background(
-                                        color = if (isInValidatedList) ValidatedModule else NotValidatedModule
-                                    )
+                                    .drawBehind {
+                                        drawCircle(
+                                            color = if (isInValidatedList) ValidatedModule else NotValidatedModule,
+                                            radius = this.size.maxDimension / 2.0f
+                                        )
+                                    }
                                     .padding(4.dp)
                             )
 

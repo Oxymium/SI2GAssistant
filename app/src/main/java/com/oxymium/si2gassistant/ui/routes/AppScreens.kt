@@ -1,4 +1,4 @@
-package com.oxymium.si2gassistant.ui.scenes
+package com.oxymium.si2gassistant.ui.routes
 
 enum class AppScreens {
     SPLASH_SCREEN,

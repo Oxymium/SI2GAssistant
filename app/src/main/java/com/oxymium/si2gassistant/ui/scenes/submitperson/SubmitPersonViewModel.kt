@@ -73,11 +73,7 @@ class SubmitPersonViewModel(
 
     private val _person = MutableStateFlow(Person())
     val person = _person.asStateFlow()
-    private fun updatePerson(person: Person) {
-        viewModelScope.launch {
-            _person.emit(person)
-        }
-    }
+
     private fun submitPerson(person: Person) {
         viewModelScope.launch {
             val personFinalized = person.copy(
@@ -136,24 +132,32 @@ class SubmitPersonViewModel(
 
     fun onEvent(submitPersonEvent: SubmitPersonEvent) {
         when (submitPersonEvent) {
-            is SubmitPersonEvent.OnPersonRoleChanged -> updatePerson(person.value.copy(role = submitPersonEvent.personRole))
-            is SubmitPersonEvent.OnPersonFirstNameChanged -> updatePerson(person.value.copy(firstname = submitPersonEvent.personFirstName))
-            is SubmitPersonEvent.OnPersonLastNameChanged -> updatePerson(person.value.copy(lastname = submitPersonEvent.personLastName))
+            is SubmitPersonEvent.OnPersonRoleChanged ->
+                _person.value = person.value.copy(
+                    role = submitPersonEvent.personRole
+                )
 
-            SubmitPersonEvent.OnPersonsModeButtonClicked -> {
-                val newState = state.value.copy(
+            is SubmitPersonEvent.OnPersonFirstNameChanged ->
+                _person.value = person.value.copy(
+                    firstname = submitPersonEvent.personFirstName
+                )
+
+            is SubmitPersonEvent.OnPersonLastNameChanged ->
+                _person.value = person.value.copy(
+                    lastname = submitPersonEvent.personLastName
+                )
+
+            SubmitPersonEvent.OnPersonsModeButtonClicked ->
+                _state.value = state.value.copy(
                     submitPersonMode = false,
                     personsMode = true
                 )
-                _state.value = newState
-            }
-            SubmitPersonEvent.OnSubmitPersonModeButtonClicked -> {
-                val newState = state.value.copy(
+
+            SubmitPersonEvent.OnSubmitPersonModeButtonClicked ->
+                _state.value = state.value.copy(
                     submitPersonMode = true,
                     personsMode = false
                 )
-                _state.value = newState
-            }
 
             SubmitPersonEvent.DismissPersonDetailsSheet -> {
                 _selected.value = null
@@ -172,6 +176,7 @@ class SubmitPersonViewModel(
                 )
 
                 val result = SubmitPersonValidator.validatePerson(person.value)
+
                 // Verify if any element is null
                 val errors = listOfNotNull(
                     result.personRoleError,
@@ -180,11 +185,6 @@ class SubmitPersonViewModel(
                 )
 
                 if (errors.isEmpty()) {
-                    _state.value = state.value.copy(
-                        isRoleFieldError = false,
-                        isFirstnameFieldError = false,
-                        isLastnameFieldError = false,
-                    )
 
                     submitPerson(person.value) // submit person after validation
 

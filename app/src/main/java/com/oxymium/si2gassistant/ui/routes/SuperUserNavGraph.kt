@@ -9,10 +9,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.oxymium.si2gassistant.ui.scenes.AppRoutes
-import com.oxymium.si2gassistant.ui.scenes.AppScreens
-import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
-import com.oxymium.si2gassistant.ui.scenes.NavigationState
+import com.oxymium.si2gassistant.ui.NavigationEvent
+import com.oxymium.si2gassistant.ui.NavigationState
 import com.oxymium.si2gassistant.ui.scenes.bottomnavigationbar.BottomNavigationBar
 import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketViewModel
 import com.oxymium.si2gassistant.ui.scenes.buglist.BugTicketsScreen
@@ -37,8 +35,11 @@ fun SuperUserNavGraph(
         bottomBar = {
             BottomNavigationBar(
                 navController = navController,
-                navigationEvent,
-                navigationState = navigationState
+                navigationState = navigationState,
+                onNavigateTo = {
+                    navController.navigate(it.name) // handles navigation
+                    navigationEvent.invoke(NavigationEvent.OnItemMenuButtonClick(it)) // update current route state
+                }
             )
         },
         content = {
@@ -62,7 +63,6 @@ fun SuperUserNavGraph(
                         val state = viewModel.state.collectAsState()
                         GreetingsScreen(
                             state.value,
-                            viewModel::onEvent,
                             navigationEvent = navigationEvent
                         )
                     }

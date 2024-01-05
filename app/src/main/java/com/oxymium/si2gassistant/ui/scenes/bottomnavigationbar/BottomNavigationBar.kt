@@ -23,9 +23,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.User
-import com.oxymium.si2gassistant.ui.scenes.AppScreens
-import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
-import com.oxymium.si2gassistant.ui.scenes.NavigationState
+import com.oxymium.si2gassistant.ui.routes.AppScreens
+import com.oxymium.si2gassistant.ui.NavigationState
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
@@ -34,11 +33,11 @@ import com.oxymium.si2gassistant.ui.theme.White
 @Composable
 fun BottomNavigationBar(
     navController: NavController?,
-    navigationEvent: (NavigationEvent) -> Unit,
-    navigationState: NavigationState
+    navigationState: NavigationState,
+    onNavigateTo: (AppScreens) -> Unit
 ) {
 
-    val backgroundColor = if (navigationState.navigationScreen == AppScreens.GREETINGS_SCREEN.name) Neutral else White
+    val backgroundColor = if (navigationState.currentScreen == AppScreens.GREETINGS_SCREEN.name) Neutral else White
 
     Column(
         modifier = Modifier
@@ -69,7 +68,7 @@ fun BottomNavigationBar(
                     .fillMaxWidth()
                     .align(Alignment.CenterVertically),
                 textAlign = TextAlign.Center,
-                text = when (navigationState.navigationScreen) {
+                text = when (navigationState.currentScreen) {
                     // BOTH
                     AppScreens.GREETINGS_SCREEN.name -> "Greetings"
                     // NORMAL
@@ -82,7 +81,7 @@ fun BottomNavigationBar(
                     AppScreens.BUG_TICKETS_SCREEN.name -> "Bug tickets"
                     AppScreens.REPORT_BUG_SCREEN.name -> "Report a bug"
                     AppScreens.SUGGESTIONS_SCREEN.name -> "Suggestions"
-                    else -> ""
+                    else -> "BLANK"
                 },
                 color = White,
                 fontSize = 20.sp,
@@ -90,7 +89,6 @@ fun BottomNavigationBar(
             )
 
         }
-
 
         BottomNavigation(
             modifier = Modifier
@@ -110,15 +108,15 @@ fun BottomNavigationBar(
                 BottomNavigationItem(
                     modifier = Modifier
                         .background(
-                            color = if (navigationState.navigationScreen == AppScreens.GREETINGS_SCREEN.name) MenuAccent else Neutral,
+                            color = if (navigationState.currentScreen == AppScreens.GREETINGS_SCREEN.name) MenuAccent else Neutral,
                             shape = RoundedCornerShape(
                                 bottomStart = 75.dp,
                                 bottomEnd = 75.dp
                             )
                         ),
-                    selected = navController?.currentDestination?.route == AppScreens.GREETINGS_SCREEN.name,
+                    selected = navigationState.currentScreen == AppScreens.GREETINGS_SCREEN.name,
                     onClick = {
-                        navigationEvent.invoke(NavigationEvent.OnGreetingsButtonClick)
+                        onNavigateTo(AppScreens.GREETINGS_SCREEN)
                     },
                     icon = {
                         Icon(
@@ -133,7 +131,7 @@ fun BottomNavigationBar(
                 BottomNavigationItem(
                     modifier = Modifier
                         .background(
-                            color = if (navigationState.navigationScreen == AppScreens.SUBMIT_PERSON_SCREEN.name) MenuAccent else Neutral,
+                            color = if (navigationState.currentScreen == AppScreens.SUBMIT_PERSON_SCREEN.name) MenuAccent else Neutral,
                             shape = RoundedCornerShape(
                                 bottomStart = 75.dp,
                                 bottomEnd = 75.dp
@@ -141,7 +139,7 @@ fun BottomNavigationBar(
                         ),
                     selected = navController?.currentDestination?.route == AppScreens.SUBMIT_PERSON_SCREEN.name,
                     onClick = {
-                        navigationEvent.invoke(NavigationEvent.OnSubmitPersonButtonClick)
+                        onNavigateTo(AppScreens.SUBMIT_PERSON_SCREEN)
                     },
                     icon = {
                         Icon(
@@ -156,7 +154,7 @@ fun BottomNavigationBar(
                 BottomNavigationItem(
                     modifier = Modifier
                         .background(
-                            color = if (navigationState.navigationScreen == AppScreens.REPORT_BUG_SCREEN.name) MenuAccent else Neutral,
+                            color = if (navigationState.currentScreen == AppScreens.REPORT_BUG_SCREEN.name) MenuAccent else Neutral,
                             shape = RoundedCornerShape(
                                 bottomStart = 75.dp,
                                 bottomEnd = 75.dp
@@ -164,7 +162,7 @@ fun BottomNavigationBar(
                         ),
                     selected = navController?.currentDestination?.route == AppScreens.REPORT_BUG_SCREEN.name,
                     onClick = {
-                        navigationEvent.invoke(NavigationEvent.OnReportBugButtonClick)
+                        onNavigateTo(AppScreens.REPORT_BUG_SCREEN)
                     },
                     icon = {
                         Icon(
@@ -179,7 +177,7 @@ fun BottomNavigationBar(
                 BottomNavigationItem(
                     modifier = Modifier
                         .background(
-                            color = if (navigationState.navigationScreen == AppScreens.SUBMIT_SUGGESTION_SCREEN.name) MenuAccent else Neutral,
+                            color = if (navigationState.currentScreen == AppScreens.SUBMIT_SUGGESTION_SCREEN.name) MenuAccent else Neutral,
                             shape = RoundedCornerShape(
                                 bottomStart = 75.dp,
                                 bottomEnd = 75.dp
@@ -187,7 +185,7 @@ fun BottomNavigationBar(
                         ),
                     selected = navController?.currentDestination?.route == AppScreens.SUBMIT_SUGGESTION_SCREEN.name,
                     onClick = {
-                        navigationEvent.invoke(NavigationEvent.OnSubmitSuggestionButtonClick)
+                        onNavigateTo(AppScreens.SUBMIT_SUGGESTION_SCREEN)
                     },
                     icon = {
                         Icon(
@@ -205,19 +203,21 @@ fun BottomNavigationBar(
 
             } else {
 
+                println("TEST >>>>>< ${navController?.currentDestination?.route}")
+
                 // GREETINGS
                 BottomNavigationItem(
                     modifier = Modifier
                         .background(
-                            color = if (navigationState.navigationScreen == AppScreens.GREETINGS_SCREEN.name) MenuAccent else Neutral,
+                            color = if (navigationState.currentScreen == AppScreens.GREETINGS_SCREEN.name) MenuAccent else Neutral,
                             shape = RoundedCornerShape(
                                 bottomStart = 75.dp,
                                 bottomEnd = 75.dp
                             )
                         ),
-                    selected = navController?.currentDestination?.route == AppScreens.GREETINGS_SCREEN.name,
+                    selected = navigationState.currentScreen  == AppScreens.GREETINGS_SCREEN.name,
                     onClick = {
-                        navigationEvent.invoke(NavigationEvent.OnGreetingsButtonClick)
+                        onNavigateTo(AppScreens.GREETINGS_SCREEN)
                     },
                     icon = {
                         Icon(
@@ -232,7 +232,7 @@ fun BottomNavigationBar(
                 BottomNavigationItem(
                     modifier = Modifier
                         .background(
-                            color = if (navigationState.navigationScreen == AppScreens.METRICS_SCREEN.name) MenuAccent else Neutral,
+                            color = if (navigationState.currentScreen == AppScreens.METRICS_SCREEN.name) MenuAccent else Neutral,
                             shape = RoundedCornerShape(
                                 bottomStart = 75.dp,
                                 bottomEnd = 75.dp
@@ -240,7 +240,7 @@ fun BottomNavigationBar(
                         ),
                     selected = navController?.currentDestination?.route == AppScreens.METRICS_SCREEN.name,
                     onClick = {
-                        navigationEvent.invoke(NavigationEvent.OnMetricsButtonClick)
+                        onNavigateTo(AppScreens.METRICS_SCREEN)
                     },
                     icon = {
                         Icon(
@@ -255,7 +255,7 @@ fun BottomNavigationBar(
                 BottomNavigationItem(
                     modifier = Modifier
                         .background(
-                            color = if (navigationState.navigationScreen == AppScreens.PERSONS_SCREEN.name) MenuAccent else Neutral,
+                            color = if (navigationState.currentScreen == AppScreens.PERSONS_SCREEN.name) MenuAccent else Neutral,
                             shape = RoundedCornerShape(
                                 bottomStart = 75.dp,
                                 bottomEnd = 75.dp
@@ -263,7 +263,7 @@ fun BottomNavigationBar(
                         ),
                     selected = navController?.currentDestination?.route == AppScreens.PERSONS_SCREEN.name,
                     onClick = {
-                        navigationEvent.invoke(NavigationEvent.OnPersonsButtonClick)
+                        onNavigateTo(AppScreens.PERSONS_SCREEN)
                     },
                     icon = {
                         Icon(
@@ -279,7 +279,7 @@ fun BottomNavigationBar(
                 BottomNavigationItem(
                     modifier = Modifier
                         .background(
-                            color = if (navigationState.navigationScreen == AppScreens.BUG_TICKETS_SCREEN.name) MenuAccent else Neutral,
+                            color = if (navigationState.currentScreen == AppScreens.BUG_TICKETS_SCREEN.name) MenuAccent else Neutral,
                             shape = RoundedCornerShape(
                                 bottomStart = 75.dp,
                                 bottomEnd = 75.dp
@@ -287,7 +287,7 @@ fun BottomNavigationBar(
                         ),
                     selected = navController?.currentDestination?.route == AppScreens.BUG_TICKETS_SCREEN.name,
                     onClick = {
-                        navigationEvent.invoke(NavigationEvent.OnBugTicketsButtonClick)
+                        onNavigateTo(AppScreens.BUG_TICKETS_SCREEN)
                     },
                     icon = {
                         Icon(
@@ -299,11 +299,11 @@ fun BottomNavigationBar(
 
                     )
 
-                // BUG TICKETS
+                // SUGGESTIONS
                 BottomNavigationItem(
                     modifier = Modifier
                         .background(
-                            color = if (navigationState.navigationScreen == AppScreens.SUGGESTIONS_SCREEN.name) MenuAccent else Neutral,
+                            color = if (navigationState.currentScreen == AppScreens.SUGGESTIONS_SCREEN.name) MenuAccent else Neutral,
                             shape = RoundedCornerShape(
                                 bottomStart = 75.dp,
                                 bottomEnd = 75.dp
@@ -311,7 +311,7 @@ fun BottomNavigationBar(
                         ),
                     selected = navController?.currentDestination?.route == AppScreens.SUGGESTIONS_SCREEN.name,
                     onClick = {
-                        navigationEvent.invoke(NavigationEvent.OnSuggestionsButtonClick)
+                        onNavigateTo(AppScreens.SUGGESTIONS_SCREEN)
                     },
                     icon = {
                         Icon(
@@ -337,7 +337,7 @@ fun BottomNavigationPreview() {
         val previewState = NavigationState(currentUser = User("", "","", "", "", false))
         BottomNavigationBar(
             navController = null,
-            {},
-            navigationState = previewState)
+            navigationState = previewState
+        ) {}
     }
 }

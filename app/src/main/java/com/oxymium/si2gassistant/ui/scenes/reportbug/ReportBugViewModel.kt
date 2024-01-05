@@ -163,6 +163,7 @@ class ReportBugViewModel(
                 )
 
                 val result = ReportBugValidator.validateBugTicket(bugTicket.value)
+
                 // Verify if any element is null
                 val errors = listOfNotNull(
                     result.bugTicketCategoryError,
@@ -206,9 +207,9 @@ class ReportBugViewModel(
                             isDescriptionFieldError = true
                         )
                     }
+
                 }
             }
-
 
         }
     }

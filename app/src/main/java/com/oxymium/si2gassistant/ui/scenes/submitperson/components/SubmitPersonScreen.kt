@@ -215,9 +215,9 @@ fun SubmitPersonScreenTest(
 fun PersonsScreenTestPreview() {
     Si2GAssistantTheme {
         val previewState = SubmitPersonState(
-            isRoleFieldError = true,
-            isFirstnameFieldError = true,
-            isLastnameFieldError = true
+            isRoleFieldError = false,
+            isFirstnameFieldError = false,
+            isLastnameFieldError = false
         )
         SubmitPersonScreenTest(
             state = previewState

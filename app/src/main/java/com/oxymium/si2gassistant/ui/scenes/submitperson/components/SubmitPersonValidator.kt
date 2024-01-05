@@ -1,6 +1,5 @@
 package com.oxymium.si2gassistant.ui.scenes.submitperson.components
 
-import com.oxymium.si2gassistant.domain.entities.BugTicket
 import com.oxymium.si2gassistant.domain.entities.Person
 
 object SubmitPersonValidator {
@@ -11,7 +10,7 @@ object SubmitPersonValidator {
 
         if (person.role.isNullOrEmpty() || person.role.isBlank()) {
             result = result.copy(
-                personRoleError = "Error: firstname cannot be empty")
+                personRoleError = "Error: role cannot be empty")
         }
 
         if (person.firstname.isNullOrEmpty() || person.firstname.isBlank()) {

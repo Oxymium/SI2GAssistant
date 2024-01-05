@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.Auth
-import com.oxymium.si2gassistant.ui.scenes.NavigationEvent
+import com.oxymium.si2gassistant.ui.NavigationEvent
 import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
@@ -77,23 +77,28 @@ fun LoginScreen(
                     )
             ) {
 
-                Button(
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MenuAccent
-                    ),
-                    onClick = { event.invoke(SplashEvent.OnClickLoginButton) }
-                ) {
+                // LOGIN BUTTON
+                if (state.isUserLoading) { // toggled off during loading
 
-                    Icon(
+                    Button(
                         modifier = Modifier
-                            .background(MenuAccent)
-                            .size(24.dp),
-                        painter = painterResource(id = R.drawable.ic_login_variant),
-                        contentDescription = "Login button",
-                        tint = White
-                    )
+                            .align(Alignment.Center),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MenuAccent
+                        ),
+                        onClick = { event.invoke(SplashEvent.OnClickLoginButton) }
+                    ) {
+
+                        Icon(
+                            modifier = Modifier
+                                .background(MenuAccent)
+                                .size(24.dp),
+                            painter = painterResource(id = R.drawable.ic_login_variant),
+                            contentDescription = "Login button",
+                            tint = White
+                        )
+                    }
+
                 }
 
             }
@@ -113,7 +118,7 @@ fun LoginScreen(
                                 horizontal = 16.dp
                             )
                             .fillMaxWidth(),
-                        text = "Login",
+                        text = "Credentials",
                         color = White,
                         textAlign = TextAlign.End
                     )
@@ -133,14 +138,14 @@ fun LoginScreen(
                                 event.invoke(SplashEvent.OnLoginMailChanged(mail))
                             },
                             colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = TextAccent,
+                                textColor = White,
                                 cursorColor = White,
                                 focusedBorderColor = TextAccent,
                                 unfocusedBorderColor = White
                             ),
                             label = {
-                                androidx.compose.material.Text(
-                                    text = if (state.isMailFieldError) "Mail input error" else "Mail",
+                                Text(
+                                    text = "Mail",
                                     color = Color.White
                                 )
                             },
@@ -149,6 +154,19 @@ fun LoginScreen(
                                 keyboardType = KeyboardType.Email
                             ),
                             maxLines = 1
+                        )
+                    }
+
+                    if (state.isMailFieldError) {
+                        Text(
+                            modifier = Modifier
+                                .padding(
+                                    horizontal = 16.dp
+                                )
+                                .fillMaxWidth(),
+                            text = "*mail cannot be empty",
+                            color = White,
+                            textAlign = TextAlign.End
                         )
                     }
 
@@ -167,14 +185,14 @@ fun LoginScreen(
                                 event.invoke(SplashEvent.OnLoginPasswordChanged(password))
                             },
                             colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = TextAccent,
+                                textColor = White,
                                 cursorColor = White,
                                 focusedBorderColor = TextAccent,
                                 unfocusedBorderColor = White,
                             ),
                             label = {
-                                androidx.compose.material.Text(
-                                    text = if (state.isPasswordFieldError) "Password input error" else "Password",
+                                Text(
+                                    text = "Password",
                                     color = White
                                 )
                             },
@@ -184,6 +202,19 @@ fun LoginScreen(
                             ),
                             maxLines = 1,
                             visualTransformation = PasswordVisualTransformation()
+                        )
+                    }
+
+                    if (state.isPasswordFieldError) {
+                        Text(
+                            modifier = Modifier
+                                .padding(
+                                    horizontal = 16.dp
+                                )
+                                .fillMaxWidth(),
+                            text = "*password cannot be empty",
+                            color = White,
+                            textAlign = TextAlign.End
                         )
                     }
 
