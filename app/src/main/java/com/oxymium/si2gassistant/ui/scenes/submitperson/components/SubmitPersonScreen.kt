@@ -57,7 +57,7 @@ fun SubmitPersonScreenTest(
                 .fillMaxWidth(),
             value = role,
             onValueChange = {
-                role = it.take(50)
+                role = it.take(30)
                 event.invoke(SubmitPersonEvent.OnPersonRoleChange(role))
             },
             colors = TextFieldDefaults.outlinedTextFieldColors(

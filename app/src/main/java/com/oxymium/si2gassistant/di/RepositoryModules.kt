@@ -1,17 +1,19 @@
 package com.oxymium.si2gassistant.di
 
+import com.oxymium.si2gassistant.data.repository.DataStoreRepositoryImpl
 import com.oxymium.si2gassistant.domain.repository.BugTicketRepository
 import com.oxymium.si2gassistant.data.repository.FirebaseAuthImpl
 import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreAcademiesImpl
 import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreAnnouncementsImpl
 import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreBugTicketsImpl
-import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreModuleImpl
+import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreModulesImpl
 import com.oxymium.si2gassistant.data.repository.FirebaseFirestorePersonsImpl
 import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreSuggestionsImpl
-import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreUserImpl
+import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreUsersImpl
 import com.oxymium.si2gassistant.domain.repository.AcademyRepository
 import com.oxymium.si2gassistant.domain.repository.AnnouncementRepository
 import com.oxymium.si2gassistant.domain.repository.AuthRepository
+import com.oxymium.si2gassistant.domain.repository.DataStoreRepository
 import com.oxymium.si2gassistant.domain.repository.ModuleRepository
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
 import com.oxymium.si2gassistant.domain.repository.SuggestionRepository
@@ -24,13 +26,13 @@ val repositoryModules = module {
     single<AuthRepository> { FirebaseAuthImpl(firebaseAuth = get() ) }
 
     // REPO: User
-    single<UserRepository> { FirebaseFirestoreUserImpl(firebaseFirestore = get() ) }
+    single<UserRepository> { FirebaseFirestoreUsersImpl(firebaseFirestore = get() ) }
 
     // REPO: Person
     single<PersonRepository> { FirebaseFirestorePersonsImpl(firebaseFirestore = get() ) }
 
     // REPO: Module
-    single<ModuleRepository> { FirebaseFirestoreModuleImpl(firebaseFirestore = get() ) }
+    single<ModuleRepository> { FirebaseFirestoreModulesImpl(firebaseFirestore = get() ) }
 
     // REPO: Academy
     single<AcademyRepository> { FirebaseFirestoreAcademiesImpl(firebaseFirestore = get() ) }
@@ -43,5 +45,8 @@ val repositoryModules = module {
 
     // REPO: Announcement
     single<AnnouncementRepository> { FirebaseFirestoreAnnouncementsImpl(firebaseFirestore = get() ) }
+
+    // REPO: DataStore
+    single<DataStoreRepository> { DataStoreRepositoryImpl(context = get() ) }
 
 }

@@ -6,7 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.oxymium.si2gassistant.ui.navigation.NavigationEvent
+import com.oxymium.si2gassistant.domain.states.AppState
+import com.oxymium.si2gassistant.ui.AppEvent
 import com.oxymium.si2gassistant.ui.scenes.splash.SplashViewModel
 import com.oxymium.si2gassistant.ui.scenes.splash.SplashScreen
 import org.koin.androidx.compose.koinViewModel
@@ -14,29 +15,31 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LoginNavGraph(
     navController: NavHostController,
-    navigationEvent: (NavigationEvent) -> Unit,
+    appState: AppState,
+    appEvent: (AppEvent) -> Unit
 ) {
 
     NavHost(
         navController = navController,
-        startDestination = AppRoutes.SPLASH_ROUTE.name
+        startDestination = AppRoute.SPLASH_ROUTE.name
     ) {
 
         navigation(
-            route = AppRoutes.SPLASH_ROUTE.name,
-            startDestination = AppScreens.SPLASH_SCREEN.name
+            route = AppRoute.SPLASH_ROUTE.name,
+            startDestination = AppScreen.SPLASH_SCREEN.name
         ) {
 
             // SCREEN: SPLASH
             composable(
-                route = AppScreens.SPLASH_SCREEN.name
+                route = AppScreen.SPLASH_SCREEN.name
             ) {
                 val viewModel = koinViewModel<SplashViewModel>()
                 val state = viewModel.state.collectAsState()
                 SplashScreen(
                     state = state.value,
-                    navigationEvent = navigationEvent,
-                    event = viewModel::onEvent
+                    event = viewModel::onEvent,
+                    appState = appState,
+                    appEvent = appEvent
                 )
             }
         }

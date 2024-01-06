@@ -75,7 +75,7 @@ fun MetricsScreen(
                     modifier = Modifier
                         .background(if (state.isOverallMetricsScreen) MenuAccent else White)
                         .size(24.dp),
-                    painter = painterResource(id = R.drawable.ic_bug),
+                    painter = painterResource(id = R.drawable.ic_album),
                     contentDescription = null,
                     tint = if (state.isOverallMetricsScreen) White else Neutral
                 )

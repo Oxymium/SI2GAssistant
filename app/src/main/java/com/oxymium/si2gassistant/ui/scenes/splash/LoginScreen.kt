@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,8 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,9 +40,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.oxymium.si2gassistant.R
-import com.oxymium.si2gassistant.domain.entities.Auth
+import com.oxymium.si2gassistant.domain.states.AppState
 import com.oxymium.si2gassistant.domain.states.SplashState
-import com.oxymium.si2gassistant.ui.navigation.NavigationEvent
+import com.oxymium.si2gassistant.ui.AppEvent
 import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
@@ -50,11 +53,22 @@ import com.oxymium.si2gassistant.ui.theme.White
 @Composable
 fun LoginScreen(
     state: SplashState,
-    navigationEvent: (NavigationEvent) -> Unit,
-    event: (SplashEvent) -> Unit
+    appState: AppState,
+    event: (SplashEvent) -> Unit,
+    appEvent: (AppEvent) -> Unit
 ) {
 
-    if (state.isAuthSuccessful) { navigationEvent.invoke(NavigationEvent.OnLoginButtonClick(state.user)) }
+    // Move the credentials upward to AppEvent
+    if (state.authQuery != null && state.authQuery.isReady) {
+        if (!state.authQuery.mail.isNullOrEmpty() && !state.authQuery.password.isNullOrEmpty()) {
+            appEvent.invoke(AppEvent.OnLoginButtonClick(
+                state.authQuery.mail,
+                state.authQuery.password
+            ))
+            // Reset isAuthQuery back to false
+            event.invoke(SplashEvent.OnButtonClickCallBack)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -69,6 +83,16 @@ fun LoginScreen(
                 .fillMaxSize()
         ) {
 
+            Text(
+                text = "",
+                color = White
+            )
+
+            Text(
+                text = "",
+                color = White
+            )
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -79,27 +103,23 @@ fun LoginScreen(
             ) {
 
                 // LOGIN BUTTON
-                if (state.isUserLoading) { // toggled off during loading
+                Button(
+                    modifier = Modifier
+                        .align(Alignment.Center),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MenuAccent
+                    ),
+                    onClick = { event.invoke(SplashEvent.OnLoginButtonClick) }
+                ) {
 
-                    Button(
+                    Icon(
                         modifier = Modifier
-                            .align(Alignment.Center),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MenuAccent
-                        ),
-                        onClick = { event.invoke(SplashEvent.OnLoginButtonClick) }
-                    ) {
-
-                        Icon(
-                            modifier = Modifier
-                                .background(MenuAccent)
-                                .size(24.dp),
-                            painter = painterResource(id = R.drawable.ic_login_variant),
-                            contentDescription = "Login button",
-                            tint = White
-                        )
-                    }
-
+                            .background(MenuAccent)
+                            .size(24.dp),
+                        painter = painterResource(id = R.drawable.ic_login_variant),
+                        contentDescription = "Login button",
+                        tint = White
+                    )
                 }
 
             }
@@ -182,7 +202,7 @@ fun LoginScreen(
                                 .fillMaxWidth(),
                             value = password,
                             onValueChange = {
-                                password = it.filter { char -> !char.isWhitespace() }.take(20)
+                                password = it.filter { char -> !char.isWhitespace() }.take(30)
                                 event.invoke(SplashEvent.OnLoginPasswordChange(password))
                             },
                             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -219,8 +239,38 @@ fun LoginScreen(
                         )
                     }
 
+                    // REMEMBER ME
+                    var checkedState by remember { mutableStateOf(false) }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = 8.dp,
+                                vertical = 8.dp
+                            )
+                    ) {
+
+                        Checkbox(
+                            checked = checkedState,
+                            onCheckedChange = { checkedState = it },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = MenuAccent,
+                                uncheckedColor = White
+                            )
+                        )
+
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically),
+                            text = "Remember me",
+                            color = White
+                        )
+
+                    }
+
                     // LOADING ANIMATION
-                    if (state.isAuthLoading) {
+                    if (appState.isUserLoading) {
 
                         LoadingAnimation(
                             modifier = Modifier
@@ -232,17 +282,17 @@ fun LoginScreen(
                 }
 
                 val offsetY1 by animateFloatAsState(
-                    targetValue = if (state.isAuthLoading) 0f else 500f,
+                    targetValue = if (appState.isAuthLoading) 0f else 500f,
                     animationSpec = tween(durationMillis = 500), label = ""
                 )
 
                 val offsetY2 by animateFloatAsState(
-                    targetValue = if (state.isAuthSuccessful) 0f else 500f,
+                    targetValue = if (appState.isAuthSuccess) 0f else 500f,
                     animationSpec = tween(durationMillis = 500), label = ""
                 )
 
                 val offsetY3 by animateFloatAsState(
-                    targetValue = if (state.authError?.isError == true) 0f else 500f,
+                    targetValue = if (appState.authFailureMessage != null) 0f else 500f,
                     animationSpec = tween(durationMillis = 500), label = ""
                 )
 
@@ -253,7 +303,7 @@ fun LoginScreen(
                     contentAlignment = Alignment.Center
                 ) {
 
-                    if (state.isAuthLoading) {
+                    if (appState.isAuthLoading) {
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -266,22 +316,8 @@ fun LoginScreen(
                         )
                     }
 
-                    if (state.isAuthSuccessful) {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .offset(y = offsetY2.dp),
-                            text = "Successful!",
-                            color = White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 30.sp,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-
-                    if (state.authError?.isError == true) {
-                        Column() {
-
+                    if (appState.userFailureMessage != null) {
+                        Column {
                             Text(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -297,7 +333,7 @@ fun LoginScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .offset(y = offsetY3.dp),
-                                text = "${state.authError.errorMessage}",
+                                text = "${appState.authFailureMessage}",
                                 color = White,
                                 textAlign = TextAlign.Center,
                             )
@@ -314,13 +350,14 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    val loginPreview = Auth("mail@mock.test", "Random")
-    val state = SplashState(auth = loginPreview)
+    val appState = AppState()
+    val state = SplashState()
     Si2GAssistantTheme() {
         LoginScreen(
             state = state,
-            navigationEvent = {},
-            event = {}
+            appState = appState,
+            event = {},
+            appEvent = {}
         )
     }
 }

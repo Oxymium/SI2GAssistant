@@ -2,7 +2,7 @@ package com.oxymium.si2gassistant.ui.scenes.submitsuggestion
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.oxymium.si2gassistant.data.repository.GLOBAL_USER
+import com.oxymium.si2gassistant.currentUser
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.Suggestion
 import com.oxymium.si2gassistant.domain.repository.SuggestionRepository
@@ -28,11 +28,10 @@ class SubmitSuggestionViewModel(
     private fun submitSuggestion(suggestion: Suggestion) {
         viewModelScope.launch {
             val suggestionFinalized = suggestion.copy(
-                submittedAcademy = GLOBAL_USER?.academy,
+                submittedAcademy = currentUser?.academy,
                 submittedDate = Calendar.getInstance().timeInMillis,
-                submittedBy = GLOBAL_USER?.mail
+                submittedBy = currentUser?.mail
             )
-
             suggestionRepository.submitSuggestion(suggestionFinalized).collect {
                 when (it) {
                     // FAILURE
@@ -63,17 +62,18 @@ class SubmitSuggestionViewModel(
         }
     }
 
-    fun onEvent(submitSuggestionEvent: SubmitSuggestionEvent) {
-        when (submitSuggestionEvent) {
+    fun onEvent(event: SubmitSuggestionEvent) {
+        when (event) {
+
             is SubmitSuggestionEvent.OnSuggestionSubjectChange -> {
                 val suggestion = suggestion.value.copy(
-                    subject = submitSuggestionEvent.suggestionSubject
+                    subject = event.suggestionSubject
                 )
                 _suggestion.value = suggestion
             }
             is SubmitSuggestionEvent.OnSuggestionBodyChange -> {
                 val suggestion = suggestion.value.copy(
-                    body = submitSuggestionEvent.suggestionBody
+                    body = event.suggestionBody
                 )
                 _suggestion.value = suggestion
             }

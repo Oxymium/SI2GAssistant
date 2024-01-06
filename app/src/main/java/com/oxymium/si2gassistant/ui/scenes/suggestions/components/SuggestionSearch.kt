@@ -69,7 +69,7 @@ fun SuggestionSearch(
                         .fillMaxWidth(),
                     value = search,
                     onValueChange = {
-                        search = it.filter { char -> !char.isWhitespace() }.take(20)
+                        search = it.take(25)
                         event.invoke(SuggestionsEvent.OnSearchTextChange(search))
                     },
                     colors = TextFieldDefaults.outlinedTextFieldColors(

@@ -62,6 +62,10 @@ class MetricsViewModelTest{
         // THEN
         assertThat(state.values).containsExactly(
             MetricsState(
+                isBugTicketMetricsScreen = false,
+                isOverallMetricsScreen = false
+            ),
+            MetricsState(
                 isBugTicketMetricsScreen = true,
                 isOverallMetricsScreen = false
             )

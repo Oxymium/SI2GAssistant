@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,10 +13,16 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -49,20 +56,24 @@ fun BugTicketItem(
     bugTicket: BugTicket,
     onEvent: (BugTicketsEvent) -> Unit,
 ) {
+
+    val backgroundColor = when(bugTicket.priority) {
+        BugTicketPriority.LOW -> PriorityLow
+        BugTicketPriority.MEDIUM -> PriorityMedium
+        BugTicketPriority.HIGH -> PriorityHigh
+        BugTicketPriority.CRITICAL -> PriorityCritical
+        else -> PriorityCritical
+    }
+
+    var isPanelExpanded by remember { mutableStateOf(false) }
+
     Box(
         contentAlignment = Alignment.BottomStart,
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .background(
-                color =
-                when (bugTicket.priority) {
-                    BugTicketPriority.LOW -> PriorityLow
-                    BugTicketPriority.MEDIUM -> PriorityMedium
-                    BugTicketPriority.HIGH -> PriorityHigh
-                    BugTicketPriority.CRITICAL -> PriorityCritical
-                    else -> PriorityCritical
-                },
+                color = backgroundColor,
                 shape = MaterialTheme.shapes.medium
             )
             .clickable {
@@ -82,6 +93,29 @@ fun BugTicketItem(
                 colorFilter = ColorFilter.tint(White75),
                 contentDescription = ""
             )
+        }
+
+        Box(
+            modifier = Modifier
+                .padding(0.dp)
+                .align(Alignment.BottomStart)
+        ) {
+
+            Button(
+                modifier = Modifier.
+                align(Alignment.Center),
+                contentPadding = PaddingValues(0.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = backgroundColor
+                ),
+                onClick = { isPanelExpanded = !isPanelExpanded }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_down_box),
+                    contentDescription = "arrow down"
+                )
+            }
+
         }
 
         Column(
@@ -139,6 +173,7 @@ fun BugTicketItem(
                     .padding(2.dp)
                     .fillMaxWidth()
             ) {
+
                 Box(
                     modifier = Modifier
                         .padding(2.dp)
@@ -173,6 +208,57 @@ fun BugTicketItem(
             )
 
         }
+    }
+
+    // EXTRA PANEL
+    if (isPanelExpanded) {
+
+        Column(
+            modifier = Modifier
+                .padding(
+                    vertical = 2.dp
+                )
+                .fillMaxWidth()
+                .background(
+                    color = backgroundColor,
+                    shape = RoundedCornerShape(8.dp)
+                )
+        ) {
+
+            Text(
+                modifier = Modifier
+                    .padding(
+                    4.dp
+                ),
+                text = "■ description: ${bugTicket.description}",
+                color = White
+            )
+
+            if (bugTicket.isResolved) {
+
+                val convertedDate = DateUtils.convertMillisToDate(bugTicket.resolvedDate)
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            4.dp
+                        ),
+                    text = "■ resolved when: $convertedDate",
+                    color = White
+                )
+
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            4.dp
+                        ),
+                    text = "■ comment: ${bugTicket.resolvedComment}",
+                    color = White
+                )
+
+            }
+
+        }
+
     }
 }
 

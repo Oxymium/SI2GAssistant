@@ -1,26 +1,15 @@
 package com.oxymium.si2gassistant.domain.states
 
-import com.oxymium.si2gassistant.domain.entities.Auth
-import com.oxymium.si2gassistant.domain.entities.User
-import com.oxymium.si2gassistant.domain.validators.Login
-
 data class SplashState(
-    val auth: Auth? = null,
-    val login: Login? = null,
-    val user: User? = null,
     val isMailFieldError: Boolean = false,
     val isPasswordFieldError: Boolean = false,
-    val isAuthLoading: Boolean = false,
-    val authError: AuthError? = null,
-    val isAuthSuccessful: Boolean = false,
-    val isUserLoading: Boolean = true,
-    val userError: String? = null,
-    val isUserSuccessful: Boolean = false,
     val isLogoScreen: Boolean = true, // default
-    val isLoginScreen: Boolean = false
+    val isLoginScreen: Boolean = false,
+    val authQuery: AuthQuery? = null
 )
 
-data class AuthError(
-    val isError: Boolean,
-    val errorMessage: String?
+data class AuthQuery(
+    val isReady: Boolean = false,
+    val mail: String? = null,
+    val password: String? = null
 )

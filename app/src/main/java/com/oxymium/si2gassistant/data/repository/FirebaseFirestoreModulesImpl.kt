@@ -9,7 +9,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class FirebaseFirestoreModuleImpl(val firebaseFirestore: FirebaseFirestore): ModuleRepository {
+class FirebaseFirestoreModulesImpl(val firebaseFirestore: FirebaseFirestore): ModuleRepository {
 
     // GET: ALL
     override fun getAllModules(): Flow<Result<List<Module>>> = callbackFlow {

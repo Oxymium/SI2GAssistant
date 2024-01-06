@@ -8,7 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
-import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreUserImpl
+import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreUsersImpl
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.User
 import com.oxymium.si2gassistant.utils.observe
@@ -30,7 +30,7 @@ class UserRepositoryTest {
         // GIVEN
         val firebaseFirestore = mockk<FirebaseFirestore>()
         val userCollectionMock = mockk<CollectionReference>()
-        val userRepository = FirebaseFirestoreUserImpl(firebaseFirestore)
+        val userRepository = FirebaseFirestoreUsersImpl(firebaseFirestore)
         val registration = mockk<ListenerRegistration> {
             every { remove() } just Runs
         }
@@ -65,7 +65,7 @@ class UserRepositoryTest {
         val user = User("001", "test@gmail.test", "Academy", "John", "Doe", false)
         val firebaseFirestore = mockk<FirebaseFirestore>()
         val userCollectionMock = mockk<CollectionReference>()
-        val userRepository = FirebaseFirestoreUserImpl(firebaseFirestore)
+        val userRepository = FirebaseFirestoreUsersImpl(firebaseFirestore)
         val registration = mockk<ListenerRegistration> {
             every { remove() } just Runs
         }

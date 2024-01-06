@@ -73,7 +73,7 @@ fun BugTicketSearch(
                         .fillMaxWidth(),
                     value = search,
                     onValueChange = {
-                        search = it.filter { char -> !char.isWhitespace() }.take(20)
+                        search = it.take(25)
                         event.invoke(BugTicketsEvent.OnSearchTextChange(search))
                     },
                     colors = TextFieldDefaults.outlinedTextFieldColors(

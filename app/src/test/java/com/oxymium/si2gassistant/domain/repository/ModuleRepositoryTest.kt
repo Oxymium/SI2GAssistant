@@ -8,7 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
-import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreModuleImpl
+import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreModulesImpl
 import com.oxymium.si2gassistant.domain.entities.Module
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.utils.observe
@@ -30,7 +30,7 @@ class ModuleRepositoryTest {
         // GIVEN
         val firebaseFirestore = mockk<FirebaseFirestore>()
         val moduleCollectionMock = mockk<CollectionReference>()
-        val moduleRepository = FirebaseFirestoreModuleImpl(firebaseFirestore)
+        val moduleRepository = FirebaseFirestoreModulesImpl(firebaseFirestore)
         val registration = mockk<ListenerRegistration> {
             every { remove() } just Runs
         }
@@ -66,7 +66,7 @@ class ModuleRepositoryTest {
         val moduleList = listOf(module)
         val firebaseFirestore = mockk<FirebaseFirestore>()
         val moduleCollectionMock = mockk<CollectionReference>()
-        val moduleRepository = FirebaseFirestoreModuleImpl(firebaseFirestore)
+        val moduleRepository = FirebaseFirestoreModulesImpl(firebaseFirestore)
         val registration = mockk<ListenerRegistration> {
             every { remove() } just Runs
         }

@@ -6,8 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.oxymium.si2gassistant.domain.states.AppState
 import com.oxymium.si2gassistant.domain.states.SplashState
-import com.oxymium.si2gassistant.ui.navigation.NavigationEvent
+import com.oxymium.si2gassistant.ui.AppEvent
 import com.oxymium.si2gassistant.ui.scenes.splash.components.LogoScreen
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
@@ -15,8 +16,9 @@ import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 @Composable
 fun SplashScreen(
     state: SplashState,
+    appState: AppState,
     event: (SplashEvent) -> Unit,
-    navigationEvent: (NavigationEvent) -> Unit
+    appEvent: (AppEvent) -> Unit
 ) {
 
     Column(
@@ -35,7 +37,8 @@ fun SplashScreen(
             LoginScreen(
                 state = state,
                 event = event,
-                navigationEvent = navigationEvent,
+                appState = appState,
+                appEvent = appEvent
             )
         }
     }
@@ -47,8 +50,10 @@ fun SplashScreen(
 fun SplashScreenPreview() {
     Si2GAssistantTheme {
         val previewState = SplashState()
+        val appStatePreview = AppState()
         SplashScreen(
             state = previewState,
+            appState = appStatePreview,
             {},
             {}
         )

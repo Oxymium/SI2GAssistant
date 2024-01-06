@@ -9,7 +9,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class FirebaseFirestoreUserImpl(
+class FirebaseFirestoreUsersImpl(
     val firebaseFirestore: FirebaseFirestore,
 ): UserRepository {
 

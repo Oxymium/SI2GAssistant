@@ -23,9 +23,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.oxymium.si2gassistant.R
+import com.oxymium.si2gassistant.domain.entities.User
+import com.oxymium.si2gassistant.domain.states.AppState
 import com.oxymium.si2gassistant.domain.states.GreetingsState
-import com.oxymium.si2gassistant.ui.navigation.LocalUserContext
-import com.oxymium.si2gassistant.ui.navigation.NavigationEvent
+import com.oxymium.si2gassistant.ui.AppEvent
 import com.oxymium.si2gassistant.ui.scenes.animations.GreetingsAnimation
 import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.greetings.components.AnnouncementFeed
@@ -39,10 +40,9 @@ import java.util.Calendar
 @Composable
 fun GreetingsScreen(
     state: GreetingsState,
-    navigationEvent: (NavigationEvent) -> Unit,
+    appState: AppState,
+    appEvent: (AppEvent) -> Unit,
 ) {
-
-    val user = LocalUserContext.current
 
     Box(
         modifier = Modifier
@@ -69,7 +69,7 @@ fun GreetingsScreen(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MenuAccent
                     ),
-                    onClick = { navigationEvent.invoke(NavigationEvent.OnLogoutButtonClick) }
+                    onClick = { appEvent.invoke(AppEvent.OnLogoutButtonClick) }
                 ) {
 
                     Icon(
@@ -124,7 +124,7 @@ fun GreetingsScreen(
                         modifier = Modifier
                             .padding(10.dp)
                             .align(Alignment.CenterHorizontally),
-                        text = "Welcome, ${user?.firstname} ${user?.lastname}",
+                        text = "Welcome, ${appState.currentUser?.firstname} ${appState.currentUser?.lastname}",
                         textAlign = TextAlign.Center,
                         color = Color.White,
                         fontSize = 38.sp,
@@ -135,7 +135,7 @@ fun GreetingsScreen(
                         modifier = Modifier
                             .padding(10.dp)
                             .align(Alignment.CenterHorizontally),
-                        text = "${user?.mail}",
+                        text = "${appState.currentUser?.mail}",
                         color = Color.White,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
@@ -145,13 +145,11 @@ fun GreetingsScreen(
                         modifier = Modifier
                             .padding(12.dp)
                             .align(Alignment.CenterHorizontally),
-                        text = "${user?.academy}",
+                        text = "${appState.currentUser?.academy}",
                         color = Color.White,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
-
-
 
                 }
 
@@ -210,8 +208,20 @@ fun GreetingsScreen(
 fun GreetingsScreenPreview() {
     Si2GAssistantTheme {
         val greetingsState = GreetingsState()
+        val appStatePreview = AppState(
+            currentUser = User(
+                "",
+                "gmail@test.net",
+                "Grenoble",
+                "Jon",
+                "Doe",
+                false
+            )
+        )
         GreetingsScreen(
             state = greetingsState,
-        ) {}
+            appState = appStatePreview,
+            appEvent = {}
+        )
     }
 }

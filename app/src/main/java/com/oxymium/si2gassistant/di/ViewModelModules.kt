@@ -1,6 +1,6 @@
 package com.oxymium.si2gassistant.di
 
-import com.oxymium.si2gassistant.ui.navigation.NavigationViewModel
+import com.oxymium.si2gassistant.ui.AppViewModel
 import com.oxymium.si2gassistant.ui.scenes.bugtickets.BugTicketsViewModel
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsViewModel
 import com.oxymium.si2gassistant.ui.scenes.splash.SplashViewModel
@@ -15,11 +15,11 @@ import org.koin.dsl.module
 
 val viewModelModules = module {
 
-    // VM: Navigation
-    viewModel { NavigationViewModel() }
+    // VM: App
+    viewModel { AppViewModel( get(), get(), get() ) }
 
     // VM: FirebaseUser
-    viewModel { SplashViewModel( get(), get() ) }
+    viewModel { SplashViewModel( get() ) }
 
     // WM: Greetings
     viewModel { GreetingsViewModel( get() ) }

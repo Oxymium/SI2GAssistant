@@ -2,7 +2,7 @@ package com.oxymium.si2gassistant.ui.scenes.submitperson
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.oxymium.si2gassistant.data.repository.GLOBAL_USER
+import com.oxymium.si2gassistant.currentUser
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
@@ -45,33 +45,35 @@ class SubmitPersonViewModel(
 
     private fun getAllPersonsByUserId() {
         viewModelScope.launch {
-            personRepository.getAllPersonsByUserId(GLOBAL_USER!!.id!!).collect() {
-                when (it) {
-                    // FAILURE
-                    is Result.Failed -> _state.emit(
-                        state.value.copy(
-                            isPersonsFailure = true,
-                            personsFailureMessage = it.errorMessage
-                        )
-                    )
-                    // LOADING
-                    is Result.Loading -> {
-                        _state.emit(
+            currentUser?.id?.let { id ->
+                personRepository.getAllPersonsByUserId(id).collect {
+                    when (it) {
+                        // FAILURE
+                        is Result.Failed -> _state.emit(
                             state.value.copy(
-                                isPersonsLoading = true
+                                isPersonsFailure = true,
+                                personsFailureMessage = it.errorMessage
                             )
                         )
-                        delay(loadingInMillis)
-                    }
-                    // SUCCESS
-                    is Result.Success -> _state.emit(
-                        state.value.copy(
-                            isPersonsFailure = false,
-                            personSubmitFailureMessage = null,
-                            isPersonsLoading = false,
-                            persons = it.data
+                        // LOADING
+                        is Result.Loading -> {
+                            _state.emit(
+                                state.value.copy(
+                                    isPersonsLoading = true
+                                )
+                            )
+                            delay(loadingInMillis)
+                        }
+                        // SUCCESS
+                        is Result.Success -> _state.emit(
+                            state.value.copy(
+                                isPersonsFailure = false,
+                                personSubmitFailureMessage = null,
+                                isPersonsLoading = false,
+                                persons = it.data
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
@@ -83,22 +85,23 @@ class SubmitPersonViewModel(
     private fun submitPerson(person: Person) {
         viewModelScope.launch {
             val personFinalized = person.copy(
-                academy = GLOBAL_USER?.academy,
-                userId = GLOBAL_USER?.id,
-                userFirstname = GLOBAL_USER?.firstname,
-                userLastname = GLOBAL_USER?.lastname
+                academy = currentUser?.academy,
+                userId = currentUser?.id,
+                userFirstname = currentUser?.firstname,
+                userLastname = currentUser?.lastname
             )
             // Await for result
             personFinalized.let {
                 personRepository.submitPerson(personFinalized).collect {
                     when (it) {
+                        // FAILURE
                         is Result.Failed -> _state.emit(
                             state.value.copy(
                                 isPersonSubmitFailure = true,
                                 personSubmitFailureMessage = it.errorMessage
                             )
                         )
-
+                        // LOADING
                         is Result.Loading -> {
                             _state.emit(
                                 state.value.copy(
@@ -107,7 +110,7 @@ class SubmitPersonViewModel(
                             )
                             delay(loadingInMillis)
                         }
-
+                        // SUCCESS
                         is Result.Success -> _state.emit(
                             state.value.copy(
                                 isPersonSubmitFailure = false,
@@ -120,7 +123,6 @@ class SubmitPersonViewModel(
                 }
             }
         }
-
     }
 
     private fun updatePersonValidatedModules(person: Person) {
@@ -138,6 +140,7 @@ class SubmitPersonViewModel(
 
     fun onEvent(event: SubmitPersonEvent) {
         when (event) {
+
             is SubmitPersonEvent.OnPersonRoleChange -> {
                 _person.value =
                     person.value.copy(
