@@ -4,25 +4,20 @@ import com.oxymium.si2gassistant.domain.entities.Suggestion
 
 object SubmitSuggestionValidator {
 
-    fun validateSuggestion(suggestion: Suggestion): SuggestionValidationResult {
+    fun validateSuggestion(suggestion: Suggestion): SuggestionValidationData {
+        return SuggestionValidationData(
+            suggestionSubjectError = suggestion.subject.isNullOrEmpty(),
+            suggestionBodyError = suggestion.body.isNullOrEmpty()
+        )
 
-        var result = SuggestionValidationResult()
-
-        if (suggestion.subject.isNullOrEmpty() || suggestion.subject.isBlank()) {
-            result = result.copy(
-                suggestionSubjectError = "Error: subject cannot be empty")
-        }
-
-        if (suggestion.body.isNullOrEmpty() || suggestion.body.isBlank()) {
-            result = result.copy(
-                suggestionBodyError = "Error: body cannot be empty")
-        }
-
-        return result
     }
 }
 
-data class SuggestionValidationResult(
-    val suggestionSubjectError: String? = null,
-    val suggestionBodyError: String? = null
-)
+data class SuggestionValidationData(
+    val suggestionSubjectError: Boolean,
+    val suggestionBodyError: Boolean
+) {
+    fun hasErrors(): Boolean {
+        return suggestionSubjectError || suggestionBodyError
+    }
+}

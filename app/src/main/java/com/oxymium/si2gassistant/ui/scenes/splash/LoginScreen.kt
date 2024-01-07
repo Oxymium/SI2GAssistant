@@ -66,7 +66,7 @@ fun LoginScreen(
                 state.authQuery.password
             ))
             // Reset isAuthQuery back to false
-            event.invoke(SplashEvent.OnButtonClickCallBack)
+            event.invoke(SplashEvent.OnButtonClickCallback)
         }
     }
 
@@ -316,7 +316,7 @@ fun LoginScreen(
                         )
                     }
 
-                    if (appState.userFailureMessage != null) {
+                    if (appState.authFailureMessage != null) {
                         Column {
                             Text(
                                 modifier = Modifier

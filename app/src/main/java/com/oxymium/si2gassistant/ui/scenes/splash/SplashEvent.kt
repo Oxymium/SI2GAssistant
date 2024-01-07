@@ -4,5 +4,5 @@ sealed interface SplashEvent {
     data object OnLoginButtonClick: SplashEvent
     data class OnLoginMailChange(val mail: String): SplashEvent
     data class OnLoginPasswordChange(val password: String): SplashEvent
-    data object OnButtonClickCallBack: SplashEvent
+    data object OnButtonClickCallback: SplashEvent
 }

@@ -159,16 +159,13 @@ class BugTicketsViewModel(
 
                 val result = ResolvedCommentaryValidator.validateResolvedCommentary(resolvedComment)
 
-                // Verify if any element is null
-                val errors = listOfNotNull(
-                    result.resolvedCommentaryError
-                )
-
-                if (errors.isEmpty()) {
-                    _state.value = state.value.copy(
-                        isResolvedCommentFieldError = false
-                    )
-
+                // Check if any errors
+                if (result.hasErrors()) {
+                    _state.value =
+                        state.value.copy(
+                            isResolvedCommentFieldError = result.resolvedCommentaryError
+                        )
+                } else {
                     // Update bug ticket if conditions are met
                     state.value.copy().let {
                         state.value.selectedBugTicket?.let { bugTicket ->
@@ -177,15 +174,6 @@ class BugTicketsViewModel(
                             )
                         }
                     }
-
-                } else {
-
-                    if (!result.resolvedCommentaryError.isNullOrEmpty()) {
-                        _state.value = state.value.copy(
-                            isResolvedCommentFieldError = true
-                        )
-                    }
-
                 }
             }
 

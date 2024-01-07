@@ -21,7 +21,7 @@ class SplashViewModel(
     val state = _state.asStateFlow()
 
     private val _login = MutableStateFlow(Login("", ""))
-    val login = _login.asStateFlow()
+    private val login = _login.asStateFlow()
 
     init {
         displayLogoScreenForGivenDuration() // start coroutine initially with given duration
@@ -42,7 +42,7 @@ class SplashViewModel(
     fun onEvent(event: SplashEvent) {
         when (event) {
 
-            SplashEvent.OnButtonClickCallBack -> {
+            SplashEvent.OnButtonClickCallback -> {
                 _state.value =
                     state.value.copy(
                         authQuery = null
@@ -51,53 +51,45 @@ class SplashViewModel(
 
             SplashEvent.OnLoginButtonClick -> {
 
-                val login = Login(
-                    _login.value.email,
-                    _login.value.password
-                )
-
-                val result = LoginValidator.validateLogin(login)
-                // Verify if any element is null
-                val errors = listOfNotNull(
-                    result.loginMailError,
-                    result.loginPasswordError
-                )
-                if (errors.isEmpty()) {
-                    _state.value = state.value.copy(
-                        isMailFieldError = false,
-                        isPasswordFieldError = false,
-                    )
-
-                    val authQuery = AuthQuery(
-                        isReady = true,
-                        mail = login.email,
-                        password = login.password
-                    )
-
-                    // Can start LOGIN
+                    // Initial reset
                     _state.value =
                         state.value.copy(
-                            authQuery = authQuery
+                            isMailFieldError = false,
+                            isPasswordFieldError = false
                         )
 
-                } else {
-                    if (!result.loginMailError.isNullOrEmpty()) {
-                        _state.value = state.value.copy(
-                            isMailFieldError = true
-                        )
+                    val login = Login(
+                        _login.value.mail,
+                        _login.value.password
+                    )
+
+                    val result = LoginValidator.validateLogin(login)
+
+                    // Check if any errors
+                    if (result.hasErrors()) {
+                        _state.value =
+                            state.value.copy(
+                                isMailFieldError = result.loginMailError,
+                                isPasswordFieldError = result.loginPasswordError
+                            )
+                    } else {
+                        // Can start LOGIN & reset field errors
+                        _state.value =
+                            state.value.copy(
+                                authQuery = AuthQuery(
+                                    isReady = true,
+                                    mail = login.mail,
+                                    password = login.password
+                                )
+                            )
                     }
-                    if (!result.loginPasswordError.isNullOrEmpty()) {
-                        _state.value = state.value.copy(
-                            isPasswordFieldError = true
-                        )
-                    }
-                }
+
             }
 
             is SplashEvent.OnLoginMailChange -> {
                 _login.value =
                     login.value.copy(
-                        email = event.mail
+                        mail = event.mail
                     )
             }
 

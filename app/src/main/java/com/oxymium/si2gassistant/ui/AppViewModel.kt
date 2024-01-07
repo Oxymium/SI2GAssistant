@@ -58,9 +58,17 @@ class AppViewModel(
     private fun resetState() {
         _state.value =
             state.value.copy(
-
+                isAuthFailure = false,
+                authFailureMessage = null,
+                isAuthLoading = false,
+                isAuthSuccess = false,
+                isUserFailure = false,
+                userFailureMessage = null,
+                isUserLoading = false,
+                isUserSuccess = false
             )
     }
+
     private fun getAuthWithCredentials(mail: String, password: String) {
         viewModelScope.launch {
             authRepository.getFirebaseAuthWithCredentials(mail, password).collect {
@@ -71,7 +79,8 @@ class AppViewModel(
                             state.value.copy(
                                 isAuthFailure = true,
                                 authFailureMessage = it.errorMessage,
-                                isAuthLoading = false
+                                isAuthLoading = false,
+                                isAuthSuccess = false
                             )
                         )
                     }
@@ -81,7 +90,8 @@ class AppViewModel(
                             state.value.copy(
                                 isAuthFailure = false,
                                 authFailureMessage = null,
-                                isAuthLoading = true
+                                isAuthLoading = true,
+                                isAuthSuccess = false
                             )
                         )
                         delay(500L)
@@ -93,8 +103,10 @@ class AppViewModel(
                                 isAuthFailure = false,
                                 authFailureMessage = null,
                                 isAuthLoading = false,
+                                isAuthSuccess = true
                             )
                         )
+                        delay(500L)
                         it.data?.let { user -> getUserByUid(user.uid) }
                     }
                 }
@@ -110,8 +122,11 @@ class AppViewModel(
                     is Result.Failed -> {
                         _state.emit(
                             state.value.copy(
+                                isAuthSuccess = false,
                                 isUserFailure = true,
                                 userFailureMessage = it.errorMessage,
+                                isUserLoading = false,
+                                isUserSuccess = false
                             )
                         )
                     }
@@ -120,9 +135,11 @@ class AppViewModel(
                     is Result.Loading -> {
                         _state.emit(
                             state.value.copy(
+                                isAuthSuccess = false,
                                 isUserFailure = false,
                                 userFailureMessage = null,
-                                isUserLoading = true
+                                isUserLoading = true,
+                                isUserSuccess = false
                             )
                         )
                         delay(500L)

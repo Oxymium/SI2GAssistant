@@ -2,20 +2,20 @@ package com.oxymium.si2gassistant.domain.validators
 
 object ResolvedCommentaryValidator {
 
-    fun validateResolvedCommentary(resolvedCommentary: String): ResolvedCommentaryValidationResult {
+    fun validateResolvedCommentary(resolvedCommentary: String): ResolvedCommentaryValidationData {
 
-        var result = ResolvedCommentaryValidationResult()
+        return ResolvedCommentaryValidationData(
+            resolvedCommentaryError = resolvedCommentary.isEmpty()
+        )
 
-        if (resolvedCommentary.isEmpty() || resolvedCommentary.isBlank()) {
-            result = result.copy(
-                resolvedCommentaryError = "Error: resolved commentary cannot be empty")
-        }
-
-        return result
     }
 
 }
 
-data class ResolvedCommentaryValidationResult(
-    val resolvedCommentaryError: String? = null
-)
+data class ResolvedCommentaryValidationData(
+    val resolvedCommentaryError: Boolean
+) {
+    fun hasErrors(): Boolean {
+        return resolvedCommentaryError
+    }
+}

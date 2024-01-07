@@ -86,31 +86,17 @@ class SubmitSuggestionViewModel(
                 )
 
                 val result = SubmitSuggestionValidator.validateSuggestion(suggestion.value)
-                // Verify if any element is null
-                val errors = listOfNotNull(
-                    result.suggestionSubjectError,
-                    result.suggestionBodyError
-                )
 
-                if (errors.isEmpty()) {
-                    _state.value = state.value.copy(
-                        isSubjectFieldError = false,
-                        isBodyFieldError = false,
-                    )
-
-                    submitSuggestion(suggestion.value) // Submit new suggestion after validation
+                // Check if any errors
+                if (result.hasErrors()) {
+                    _state.value =
+                        state.value.copy(
+                            isSubjectFieldError = result.suggestionSubjectError,
+                            isBodyFieldError = result.suggestionBodyError
+                        )
 
                 } else {
-                    if (!result.suggestionSubjectError.isNullOrEmpty()) {
-                        _state.value = state.value.copy(
-                            isSubjectFieldError = true
-                        )
-                    }
-                    if (!result.suggestionBodyError.isNullOrEmpty()) {
-                        _state.value = state.value.copy(
-                            isBodyFieldError = true
-                        )
-                    }
+                    submitSuggestion(suggestion.value) // Submit new suggestion after validation
                 }
 
             }

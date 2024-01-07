@@ -3,32 +3,22 @@ package com.oxymium.si2gassistant.domain.validators
 import com.oxymium.si2gassistant.domain.entities.Person
 
 object SubmitPersonValidator {
-
-    fun validatePerson(person: Person): PersonValidationResult {
-
-        var result = PersonValidationResult()
-
-        if (person.role.isNullOrEmpty() || person.role.isBlank()) {
-            result = result.copy(
-                personRoleError = "Error: role cannot be empty")
-        }
-
-        if (person.firstname.isNullOrEmpty() || person.firstname.isBlank()) {
-            result = result.copy(
-                personFirstnameError = "Error: firstname cannot be empty")
-        }
-
-        if (person.lastname.isNullOrEmpty() || person.lastname.isBlank()) {
-            result = result.copy(
-                personLastnameError = "Error: lastname cannot be empty")
-        }
-
-        return result
+    fun validatePerson(person: Person): PersonValidationData {
+        return PersonValidationData(
+            personRoleError = person.role.isNullOrEmpty(),
+            personFirstnameError = person.firstname.isNullOrEmpty(),
+            personLastnameError = person.lastname.isNullOrEmpty()
+        )
     }
+
 }
 
-data class PersonValidationResult(
-    val personRoleError: String? = null,
-    val personFirstnameError: String? = null,
-    val personLastnameError: String? = null
-)
+data class PersonValidationData(
+    val personRoleError: Boolean,
+    val personFirstnameError: Boolean,
+    val personLastnameError: Boolean
+) {
+    fun hasErrors(): Boolean {
+        return personRoleError || personFirstnameError || personLastnameError
+    }
+}

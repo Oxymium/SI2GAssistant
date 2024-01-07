@@ -27,7 +27,7 @@ import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.states.SubmitPersonState
 import com.oxymium.si2gassistant.ui.scenes.submitperson.components.PersonBottomSheet
 import com.oxymium.si2gassistant.ui.scenes.submitperson.components.PersonsScreen_Nu
-import com.oxymium.si2gassistant.ui.scenes.submitperson.components.SubmitPersonScreenTest
+import com.oxymium.si2gassistant.ui.scenes.submitperson.components.SubmitPersonScreen
 import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
@@ -118,7 +118,7 @@ fun SubmitPersonScreen(
         }
 
         if (state.submitPersonMode) {
-            SubmitPersonScreenTest(
+            SubmitPersonScreen(
                 state = state,
                 event = event
             )

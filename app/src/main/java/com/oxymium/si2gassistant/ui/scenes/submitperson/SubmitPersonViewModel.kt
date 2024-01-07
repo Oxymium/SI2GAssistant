@@ -3,12 +3,12 @@ package com.oxymium.si2gassistant.ui.scenes.submitperson
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oxymium.si2gassistant.currentUser
-import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.Person
+import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
 import com.oxymium.si2gassistant.domain.states.SubmitPersonState
-import com.oxymium.si2gassistant.loadingInMillis
 import com.oxymium.si2gassistant.domain.validators.SubmitPersonValidator
+import com.oxymium.si2gassistant.loadingInMillis
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -159,7 +159,7 @@ class SubmitPersonViewModel(
                 _person.value =
                     person.value.copy(
                         lastname = event.personLastName
-                )
+                    )
             }
 
             SubmitPersonEvent.OnPersonsModeButtonClick -> {
@@ -175,7 +175,7 @@ class SubmitPersonViewModel(
                     state.value.copy(
                         submitPersonMode = true,
                         personsMode = false
-                )
+                    )
             }
 
             SubmitPersonEvent.DismissPersonDetailsSheet -> {
@@ -188,39 +188,27 @@ class SubmitPersonViewModel(
 
             SubmitPersonEvent.OnSubmitPersonButtonClick -> {
 
+                // Initial reset
+                _state.value =
+                    state.value.copy(
+                        isRoleFieldError = false,
+                        isFirstnameFieldError = false,
+                        isLastnameFieldError = false
+                    )
+
                 val result = SubmitPersonValidator.validatePerson(person.value)
 
-                // Verify if any element is null
-                val errors = listOfNotNull(
-                    result.personRoleError,
-                    result.personFirstnameError,
-                    result.personLastnameError
-                )
-
-                if (errors.isEmpty()) {
-
-                    submitPerson(person.value) // submit person after validation
-
+                // Check if any errors
+                if (result.hasErrors()) {
+                    _state.value =
+                        state.value.copy(
+                            isRoleFieldError = result.personRoleError,
+                            isFirstnameFieldError = result.personFirstnameError,
+                            isLastnameFieldError = result.personLastnameError
+                        )
                 } else {
-
-                    if (!result.personRoleError.isNullOrEmpty()) {
-                        _state.value = state.value.copy(
-                            isRoleFieldError = true
-                        )
-                    }
-
-                    if (!result.personFirstnameError.isNullOrEmpty()) {
-                        _state.value = state.value.copy(
-                            isFirstnameFieldError = true
-                        )
-                    }
-
-                    if (!result.personLastnameError.isNullOrEmpty()) {
-                        _state.value = state.value.copy(
-                            isLastnameFieldError = true
-                        )
-                    }
-
+                    // Submit person
+                    submitPerson(person.value)
                 }
             }
 

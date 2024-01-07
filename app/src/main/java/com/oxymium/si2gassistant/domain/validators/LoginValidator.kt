@@ -2,27 +2,24 @@ package com.oxymium.si2gassistant.domain.validators
 
 object LoginValidator {
 
-    fun validateLogin(login: Login): LoginValidationResult {
-        var result = LoginValidationResult()
-
-        if (login.email.isEmpty() || login.email.isBlank()) {
-            result = result.copy(loginMailError = "Error: mail cannot be empty.")
-        }
-
-        if (login.password.isEmpty() || login.password.isBlank()) {
-            result = result.copy(loginPasswordError = "Error: password cannot be empty.")
-        }
-
-        return result
+    fun validateLogin(login: Login): LoginValidationData {
+        return LoginValidationData(
+            loginMailError = login.mail.isEmpty(),
+            loginPasswordError = login.password.isEmpty()
+        )
     }
 }
 
-data class LoginValidationResult(
-    val loginMailError: String? = null,
-    val loginPasswordError: String? = null
-)
+data class LoginValidationData(
+    val loginMailError: Boolean,
+    val loginPasswordError: Boolean
+) {
+    fun hasErrors(): Boolean {
+        return loginMailError || loginPasswordError
+    }
+}
 
 data class Login(
-    val email: String,
+    val mail: String,
     val password: String
 )

@@ -37,10 +37,12 @@ import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.TextAccent
 
 @Composable
-fun SubmitPersonScreenTest(
+fun SubmitPersonScreen(
     state: SubmitPersonState,
     event: (SubmitPersonEvent) -> Unit
 ) {
+
+    println(">>>>>>>>>${state.isRoleFieldError} ${state.isFirstnameFieldError} ${state.isLastnameFieldError}")
 
     Column(
         modifier = Modifier
@@ -219,7 +221,7 @@ fun PersonsScreenTestPreview() {
             isFirstnameFieldError = false,
             isLastnameFieldError = false
         )
-        SubmitPersonScreenTest(
+        SubmitPersonScreen(
             state = previewState
         ) {
         }

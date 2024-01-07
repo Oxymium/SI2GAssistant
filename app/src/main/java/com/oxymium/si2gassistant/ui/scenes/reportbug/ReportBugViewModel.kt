@@ -108,97 +108,65 @@ class ReportBugViewModel(
         when (event) {
 
             is ReportBugEvent.OnBugCategorySelect -> {
-                val bugTicket = bugTicket.value.copy(
-                    category = event.bugTicketCategory
-                )
-                _bugTicket.value = bugTicket
+                _bugTicket.value =
+                    bugTicket.value.copy(
+                        category = event.bugTicketCategory
+                    )
             }
 
             is ReportBugEvent.OnBugPrioritySelect -> {
-                val bugTicket = bugTicket.value.copy(
-                    priority = event.bugTicketPriority
-                )
-                _bugTicket.value = bugTicket
+                _bugTicket.value =
+                    bugTicket.value.copy(
+                        priority = event.bugTicketPriority
+                    )
             }
 
             is ReportBugEvent.OnShortDescriptionChange -> {
-                val bugTicket = bugTicket.value.copy(
-                    shortDescription = event.shortDescription
-                )
-                _bugTicket.value = bugTicket
+                _bugTicket.value =
+                    bugTicket.value.copy(
+                        shortDescription = event.shortDescription
+                    )
             }
 
             is ReportBugEvent.OnDescriptionChange -> {
-                val bugTicket = bugTicket.value.copy(
-                    description = event.description
-                )
-                _bugTicket.value = bugTicket
+                _bugTicket.value =
+                    bugTicket.value.copy(
+                        description = event.description
+                    )
             }
 
             ReportBugEvent.OnBugTicketsModeButtonClick -> {
-                val newState = state.value.copy(
-                    bugTicketsMode = true,
-                    submitBugTicketMode = false
-                )
-                _state.value = newState
+                _state.value =
+                    state.value.copy(
+                        bugTicketsMode = true,
+                        submitBugTicketMode = false
+                    )
             }
             ReportBugEvent.OnReportBugModeButtonClick -> {
-                val newState = state.value.copy(
-                    bugTicketsMode = false,
-                    submitBugTicketMode = true
-                )
-                _state.value = newState
+                _state.value =
+                    state.value.copy(
+                        bugTicketsMode = false,
+                        submitBugTicketMode = true
+                    )
             }
 
             ReportBugEvent.OnReportBugButtonClick -> {
 
                 val result = ReportBugValidator.validateBugTicket(bugTicket.value)
 
-                // Verify if any element is null
-                val errors = listOfNotNull(
-                    result.bugTicketCategoryError,
-                    result.bugTicketPriorityError,
-                    result.bugTicketShortDescriptionError,
-                    result.bugTicketDescriptionError
-                )
-
-                if (errors.isEmpty()) {
-                    _state.value = state.value.copy(
-                        isCategoryFieldError = false,
-                        isPriorityFieldError = false,
-                        isShortDescriptionFieldError = false,
-                        isDescriptionFieldError = false,
-                    )
-
-                    createBugTicket(bugTicket.value) // Create new bug ticket after validation
-
+                // Check if any errors
+                if (result.hasErrors()) {
+                    _state.value =
+                        state.value.copy(
+                            isCategoryFieldError = result.bugTicketCategoryError ,
+                            isPriorityFieldError = result.bugTicketPriorityError,
+                            isShortDescriptionFieldError = result.bugTicketShortDescriptionError,
+                            isDescriptionFieldError = result.bugTicketDescriptionError
+                        )
                 } else {
-
-                    if (!result.bugTicketCategoryError.isNullOrEmpty()) {
-                        _state.value = state.value.copy(
-                            isCategoryFieldError = true
-                        )
-                    }
-
-                    if (!result.bugTicketPriorityError.isNullOrEmpty()) {
-                        _state.value = state.value.copy(
-                            isPriorityFieldError = true
-                        )
-                    }
-
-                    if (!result.bugTicketShortDescriptionError.isNullOrEmpty()) {
-                        _state.value = state.value.copy(
-                            isShortDescriptionFieldError = true
-                        )
-                    }
-
-                    if (!result.bugTicketDescriptionError.isNullOrEmpty()) {
-                        _state.value = state.value.copy(
-                            isDescriptionFieldError = true
-                        )
-                    }
-
+                    createBugTicket(bugTicket.value)
                 }
+
             }
 
         }
