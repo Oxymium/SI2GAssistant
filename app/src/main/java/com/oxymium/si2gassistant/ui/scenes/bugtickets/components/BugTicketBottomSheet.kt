@@ -366,8 +366,15 @@ fun BugTicketBottomSheet(
                                     .fillMaxWidth(),
                                 value = resolvedComment,
                                 onValueChange = {
-                                    resolvedComment = it.take(100)
-                                    event.invoke(BugTicketsEvent.OnResolvedCommentChange(resolvedComment))
+                                    val resolvedCommentTrimmed = it.trim()
+                                    if (resolvedCommentTrimmed.isNotBlank() || it.isEmpty()) {
+                                        resolvedComment = it.take(100)
+                                        event.invoke(
+                                            BugTicketsEvent.OnResolvedCommentChange(
+                                                resolvedComment
+                                            )
+                                        )
+                                    }
                                 },
                                 colors = TextFieldDefaults.outlinedTextFieldColors(
                                     textColor = Black,

@@ -42,8 +42,6 @@ fun SubmitPersonScreen(
     event: (SubmitPersonEvent) -> Unit
 ) {
 
-    println(">>>>>>>>>${state.isRoleFieldError} ${state.isFirstnameFieldError} ${state.isLastnameFieldError}")
-
     Column(
         modifier = Modifier
             .padding(horizontal = 8.dp)
@@ -59,8 +57,11 @@ fun SubmitPersonScreen(
                 .fillMaxWidth(),
             value = role,
             onValueChange = {
-                role = it.take(30)
-                event.invoke(SubmitPersonEvent.OnPersonRoleChange(role))
+                val roleTrimmed = it.trim()
+                if (roleTrimmed.isNotBlank() || it.isEmpty()) {
+                    role = it.take(35)
+                    event.invoke(SubmitPersonEvent.OnPersonRoleChange(role))
+                }
             },
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 textColor = TextAccent,
@@ -102,8 +103,11 @@ fun SubmitPersonScreen(
                     .fillMaxWidth(),
                 value = firstname,
                 onValueChange = {
-                    firstname = it.take(50)
-                    event.invoke(SubmitPersonEvent.OnPersonFirstNameChange(firstname))
+                    val firstnameTrimmed = it.trim()
+                    if (firstnameTrimmed.isNotBlank() || it.isEmpty()) {
+                        firstname = it.take(35)
+                        event.invoke(SubmitPersonEvent.OnPersonFirstNameChange(firstname))
+                    }
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = TextAccent,
@@ -146,8 +150,11 @@ fun SubmitPersonScreen(
                     .fillMaxWidth(),
                 value = lastname,
                 onValueChange = {
-                    lastname = it.take(50)
-                    event.invoke(SubmitPersonEvent.OnPersonLastNameChange(lastname))
+                    val lastnameTrimmed = it.trim()
+                    if (lastnameTrimmed.isNotBlank() || it.isEmpty()) {
+                        lastname = it.take(35)
+                        event.invoke(SubmitPersonEvent.OnPersonLastNameChange(lastname))
+                    }
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = TextAccent,

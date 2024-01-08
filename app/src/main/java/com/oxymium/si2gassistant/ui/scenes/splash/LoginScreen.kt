@@ -1,25 +1,18 @@
 package com.oxymium.si2gassistant.ui.scenes.splash
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -146,6 +140,7 @@ fun LoginScreen(
 
                     // MAIL
                     var mail by remember { mutableStateOf("") }
+
                     Box(
                         modifier = Modifier
                             .padding(horizontal = 8.dp)
@@ -193,6 +188,7 @@ fun LoginScreen(
 
                     // PASSWORD
                     var password by remember { mutableStateOf("") }
+
                     Box(
                         modifier = Modifier
                             .padding(horizontal = 8.dp)
@@ -239,38 +235,48 @@ fun LoginScreen(
                         )
                     }
 
-                    // REMEMBER ME
-                    var checkedState by remember { mutableStateOf(false) }
+                    // ERROR MESSAGE
+                    if (appState.isAuthFailure || appState.isUserFailure) {
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                horizontal = 8.dp,
-                                vertical = 8.dp
-                            )
-                    ) {
-
-                        Checkbox(
-                            checked = checkedState,
-                            onCheckedChange = { checkedState = it },
-                            colors = CheckboxDefaults.colors(
-                                checkedColor = MenuAccent,
-                                uncheckedColor = White
-                            )
+                        Text(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .fillMaxWidth(),
+                            text = "Failure",
+                            color = White,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
                         )
 
                         Text(
                             modifier = Modifier
-                                .align(Alignment.CenterVertically),
-                            text = "Remember me",
-                            color = White
+                                .padding(4.dp)
+                                .fillMaxWidth(),
+                            text = appState.authFailureMessage.toString(),
+                            color = White,
+                            fontSize = 22.sp,
+                            fontStyle = FontStyle.Italic,
+                            textAlign = TextAlign.Center
+                        )
+
+                    }
+
+                    if (appState.isUserFailure) {
+
+                        Text(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .fillMaxWidth(),
+                            text = appState.userFailureMessage.toString(),
+                            color = White,
+                            textAlign = TextAlign.Center
                         )
 
                     }
 
                     // LOADING ANIMATION
-                    if (appState.isUserLoading) {
+                    if (appState.isUserLoading || appState.isAuthLoading) {
 
                         LoadingAnimation(
                             modifier = Modifier
@@ -281,67 +287,7 @@ fun LoginScreen(
 
                 }
 
-                val offsetY1 by animateFloatAsState(
-                    targetValue = if (appState.isAuthLoading) 0f else 500f,
-                    animationSpec = tween(durationMillis = 500), label = ""
-                )
 
-                val offsetY2 by animateFloatAsState(
-                    targetValue = if (appState.isAuthSuccess) 0f else 500f,
-                    animationSpec = tween(durationMillis = 500), label = ""
-                )
-
-                val offsetY3 by animateFloatAsState(
-                    targetValue = if (appState.authFailureMessage != null) 0f else 500f,
-                    animationSpec = tween(durationMillis = 500), label = ""
-                )
-
-                Box(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .align(Alignment.Center),
-                    contentAlignment = Alignment.Center
-                ) {
-
-                    if (appState.isAuthLoading) {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .offset(y = offsetY1.dp),
-                            text = "Loading...",
-                            color = White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 30.sp,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-
-                    if (appState.authFailureMessage != null) {
-                        Column {
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .offset(y = offsetY3.dp),
-                                text = "Failure",
-                                color = White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 30.sp,
-                                textAlign = TextAlign.Center
-                            )
-
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .offset(y = offsetY3.dp),
-                                text = "${appState.authFailureMessage}",
-                                color = White,
-                                textAlign = TextAlign.Center,
-                            )
-                        }
-
-                    }
-
-                }
             }
         }
     }
@@ -350,7 +296,10 @@ fun LoginScreen(
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    val appState = AppState()
+    val appState = AppState(
+        isAuthFailure = true,
+        authFailureMessage = "Failure test"
+    )
     val state = SplashState()
     Si2GAssistantTheme() {
         LoginScreen(

@@ -12,10 +12,8 @@ data class AppState(
     val isAuthFailure: Boolean = false,
     val authFailureMessage: String? = null,
     val isAuthLoading: Boolean = false,
-    val isAuthSuccess: Boolean = false,
     // USER QUERY
     val isUserFailure: Boolean = false,
     val userFailureMessage: String? = null,
-    val isUserLoading: Boolean = false,
-    val isUserSuccess: Boolean = false
+    val isUserLoading: Boolean = false
 )

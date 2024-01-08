@@ -9,6 +9,7 @@ object FirebaseFirestoreCollections {
     const val PERSONS = "persons"
     const val USERS = "users"
     const val MODULES = "modules"
+    const val MESSAGES = "messages"
 }
 
 object FirebaseFirestoreFields {

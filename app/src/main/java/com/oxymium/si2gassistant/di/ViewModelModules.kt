@@ -2,6 +2,7 @@ package com.oxymium.si2gassistant.di
 
 import com.oxymium.si2gassistant.ui.AppViewModel
 import com.oxymium.si2gassistant.ui.scenes.bugtickets.BugTicketsViewModel
+import com.oxymium.si2gassistant.ui.scenes.chat.ChatViewModel
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsViewModel
 import com.oxymium.si2gassistant.ui.scenes.splash.SplashViewModel
 import com.oxymium.si2gassistant.ui.scenes.metrics.MetricsViewModel
@@ -14,7 +15,6 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModules = module {
-
     // VM: App
     viewModel { AppViewModel( get(), get(), get() ) }
 
@@ -45,4 +45,6 @@ val viewModelModules = module {
     // VM: Suggestion
     viewModel { SuggestionsViewModel( get() ) }
 
+    // VM: Chat
+    viewModel { ChatViewModel( get() ) }
 }

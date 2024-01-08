@@ -110,8 +110,11 @@ fun SubmitSuggestionScreen(
                     .fillMaxWidth(),
                 value = subject,
                 onValueChange = {
-                    subject = it.take(40)
-                    event.invoke(SubmitSuggestionEvent.OnSuggestionSubjectChange(subject))
+                    val subjectTrimmed = it.trim()
+                    if (subjectTrimmed.isNotBlank() || it.isEmpty()) {
+                        subject = it.take(35)
+                        event.invoke(SubmitSuggestionEvent.OnSuggestionSubjectChange(subject))
+                    }
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = TextAccent,
@@ -155,8 +158,11 @@ fun SubmitSuggestionScreen(
                     .fillMaxWidth(),
                 value = body,
                 onValueChange = {
-                    body = it.take(500)
-                    event.invoke(SubmitSuggestionEvent.OnSuggestionBodyChange(body))
+                    val bodyTrimmed = it.trim()
+                    if (bodyTrimmed.isNotBlank() || it.isEmpty()) {
+                        body = it.take(35)
+                        event.invoke(SubmitSuggestionEvent.OnSuggestionBodyChange(body))
+                    }
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = TextAccent,

@@ -10,7 +10,7 @@ import com.oxymium.si2gassistant.ui.routes.SuperUserNavGraph
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun App(navController: NavHostController) {
+fun NavHost(navController: NavHostController) {
 
     val appViewModel = koinViewModel<AppViewModel>()
     val appState = appViewModel.state.collectAsState()

@@ -26,7 +26,7 @@ fun GreetingsAnimation() {
         val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(resId = R.raw.lottie_greetings_animation))
         LottieAnimation(
             modifier = Modifier
-                .scale(15f)
+                .scale(1f)
                 .align(Alignment.Center),
             composition = composition,
             iterations = LottieConstants.IterateForever

@@ -8,10 +8,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
-import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreSuggestionsImpl
+import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreMessagesImpl
+import com.oxymium.si2gassistant.domain.entities.Message
+import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.entities.Result
-import com.oxymium.si2gassistant.domain.entities.Suggestion
-import com.oxymium.si2gassistant.domain.mock.provideRandomSuggestion
+import com.oxymium.si2gassistant.domain.mock.provideRandomMessage
 import com.oxymium.si2gassistant.utils.observe
 import io.mockk.Runs
 import io.mockk.every
@@ -23,15 +24,15 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
-class SuggestionRepositoryTest {
+class MessageRepositoryTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllSuggestionsErrorTest() = runTest {
+    fun getAllMessagesErrorTest() = runTest {
         // GIVEN
         val firebaseFirestore = mockk<FirebaseFirestore>()
-        val suggestionCollectionMock = mockk<CollectionReference>()
-        val suggestionRepository = FirebaseFirestoreSuggestionsImpl(firebaseFirestore)
+        val messageCollectionMock = mockk<CollectionReference>()
+        val messageRepository = FirebaseFirestoreMessagesImpl(firebaseFirestore)
         val registration = mockk<ListenerRegistration> {
             every { remove() } just Runs
         }
@@ -40,19 +41,19 @@ class SuggestionRepositoryTest {
         }
 
         val callbackSlot = slot<EventListener<QuerySnapshot>>()
-        every { firebaseFirestore.collection(any()) } returns suggestionCollectionMock
-        every { suggestionCollectionMock.addSnapshotListener(capture(callbackSlot)) } answers {
+        every { firebaseFirestore.collection(any()) } returns messageCollectionMock
+        every { messageCollectionMock.addSnapshotListener(capture(callbackSlot)) } answers {
             callbackSlot.captured.onEvent(null, exception)
             registration
         }
 
         // WHEN
-        val flow = suggestionRepository.getAllSuggestions().observe(this)
+        val flow = messageRepository.getAllMessages().observe(this)
         advanceUntilIdle()
 
         // THEN
         Truth.assertThat(flow.values).containsExactly(
-            Result.Loading<List<Suggestion>>(),
+            Result.Loading<List<Message>>(),
             Result.Failed<String>("exception")
         )
 
@@ -61,13 +62,13 @@ class SuggestionRepositoryTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllSuggestionsSuccessTest() = runTest {
+    fun getAllPersonsSuccessTest() = runTest {
         // GIVEN
-        val suggestion = provideRandomSuggestion()
-        val documentId = "Er0DrxAPxE"
+        val message = provideRandomMessage()
+        val documentId = "XdXddEbERRcDFg"
         val firebaseFirestore = mockk<FirebaseFirestore>()
-        val suggestionCollectionMock = mockk<CollectionReference>()
-        val suggestionRepository = FirebaseFirestoreSuggestionsImpl(firebaseFirestore)
+        val messageCollectionMock = mockk<CollectionReference>()
+        val messageRepository = FirebaseFirestoreMessagesImpl(firebaseFirestore)
         val registration = mockk<ListenerRegistration> {
             every { remove() } just Runs
         }
@@ -75,37 +76,25 @@ class SuggestionRepositoryTest {
         val documentSnapshot = mockk<DocumentSnapshot>()
         every { snapshot.documents } returns listOf(documentSnapshot)
         every { documentSnapshot.id } returns documentId
-        every { documentSnapshot.toObject<Suggestion>(any()) } returns suggestion
+        every { documentSnapshot.toObject<Message>(any()) } returns message
 
         val callbackSlot = slot<EventListener<QuerySnapshot>>()
-        every { firebaseFirestore.collection(any()) } returns suggestionCollectionMock
-        every { suggestionCollectionMock.addSnapshotListener(capture(callbackSlot)) } answers {
+        every { firebaseFirestore.collection(any()) } returns messageCollectionMock
+        every { messageCollectionMock.addSnapshotListener(capture(callbackSlot)) } answers {
             callbackSlot.captured.onEvent(snapshot, null)
             registration
         }
 
         // WHEN
-        val flow = suggestionRepository.getAllSuggestions().observe(this)
+        val flow = messageRepository.getAllMessages().observe(this)
         advanceUntilIdle()
 
         // THEN
         Truth.assertThat(flow.values).containsExactly(
-            Result.Loading<List<Suggestion>>(),
-            Result.Success(listOf(suggestion.copy(id = documentId)))
+            Result.Loading<List<Person>>(),
+            Result.Success(listOf(message.copy(id = documentId)))
         )
 
         flow.finish()
-
     }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun submitSuggestionFailureTest() = runTest {
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun submitSuggestionSuccessTest() = runTest {
-    }
-
 }

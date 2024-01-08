@@ -150,8 +150,11 @@ fun ReportBugScreenTest(
                     .fillMaxWidth(),
                 value = shortDescription,
                 onValueChange = {
-                    shortDescription = it.take(100)
-                    event.invoke(ReportBugEvent.OnShortDescriptionChange(shortDescription))
+                    val shortDescriptionTrimmed = it.trim()
+                    if (shortDescriptionTrimmed.isNotBlank() || it.isEmpty()) {
+                        shortDescription = it.take(35)
+                        event.invoke(ReportBugEvent.OnShortDescriptionChange(shortDescription))
+                    }
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = TextAccent,
@@ -195,8 +198,11 @@ fun ReportBugScreenTest(
                     .fillMaxWidth(),
                 value = description,
                 onValueChange = {
-                    description = it.take(500)
-                    event.invoke(ReportBugEvent.OnDescriptionChange(description))
+                    val descriptionTrimmed = it.trim()
+                    if (descriptionTrimmed.isNotBlank() || it.isEmpty()) {
+                        description = it.take(500)
+                        event.invoke(ReportBugEvent.OnDescriptionChange(description))
+                    }
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     textColor = TextAccent,

@@ -12,6 +12,8 @@ import androidx.navigation.navigation
 import com.oxymium.si2gassistant.domain.states.AppState
 import com.oxymium.si2gassistant.ui.AppEvent
 import com.oxymium.si2gassistant.ui.scenes.bottomnavigationbar.BottomNavigationBar
+import com.oxymium.si2gassistant.ui.scenes.chat.ChatScreen
+import com.oxymium.si2gassistant.ui.scenes.chat.ChatViewModel
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsScreen
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsViewModel
 import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugScreen
@@ -100,6 +102,19 @@ fun NormalUserNavGraph(
                             state = state.value,
                             event = viewModel::onEvent
                         )
+                    }
+
+                    // SCREEN: CHAT
+                    composable(
+                        route = AppScreen.CHAT_SCREEN.name
+                    ) {
+                        val viewModel = koinViewModel<ChatViewModel>()
+                        val state = viewModel.state.collectAsState()
+                        ChatScreen(
+                            state = state.value,
+                            event = viewModel::onEvent
+                        )
+
                     }
 
                 }

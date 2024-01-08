@@ -75,6 +75,7 @@ fun BottomNavigationBar(
                     AppScreen.SUBMIT_PERSON_SCREEN -> "Persons"
                     AppScreen.REPORT_BUG_SCREEN -> "Bug tickets"
                     AppScreen.SUBMIT_SUGGESTION_SCREEN -> "Suggestion"
+                    AppScreen.CHAT_SCREEN -> "Chat"
                     // SUPER
                     AppScreen.METRICS_SCREEN -> "Metrics"
                     AppScreen.PERSONS_SCREEN -> "Persons"
@@ -194,6 +195,30 @@ fun BottomNavigationBar(
                         )
                     },
                 )
+
+                // CHAT
+                BottomNavigationItem(
+                    modifier = Modifier
+                        .background(
+                            color = if (appState.currentScreen == AppScreen.CHAT_SCREEN) MenuAccent else Neutral,
+                            shape = RoundedCornerShape(
+                                bottomStart = 75.dp,
+                                bottomEnd = 75.dp
+                            )
+                        ),
+                    selected = navController?.currentDestination?.route == AppScreen.CHAT_SCREEN.name,
+                    onClick = {
+                        onNavigateTo(AppScreen.CHAT_SCREEN)
+                    },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_forum_outline),
+                            tint = White,
+                            contentDescription = null
+                        )
+                    },
+                )
+
 
 
                 // -----------------
