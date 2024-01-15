@@ -11,6 +11,9 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class FirebaseFirestoreMessagesImpl(
     val firebaseFirestore: FirebaseFirestore
@@ -48,26 +51,40 @@ class FirebaseFirestoreMessagesImpl(
     }
 
     // SUBMIT: MESSAGE
-    override fun submitMessage(message: Message): Flow<Result<Boolean>> = flow {
-        // Loading
-        emit(Result.Loading())
-
-        val result = CompletableDeferred<Boolean>()
-
-        try {
+    override suspend fun submitMessage(message: Message) = suspendCancellableCoroutine { continuation ->
             firebaseFirestore
                 .collection(FirebaseFirestoreCollections.MESSAGES)
-                .document()// auto-generates ID
-                .set(message)
+                .add(message)
                 .addOnSuccessListener {
                     // Success
-                    result.complete(true)
+                    continuation.resume(Unit)
+                }
+                .addOnFailureListener {
+                    continuation.resumeWithException(it)
                 }
             // Success
-            emit(Result.Success(true))
-        } catch (e: Exception) {
-            // Failure
-            emit(Result.Failed(e.message ?: pushError, false))
+        continuation.invokeOnCancellation {
+            // Handle cancellation if needed
+        }
+    }
+
+    // DELETE: MESSAGE
+    override suspend fun deleteMessage(message: Message) = suspendCancellableCoroutine { continuation ->
+        firebaseFirestore
+            .collection(FirebaseFirestoreCollections.MESSAGES)
+            .document(message.id ?: "")
+            .delete()
+            .addOnSuccessListener {
+                // Success
+                continuation.resume(Unit)
+            }
+            .addOnFailureListener {
+                // Failure
+                continuation.resumeWithException(it)
+            }
+
+        continuation.invokeOnCancellation {
+            // Handle cancellation if needed
         }
     }
 

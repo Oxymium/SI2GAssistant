@@ -12,6 +12,5 @@ sealed interface ReportBugEvent {
 
     data class OnShortDescriptionChange(val shortDescription: String): ReportBugEvent
     data class OnDescriptionChange(val description: String): ReportBugEvent
-
     data object OnReportBugButtonClick: ReportBugEvent
 }

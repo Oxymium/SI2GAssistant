@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -36,25 +35,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.BugTicket
-import com.oxymium.si2gassistant.domain.mock.provideRandomBugTicket
 import com.oxymium.si2gassistant.domain.entities.BugTicketPriority
+import com.oxymium.si2gassistant.domain.mock.provideRandomBugTicket
 import com.oxymium.si2gassistant.ui.scenes.bugtickets.BugTicketsEvent
 import com.oxymium.si2gassistant.ui.theme.PriorityCritical
 import com.oxymium.si2gassistant.ui.theme.PriorityHigh
 import com.oxymium.si2gassistant.ui.theme.PriorityLow
 import com.oxymium.si2gassistant.ui.theme.PriorityMedium
 import com.oxymium.si2gassistant.ui.theme.ResolvedBugTicket
-import com.oxymium.si2gassistant.utils.DateUtils
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.UnresolvedBugTicket
 import com.oxymium.si2gassistant.ui.theme.White
 import com.oxymium.si2gassistant.ui.theme.White75
 import com.oxymium.si2gassistant.utils.CapitalizeFirstLetter
+import com.oxymium.si2gassistant.utils.DateUtils
 
 @Composable
 fun BugTicketItem(
     bugTicket: BugTicket,
-    onEvent: (BugTicketsEvent) -> Unit,
+    event: (BugTicketsEvent) -> Unit,
 ) {
 
     val backgroundColor = when(bugTicket.priority) {
@@ -77,7 +76,7 @@ fun BugTicketItem(
                 shape = MaterialTheme.shapes.medium
             )
             .clickable {
-                onEvent(BugTicketsEvent.SelectBugTicket(bugTicket))
+                event(BugTicketsEvent.SelectBugTicket(bugTicket))
             }
     ) {
 
@@ -87,12 +86,33 @@ fun BugTicketItem(
                 .matchParentSize()
                 .wrapContentHeight()
         ) {
+
             Image(
                 modifier = Modifier,
                 painter = painterResource(id = R.drawable.grid_hexagons_items),
                 colorFilter = ColorFilter.tint(White75),
                 contentDescription = ""
             )
+
+        }
+
+        Box(
+            modifier = Modifier
+                .padding(4.dp)
+                .align(Alignment.TopStart)
+        ) {
+
+            Icon(
+                modifier = Modifier
+                    .background(
+                        color = White,
+                        shape = RoundedCornerShape(200.dp)
+                    ),
+                painter = if (bugTicket.isResolved) painterResource(R.drawable.ic_check_circle) else painterResource(R.drawable.ic_help_circle),
+                contentDescription = "",
+                tint = if (bugTicket.isResolved) ResolvedBugTicket else UnresolvedBugTicket
+            )
+
         }
 
         Box(
@@ -110,10 +130,12 @@ fun BugTicketItem(
                 ),
                 onClick = { isPanelExpanded = !isPanelExpanded }
             ) {
+
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_down_box),
+                    painter = painterResource(id = if (isPanelExpanded) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down),
                     contentDescription = "arrow down"
                 )
+
             }
 
         }
@@ -125,29 +147,14 @@ fun BugTicketItem(
                 .padding(8.dp)
         ) {
 
-            Row {
-
-                Icon(
-                    modifier = Modifier
-                        .background(
-                            color = White,
-                            shape = RoundedCornerShape(200.dp)
-                        ),
-                    painter = if (bugTicket.isResolved) painterResource(R.drawable.ic_check_circle) else painterResource(R.drawable.ic_help_circle),
-                    contentDescription = "",
-                    tint = if (bugTicket.isResolved) ResolvedBugTicket else UnresolvedBugTicket
-                )
-
-                Text(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(horizontal = 8.dp),
-                    text = CapitalizeFirstLetter.capitalizeFirstLetter(bugTicket.category.toString()),
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Start
-                )
-            }
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = "${bugTicket.submittedBy}",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
 
             Text(
                 modifier = Modifier
@@ -185,11 +192,12 @@ fun BugTicketItem(
                         .align(Alignment.Center)
                 ) {
 
+                    val capitalizedCategory = CapitalizeFirstLetter.capitalizeFirstLetter(bugTicket.category?.name ?: "")
                     Text(
                         modifier = Modifier
                             .padding(8.dp)
                             .align(Alignment.Center),
-                        text = bugTicket.academy.toString(),
+                        text = capitalizedCategory,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
@@ -210,14 +218,11 @@ fun BugTicketItem(
         }
     }
 
-    // EXTRA PANEL
     if (isPanelExpanded) {
 
         Column(
             modifier = Modifier
-                .padding(
-                    vertical = 2.dp
-                )
+                .padding(vertical = 1.dp)
                 .fillMaxWidth()
                 .background(
                     color = backgroundColor,
@@ -225,38 +230,43 @@ fun BugTicketItem(
                 )
         ) {
 
-            Text(
+            Column(
                 modifier = Modifier
-                    .padding(
-                    4.dp
-                ),
-                text = "■ description: ${bugTicket.description}",
-                color = White
-            )
-
-            if (bugTicket.isResolved) {
-
-                val convertedDate = DateUtils.convertMillisToDate(bugTicket.resolvedDate)
-                Text(
-                    modifier = Modifier
-                        .padding(
-                            4.dp
-                        ),
-                    text = "■ resolved when: $convertedDate",
-                    color = White
-                )
+                    .padding(4.dp)
+            ) {
 
                 Text(
                     modifier = Modifier
-                        .padding(
-                            4.dp
-                        ),
-                    text = "■ comment: ${bugTicket.resolvedComment}",
-                    color = White
+                        .padding(4.dp)
+                        .fillMaxWidth(),
+                    text = "▣ ${bugTicket.description}",
+                    color = White,
+                    textAlign = TextAlign.Center
                 )
 
+                val resolvedDateFormatted = DateUtils.convertMillisToDate(bugTicket.resolvedDate)
+
+                if (bugTicket.isResolved) {
+                    Text(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .fillMaxWidth(),
+                        text = resolvedDateFormatted,
+                        color = White,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Text(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .fillMaxWidth(),
+                        text = "▣ ${bugTicket.resolvedComment}",
+                        color = White,
+                        textAlign = TextAlign.Center
+                    )
+
+                }
             }
-
         }
 
     }

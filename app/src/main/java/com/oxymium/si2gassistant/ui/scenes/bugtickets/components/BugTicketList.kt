@@ -29,7 +29,7 @@ fun BugTicketList(
             items(state.bugTickets) { bugTicket ->
                 BugTicketItem(
                     bugTicket = bugTicket,
-                    onEvent = onEvent
+                    event = onEvent
                 )
             }
         }

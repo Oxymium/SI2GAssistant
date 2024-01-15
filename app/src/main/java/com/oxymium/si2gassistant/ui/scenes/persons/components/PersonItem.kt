@@ -31,10 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.Person
-import com.oxymium.si2gassistant.domain.mock.ALL_ACADEMIES
-import com.oxymium.si2gassistant.domain.mock.FIRSTNAMES
-import com.oxymium.si2gassistant.domain.mock.LASTNAMES
-import com.oxymium.si2gassistant.domain.mock.ROLES
+import com.oxymium.si2gassistant.domain.mock.provideRandomPerson
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonEvent
 import com.oxymium.si2gassistant.ui.theme.NotValidatedModule
 import com.oxymium.si2gassistant.ui.theme.Person1
@@ -61,44 +58,6 @@ fun PersonItem(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-
-        // USER
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(
-                    vertical = 2.dp
-                )
-        ) {
-
-            Row(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .background(
-                        color = backgroundColor,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-            ){
-
-                // ATTACHED USER
-                Box(
-                    modifier = Modifier
-                        .padding(4.dp)
-                ) {
-
-                    Text(
-                        text = "${person.userFirstname} ${person.userLastname}",
-                        color = White,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(4.dp)
-                    )
-
-                }
-
-            }
-        }
 
         // PERSON
         Box(
@@ -131,28 +90,31 @@ fun PersonItem(
                 modifier = Modifier
                     .wrapContentWidth()
                     .wrapContentHeight()
-                    .padding(8.dp)
             ) {
 
-                Row {
-                    Icon(
-                        modifier = Modifier,
-                        painter = painterResource(R.drawable.ic_account),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
+                // SUBMITTED BY
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(2.dp),
+                    text = "${person.submittedBy}",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
 
-                    Text(
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .padding(horizontal = 8.dp),
-                        text = person.role ?: "",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Start
-                    )
-                }
+                // ROLE
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(2.dp),
+                    text = person.role ?: "",
+                    color = Color.White,
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center
+                )
 
+                // FIRSTNAME
                 Text(
                     modifier = Modifier
                         .padding(2.dp)
@@ -164,7 +126,7 @@ fun PersonItem(
                     textAlign = TextAlign.Center
                 )
 
-
+                // LASTNAME
                 Text(
                     modifier = Modifier
                         .padding(2.dp)
@@ -176,6 +138,7 @@ fun PersonItem(
                     textAlign = TextAlign.Center
                 )
 
+                // ACADEMY
                 Box(
                     modifier = Modifier
                         .padding(2.dp)
@@ -210,7 +173,7 @@ fun PersonItem(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
+                .align(Alignment.CenterHorizontally)
                 .padding(
                     vertical = 2.dp
                 )
@@ -218,10 +181,11 @@ fun PersonItem(
 
             Row(
                 modifier = Modifier
-                    .align(Alignment.CenterStart)
-            ){
+                    .align(Alignment.Center)
+            ) {
 
-                val validatedModulesList = person.validatedModules?.split(".")?.map { it.trim() }
+                val validatedModulesList =
+                    person.validatedModules?.split(".")?.map { it.trim() }
 
                 for (i in 1..8) {
                     val moduleNumber = i.toString()
@@ -234,7 +198,7 @@ fun PersonItem(
                                 shape = RoundedCornerShape(8.dp)
                             )
                     ) {
-                        
+
                         Box(
                             modifier = Modifier
                                 .padding(
@@ -273,21 +237,12 @@ fun PersonItem(
 
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun PersonItemTestPreview() {
     Si2GAssistantTheme {
-        val randomPerson = Person(
-            "",
-            ROLES.random(),
-            FIRSTNAMES.random(),
-            LASTNAMES.random(),
-            "1, 2, 3, 5",
-            ALL_ACADEMIES.random().shortTitle,
-            "",
-            FIRSTNAMES.random(),
-            LASTNAMES.random()
-            )
+        val randomPerson = provideRandomPerson()
         PersonItem(
             index = (1..4).random(),
             person = randomPerson

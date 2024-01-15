@@ -14,9 +14,9 @@ interface PersonRepository {
     fun getAllPersonsByUserId(userId: String): Flow<Result<List<Person>>>
 
     // PUSH: PERSON
-    suspend fun submitPerson(person: Person): Flow<Result<Boolean>>
+    suspend fun submitPerson(person: Person)
 
     // UPDATE: PERSON
-    suspend fun updatePerson(person: Person): Flow<Result<Boolean>>
+    suspend fun updatePerson(person: Person)
 
 }

@@ -51,6 +51,7 @@ fun AnnouncementFeed(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+
             item {
 
                 AnnouncementItem(
@@ -59,9 +60,9 @@ fun AnnouncementFeed(
                 )
 
             }
+
         }
     }
-
 }
 
 @Preview(showBackground = true)

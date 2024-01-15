@@ -23,7 +23,7 @@ class ReportBugViewModel(
     val state = _state.asStateFlow()
 
     private val _bugTicket = MutableStateFlow(BugTicket())
-    private val bugTicket = _bugTicket.asStateFlow()
+    val bugTicket = _bugTicket.asStateFlow()
 
     init {
         getAllBugTicketsByUser()
@@ -35,35 +35,27 @@ class ReportBugViewModel(
                 academy = currentUser?.academy,
                 submittedBy = currentUser?.mail
             )
-            bugTicketRepository.submitBugTicket(bugTicketFinalized).collect {
-                when (it) {
-                    // FAILURE
-                    is Result.Failed -> _state.emit(
-                        state.value.copy(
-                            isSubmitBugTicketFailure = true,
-                            submitBugTicketFailureMessage = it.errorMessage
-                        )
-                    )
-                    // LOADING
-                    is Result.Loading -> {
-                        _state.emit(
-                            state.value.copy(
-                                isSubmitBugTicketLoading = true
-                            )
-                        )
-                        delay(loadingInMillis)
-                    }
-                    // SUCCESS
-                    is Result.Success -> _state.emit(
-                        state.value.copy(
-                            isSubmitBugTicketFailure = false,
-                            submitBugTicketFailureMessage = null,
-                            isSubmitBugTicketLoading = false
-                        )
-                    )
 
-                }
+            // Submit Bug ticket
+            try {
+                bugTicketRepository.submitBugTicket(bugTicketFinalized)
+                // SUCCESS
+                _state.emit(
+                    state.value.copy(
+                        isSubmitBugTicketFailure = false,
+                        submitBugTicketFailureMessage = null
+                    )
+                )
+            } catch (e: Exception) {
+                // FAILURE
+                _state.emit(
+                    state.value.copy(
+                        isSubmitBugTicketFailure = true,
+                        submitBugTicketFailureMessage = e.message
+                    )
+                )
             }
+
         }
     }
 
@@ -142,6 +134,7 @@ class ReportBugViewModel(
                         submitBugTicketMode = false
                     )
             }
+
             ReportBugEvent.OnReportBugModeButtonClick -> {
                 _state.value =
                     state.value.copy(

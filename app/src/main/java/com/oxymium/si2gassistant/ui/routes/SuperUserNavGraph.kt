@@ -14,6 +14,8 @@ import com.oxymium.si2gassistant.ui.AppEvent
 import com.oxymium.si2gassistant.ui.scenes.bottomnavigationbar.BottomNavigationBar
 import com.oxymium.si2gassistant.ui.scenes.bugtickets.BugTicketsViewModel
 import com.oxymium.si2gassistant.ui.scenes.bugtickets.BugTicketsScreen
+import com.oxymium.si2gassistant.ui.scenes.chat.ChatScreen
+import com.oxymium.si2gassistant.ui.scenes.chat.ChatViewModel
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsScreen
 import com.oxymium.si2gassistant.ui.scenes.greetings.GreetingsViewModel
 import com.oxymium.si2gassistant.ui.scenes.metrics.MetricsScreen
@@ -37,7 +39,11 @@ fun SuperUserNavGraph(
                 navController = navController,
                 appState = appState,
                 onNavigateTo = {
-                    navController.navigate(it.name) // handles navigation
+                    navController.navigate(it.name) {
+                        popUpTo(AppRoute.SUPER_USER_ROUTE.name) {
+                            inclusive = true
+                        }
+                    }
                     appEvent.invoke(AppEvent.OnItemMenuButtonClick(it)) // update current route state
                 }
             )
@@ -115,6 +121,20 @@ fun SuperUserNavGraph(
                             event = viewModel::onEvent
                         )
                     }
+
+                    // SCREEN: CHAT
+                    composable(
+                        route = AppScreen.CHAT_SCREEN.name
+                    ) {
+                        val viewModel = koinViewModel<ChatViewModel>()
+                        val state = viewModel.state.collectAsState()
+                        ChatScreen(
+                            state = state.value,
+                            event = viewModel::onEvent
+                        )
+
+                    }
+
 
                 }
             }

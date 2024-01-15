@@ -49,15 +49,39 @@ class ChatViewModel(
                 submittedBy = currentUser?.mail,
                 submittedDate = Calendar.getInstance().timeInMillis
             )
-            messageRepository.submitMessage(message = finalizedMessage).collect {
-                when (it) {
-                    is Result.Failed -> {}
-                    is Result.Loading -> {}
-                    is Result.Success -> {}
-                }
+
+            // Submit message
+            try {
+                messageRepository.submitMessage(finalizedMessage)
+                // SUCCESS
+                _state.emit(
+                    state.value.copy(
+                    )
+                )
+            } catch (e: Exception) {
+                // FAILURE
+                _state.emit(
+                    state.value.copy(
+                    )
+                )
+            }
+
+        }
+
+    }
+
+    private fun deleteMessage(message: Message) {
+        viewModelScope.launch {
+            // DELETE MESSAGE
+            try {
+                messageRepository.deleteMessage(message)
+                // SUCCESS
+            } catch (e: Exception) {
+                // FAILURE
             }
         }
     }
+
 
     fun onEvent(event: ChatEvent) {
         when (event) {
@@ -70,7 +94,6 @@ class ChatViewModel(
             }
 
             ChatEvent.OnSubmitMessageButtonClick -> {
-
                 val validator = MessageValidator.validateBugTicket(message.value)
                 if (validator.hasErrors()) {
                     _state.value =
@@ -80,6 +103,10 @@ class ChatViewModel(
                 } else {
                     submitMessage()
                 }
+            }
+
+            is ChatEvent.OnDeleteMessageButtonClick -> {
+                deleteMessage(event.message)
             }
 
         }

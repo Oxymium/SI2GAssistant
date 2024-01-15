@@ -37,7 +37,11 @@ fun NormalUserNavGraph(
                 navController = navController,
                 appState = appState,
                 onNavigateTo = {
-                    navController.navigate(it.name) // handles navigation
+                    navController.navigate(it.name) {
+                        popUpTo(AppRoute.NORMAL_USER_ROUTE.name) {
+                            inclusive = true
+                        }
+                    }
                     appEvent.invoke(AppEvent.OnItemMenuButtonClick(it)) // update current route state
                 }
             )

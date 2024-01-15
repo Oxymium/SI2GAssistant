@@ -47,9 +47,8 @@ fun provideRandomPerson(): Person {
         LASTNAMES.random(),
         generateRandomValidatedModules(),
         ALL_ACADEMIES.random().shortTitle,
-        "",
-        FIRSTNAMES.random(),
-        LASTNAMES.random()
+        ALL_ACADEMIES.random().shortTitle + "@gmail.test",
+        ""
     )
 
 }

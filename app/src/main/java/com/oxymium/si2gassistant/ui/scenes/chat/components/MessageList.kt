@@ -6,17 +6,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.oxymium.si2gassistant.ui.scenes.chat.ChatEvent
 import com.oxymium.si2gassistant.ui.scenes.chat.ChatState
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 
 @Composable
 fun MessageList(
-    state: ChatState
+    state: ChatState,
+    event: (ChatEvent) -> Unit
 ) {
 
     Box(
@@ -30,13 +33,16 @@ fun MessageList(
                 .padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            itemsIndexed(state.messages) { index, message ->
-
+           
+            items(state.messages) {message ->
+                
                 MessageItem(
-                    index = index,
-                    message = message
+                    message = message,
+                    event = event
                 )
+                
             }
+            
         }
     }
 
@@ -49,6 +55,6 @@ fun MessageListPreview() {
         val previewState = ChatState(emptyList())
         MessageList(
             state = previewState
-        )
+        ) {}
     }
 }

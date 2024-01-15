@@ -46,15 +46,24 @@ class DateUtils {
         }
 
         @JvmStatic
-        fun convertMillisToTime(millis: Long?): String {
+        fun convertMillisToTime(millis: Long?, mode: TimeMode): String {
             val calendar =  Calendar.getInstance()
             with(calendar) {
                 timeInMillis = millis ?: 0L
             }
 
             // Get time
-            val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val dateFormat: SimpleDateFormat = when (mode) {
+                TimeMode.MINUTES -> SimpleDateFormat("HH:mm", Locale.getDefault())
+                TimeMode.SECONDS -> SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+            }
+
             return dateFormat.format(calendar.time)
         }
     }
+}
+
+enum class TimeMode {
+    MINUTES,
+    SECONDS
 }

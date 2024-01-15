@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
@@ -55,8 +54,7 @@ fun PersonBottomSheet(
                     .wrapContentHeight()
                     .align(Alignment.CenterHorizontally)
                     .background(
-                        color = NeutralLighter,
-                        shape = RoundedCornerShape(20.dp)
+                        color = NeutralLighter
                     )
             ) {
 
@@ -71,7 +69,7 @@ fun PersonBottomSheet(
                         modifier = Modifier
                             .padding(2.dp)
                             .align(Alignment.CenterHorizontally),
-                        text = "firstname: ${state.selectedPerson.firstname}",
+                        text = "${state.selectedPerson.firstname}",
                         color = White,
                         textAlign = TextAlign.Center
                     )
@@ -81,7 +79,7 @@ fun PersonBottomSheet(
                         modifier = Modifier
                             .padding(2.dp)
                             .align(Alignment.CenterHorizontally),
-                        text = "lastname: ${state.selectedPerson.lastname}",
+                        text = "${state.selectedPerson.lastname}",
                         color = White,
                         textAlign = TextAlign.Center
                     )
@@ -91,7 +89,7 @@ fun PersonBottomSheet(
                         modifier = Modifier
                             .padding(2.dp)
                             .align(Alignment.CenterHorizontally),
-                        text = "academy: ${state.selectedPerson.role}",
+                        text = "${state.selectedPerson.role}",
                         color = White,
                         textAlign = TextAlign.Center
                     )
@@ -116,8 +114,7 @@ fun PersonBottomSheet(
                     .wrapContentHeight()
                     .align(Alignment.CenterHorizontally)
                     .background(
-                        color = NeutralLighter,
-                        shape = RoundedCornerShape(20.dp)
+                        color = NeutralLighter
                     )
             ) {
 

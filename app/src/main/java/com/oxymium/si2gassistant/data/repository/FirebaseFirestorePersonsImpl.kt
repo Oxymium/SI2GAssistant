@@ -5,13 +5,13 @@ import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreCollections
 import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreFields
 import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.entities.Result
-import com.oxymium.si2gassistant.domain.entities.pushError
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class FirebaseFirestorePersonsImpl(val firebaseFirestore: FirebaseFirestore): PersonRepository {
 
@@ -77,49 +77,41 @@ class FirebaseFirestorePersonsImpl(val firebaseFirestore: FirebaseFirestore): Pe
     }
 
     // SUBMIT: PERSON
-    override suspend fun submitPerson(person: Person): Flow<Result<Boolean>> = flow {
-        // Loading
-        emit(Result.Loading())
-
-        val result = CompletableDeferred<Boolean>()
-
-        try {
-            firebaseFirestore
-                .collection(FirebaseFirestoreCollections.PERSONS)
-                .document()// auto-generates ID
-                .set(person)
-                .addOnSuccessListener {
-                    // Success
-                    result.complete(true)
-                }
-            // Success
-            emit(Result.Success(true))
-        } catch (e: Exception) {
-            // Failure
-            emit(Result.Failed(e.message ?: pushError, false))
+    override suspend fun submitPerson(person: Person) = suspendCancellableCoroutine { continuation ->
+        firebaseFirestore
+            .collection(FirebaseFirestoreCollections.PERSONS)
+            .add(person)
+            .addOnSuccessListener {
+                // Success
+                continuation.resume(Unit)
+            }
+            .addOnFailureListener {
+                // Failure
+                continuation.resumeWithException(it)
+            }
+        continuation.invokeOnCancellation {
+            // Handle cancellation if needed
         }
     }
 
+
     // UPDATE: PERSON
-    override suspend fun updatePerson(person: Person): Flow<Result<Boolean>> = flow {
-        // Loading
-        emit(Result.Loading())
+    override suspend fun updatePerson(person: Person) = suspendCancellableCoroutine { continuation ->
+        firebaseFirestore
+            .collection(FirebaseFirestoreCollections.PERSONS)
+            .document(person.id ?: "")
+            .update(FirebaseFirestoreFields.VALIDATED_MODULES, person.validatedModules)
+            .addOnSuccessListener {
+                // SUCCESS
+                continuation.resume(Unit)
+            }
+            .addOnFailureListener {
+                // FAILURE
+                continuation.resumeWithException(it)
+            }
 
-        val result = CompletableDeferred<Boolean>()
-
-        try {
-            firebaseFirestore
-                .collection(FirebaseFirestoreCollections.PERSONS)
-                .document(person.id ?: "")
-                .update(FirebaseFirestoreFields.VALIDATED_MODULES, person.validatedModules)
-                .addOnSuccessListener {
-                    result.complete(true)
-                }
-            // Success
-            emit(Result.Success(true))
-        } catch (e: Exception) {
-            // Failure
-            emit(Result.Failed(e.message ?: pushError, false))
+        continuation.invokeOnCancellation {
+            // Handle cancellation if needed
         }
     }
 

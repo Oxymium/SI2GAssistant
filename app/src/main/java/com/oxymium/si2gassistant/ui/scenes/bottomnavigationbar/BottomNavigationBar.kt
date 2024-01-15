@@ -189,7 +189,7 @@ fun BottomNavigationBar(
                     },
                     icon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_comment_plus),
+                            painter = painterResource(id = R.drawable.ic_lightbulb),
                             tint = White,
                             contentDescription = null
                         )
@@ -218,8 +218,6 @@ fun BottomNavigationBar(
                         )
                     },
                 )
-
-
 
                 // -----------------
                 // SUPER USER ITEMS
@@ -337,13 +335,36 @@ fun BottomNavigationBar(
                     },
                     icon = {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_comment_text_multiple),
+                            painter = painterResource(id = R.drawable.ic_lightbulb),
                             tint = White,
                             contentDescription = null
                         )
                     },
 
                     )
+
+                // CHAT
+                BottomNavigationItem(
+                    modifier = Modifier
+                        .background(
+                            color = if (appState.currentScreen == AppScreen.CHAT_SCREEN) MenuAccent else Neutral,
+                            shape = RoundedCornerShape(
+                                bottomStart = 75.dp,
+                                bottomEnd = 75.dp
+                            )
+                        ),
+                    selected = navController?.currentDestination?.route == AppScreen.CHAT_SCREEN.name,
+                    onClick = {
+                        onNavigateTo(AppScreen.CHAT_SCREEN)
+                    },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_forum_outline),
+                            tint = White,
+                            contentDescription = null
+                        )
+                    },
+                )
 
             }
 

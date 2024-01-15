@@ -1,8 +1,8 @@
 package com.oxymium.si2gassistant.ui.routes
 
 enum class AppScreen {
-    SPLASH_SCREEN,
-    GREETINGS_SCREEN,
+    SPLASH_SCREEN, // FIRST SCREEN
+    GREETINGS_SCREEN, // COMMON SCREEN
     METRICS_SCREEN,
     PERSONS_SCREEN,
     BUG_TICKETS_SCREEN,

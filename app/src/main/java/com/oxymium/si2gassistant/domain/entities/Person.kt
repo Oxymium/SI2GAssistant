@@ -6,15 +6,13 @@ data class Person(
     val firstname: String?,
     val lastname: String?,
     val validatedModules: String?,
-    var academy: String?,
+    val academy: String?,
+    val submittedBy: String?,
     val userId: String?,
-    val userFirstname: String?,
-    val userLastname: String?
 )
 
 {
     constructor() : this(
-    null,
     null,
     null,
     null,

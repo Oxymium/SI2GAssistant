@@ -9,5 +9,8 @@ interface MessageRepository {
     fun getAllMessages(): Flow<Result<List<Message>>>
 
     // PUSH: MESSAGE
-    fun submitMessage(message: Message): Flow<Result<Boolean>>
+    suspend fun submitMessage(message: Message)
+
+    // DELETE: MESSAGE
+    suspend fun deleteMessage(message: Message)
 }

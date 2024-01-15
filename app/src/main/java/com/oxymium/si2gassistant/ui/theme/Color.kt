@@ -43,6 +43,8 @@ val Suggestions3 = Color(0xFF72195A)
 val Suggestions2 = Color(0xFF9E2A2B)
 val Suggestions1 = Color( 0xFF534672)
 
+val Chat1 = Color(0xFF0B666A)
+
 val ResolvedBugTicket = Color(0xFF90be6d)
 val UnresolvedBugTicket = Color(0xFFce4257)
 

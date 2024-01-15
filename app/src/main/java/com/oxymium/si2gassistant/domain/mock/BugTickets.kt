@@ -22,7 +22,7 @@ fun provideRandomBugTicket(
         LoremIpsum(4).values.joinToString(""),
         LoremIpsum(10).values.joinToString(""),
         ALL_ACADEMIES.random().shortTitle,
-        "",
+        ALL_ACADEMIES.random().shortTitle + "@gmail.test",
         Random.nextLong(dateInMillis, secondDateInMillis),
         isResolved,
         if (isResolved) Random.nextLong(dateInMillis, secondDateInMillis) else null,

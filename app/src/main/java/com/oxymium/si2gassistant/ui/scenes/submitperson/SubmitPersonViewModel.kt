@@ -87,52 +87,40 @@ class SubmitPersonViewModel(
             val personFinalized = person.copy(
                 academy = currentUser?.academy,
                 userId = currentUser?.id,
-                userFirstname = currentUser?.firstname,
-                userLastname = currentUser?.lastname
+                submittedBy = currentUser?.mail
             )
-            // Await for result
-            personFinalized.let {
-                personRepository.submitPerson(personFinalized).collect {
-                    when (it) {
-                        // FAILURE
-                        is Result.Failed -> _state.emit(
-                            state.value.copy(
-                                isPersonSubmitFailure = true,
-                                personSubmitFailureMessage = it.errorMessage
-                            )
-                        )
-                        // LOADING
-                        is Result.Loading -> {
-                            _state.emit(
-                                state.value.copy(
-                                    isPersonSubmitLoading = true
-                                )
-                            )
-                            delay(loadingInMillis)
-                        }
-                        // SUCCESS
-                        is Result.Success -> _state.emit(
-                            state.value.copy(
-                                isPersonSubmitFailure = false,
-                                personSubmitFailureMessage = null,
-                                isPersonSubmitLoading = false,
-                            )
-                        )
-                    }
 
-                }
+            // Submit Person
+            try {
+                personRepository.submitPerson(personFinalized)
+                // SUCCESS
+                _state.emit(
+                    state.value.copy(
+                        isPersonsFailure = false,
+                        personSubmitFailureMessage = null
+                    )
+                )
+
+            } catch (e: Exception) {
+                // FAILURE
+                _state.emit(
+                    state.value.copy(
+                        isPersonsFailure = true,
+                        personSubmitFailureMessage = e.message
+                    )
+                )
+
             }
         }
     }
 
     private fun updatePersonValidatedModules(person: Person) {
         viewModelScope.launch {
-            personRepository.updatePerson(person).collect {
-                when (it) {
-                    is Result.Failed -> Unit
-                    is Result.Loading -> Unit
-                    is Result.Success -> Unit
-                }
+            try {
+                personRepository.updatePerson(person)
+                // SUCCESS
+            } catch (e: Exception) {
+                // FAILURE
             }
         }
     }

@@ -15,9 +15,9 @@ interface BugTicketRepository {
     fun getBugTicketsByUser(mail: String): Flow<Result<List<BugTicket>>>
 
     // SUBMIT: BUG TICKET
-    suspend fun submitBugTicket(bugTicket: BugTicket): Flow<Result<Boolean>>
+    suspend fun submitBugTicket(bugTicket: BugTicket)
 
     // UPDATE: BUG TICKET
-    suspend fun updateBugTicket(bugTicket: BugTicket): Flow<Result<Boolean>>
+    suspend fun updateBugTicket(bugTicket: BugTicket)
 
 }

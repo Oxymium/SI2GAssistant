@@ -103,37 +103,26 @@ class BugTicketsViewModel(
                     resolvedComment = state.value.resolvedComment
                 )
             )
-            bugTicketUpdated.selectedBugTicket?.let {
-                bugTicketsRepository.updateBugTicket(it).collect { result ->
-                    when (result) {
 
-                        // FAILURE
-                        is Result.Failed -> _state.emit(
-                            state.value.copy(
-                                isUpdateBugTicketFailure = true,
-                                isUpdateBugTicketFailureMessage = result.errorMessage
-                            )
-                        )
+            // UPDATE BUG TICKET
+            try {
+                bugTicketUpdated.selectedBugTicket?.let { bugTicketsRepository.updateBugTicket(it) }
+                // SUCCESS
+                _state.emit(
+                    state.value.copy(
+                        isUpdateBugTicketFailure = false,
+                        updateBugTicketFailureMessage = null
+                    )
+                )
+            } catch (e: Exception) {
+                // FAILURE
+                _state.emit(
+                    state.value.copy(
+                        isUpdateBugTicketFailure = true,
+                        updateBugTicketFailureMessage = e.message
+                    )
+                )
 
-                        // LOADING
-                        is Result.Loading -> { _state.emit(
-                            state.value.copy(
-                                isUpdateBugTicketLoading = true
-                            )
-                        )
-                            delay(loadingInMillis)
-                        }
-
-                        // SUCCESS
-                        is Result.Success -> _state.emit(
-                            state.value.copy(
-                                isUpdateBugTicketFailure = false,
-                                isUpdateBugTicketFailureMessage = null,
-                                isUpdateBugTicketLoading = false,
-                            )
-                        )
-                    }
-                }
             }
         }
     }

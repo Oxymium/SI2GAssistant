@@ -8,6 +8,6 @@ import kotlinx.coroutines.flow.Flow
 interface SuggestionRepository {
 
     fun getAllSuggestions(): Flow<Result<List<Suggestion>>>
-    suspend fun submitSuggestion(suggestion: Suggestion): Flow<Result<Boolean>>
+    suspend fun submitSuggestion(suggestion: Suggestion)
 
 }

@@ -5,13 +5,13 @@ import com.oxymium.si2gassistant.domain.entities.BugTicket
 import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreCollections
 import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreFields
 import com.oxymium.si2gassistant.domain.entities.Result
-import com.oxymium.si2gassistant.domain.entities.pushError
 import com.oxymium.si2gassistant.domain.repository.BugTicketRepository
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class FirebaseFirestoreBugTicketsImpl(val firebaseFirestore: FirebaseFirestore):
     BugTicketRepository {
@@ -21,7 +21,8 @@ class FirebaseFirestoreBugTicketsImpl(val firebaseFirestore: FirebaseFirestore):
         // Loading
         trySend(Result.Loading())
 
-        val bugTicketsCollection = firebaseFirestore.collection(FirebaseFirestoreCollections.BUG_TICKETS)
+        val bugTicketsCollection =
+            firebaseFirestore.collection(FirebaseFirestoreCollections.BUG_TICKETS)
 
         val listener = bugTicketsCollection
             .addSnapshotListener { querySnapshot, exception ->
@@ -34,7 +35,8 @@ class FirebaseFirestoreBugTicketsImpl(val firebaseFirestore: FirebaseFirestore):
                     val bugTickets: List<BugTicket> =
                         querySnapshot.documents.mapNotNull { document ->
                             val bugTicket = document.toObject(BugTicket::class.java)
-                            bugTicket?.id = document.id // assign the reference of the document for the ID
+                            bugTicket?.id =
+                                document.id // assign the reference of the document for the ID
                             bugTicket
                         }
                     // Success
@@ -68,7 +70,8 @@ class FirebaseFirestoreBugTicketsImpl(val firebaseFirestore: FirebaseFirestore):
                     val bugTickets: List<BugTicket> =
                         querySnapshot.documents.mapNotNull { document ->
                             val bugTicket = document.toObject(BugTicket::class.java)
-                            bugTicket?.id = document.id // assign the reference of the document for the ID
+                            bugTicket?.id =
+                                document.id // assign the reference of the document for the ID
                             bugTicket
                         }
                     trySend(Result.Success(bugTickets)).isSuccess
@@ -81,56 +84,45 @@ class FirebaseFirestoreBugTicketsImpl(val firebaseFirestore: FirebaseFirestore):
     }
 
     // PUSH: BUG TICKET
-    override suspend fun submitBugTicket(bugTicket: BugTicket): Flow<Result<Boolean>> = flow {
-        // Loading
-        emit(Result.Loading())
+    override suspend fun submitBugTicket(bugTicket: BugTicket) = suspendCancellableCoroutine { continuation ->
+        firebaseFirestore
+            .collection(FirebaseFirestoreCollections.BUG_TICKETS)
+            .add(bugTicket)
+            .addOnSuccessListener {
+                // SUCCESS
+                continuation.resume(Unit)
+            }
+            .addOnFailureListener {
+                // FAILURE
+                continuation.resumeWithException(it)
+            }
 
-        val result = CompletableDeferred<Boolean?>()
-
-        try {
-            firebaseFirestore
-                .collection(FirebaseFirestoreCollections.BUG_TICKETS)
-                .document()// auto-generates ID
-                .set(bugTicket)
-                .addOnSuccessListener {
-                    result.complete(true)
-                }
-            // Success
-            emit(Result.Success(true))
-        } catch (e: Exception) {
-            // Failure
-            emit(Result.Failed(e.message ?: pushError, false))
+        continuation.invokeOnCancellation {
+            // Handle cancellation if needed
         }
     }
 
     // UPDATE: BUG TICKET
-    override suspend fun updateBugTicket(bugTicket: BugTicket): Flow<Result<Boolean>> = flow {
-        // Loading
-        emit(Result.Loading())
-
-        val result = CompletableDeferred<Boolean?>()
-
-        try {
-            firebaseFirestore
-                .collection(FirebaseFirestoreCollections.BUG_TICKETS)
-                .document(bugTicket.id ?: "")
-                .update(
-                    FirebaseFirestoreFields.RESOLVED, bugTicket.isResolved,
-                    FirebaseFirestoreFields.RESOLVED_COMMENT, bugTicket.resolvedComment,
-                    FirebaseFirestoreFields.RESOLVED_DATE, bugTicket.resolvedDate
-
-                )
-                .addOnSuccessListener {
-                    result.complete(true)
-                }
-            // Success
-            emit(Result.Success(true))
-        } catch (e: Exception) {
-            // Failure
-            emit(Result.Failed(e.message ?: pushError, false))
+    override suspend fun updateBugTicket(bugTicket: BugTicket) = suspendCancellableCoroutine { continuation ->
+        firebaseFirestore
+            .collection(FirebaseFirestoreCollections.BUG_TICKETS)
+            .document(bugTicket.id ?: "")
+            .update(
+                FirebaseFirestoreFields.RESOLVED, bugTicket.isResolved,
+                FirebaseFirestoreFields.RESOLVED_COMMENT, bugTicket.resolvedComment,
+                FirebaseFirestoreFields.RESOLVED_DATE, bugTicket.resolvedDate
+            )
+            .addOnSuccessListener {
+                // SUCCESS
+                continuation.resume(Unit)
+            }
+            .addOnFailureListener {
+                // FAILURE
+                continuation.resumeWithException(it)
+            }
+        continuation.invokeOnCancellation {
+            // Handle cancellation if needed
         }
-
     }
-
 
 }

@@ -1,7 +1,9 @@
 package com.oxymium.si2gassistant.ui.scenes.suggestions.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -19,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.Suggestion
 import com.oxymium.si2gassistant.domain.mock.provideRandomSuggestion
+import com.oxymium.si2gassistant.ui.theme.Black
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.Suggestions1
 import com.oxymium.si2gassistant.ui.theme.Suggestions2
@@ -26,6 +29,7 @@ import com.oxymium.si2gassistant.ui.theme.Suggestions3
 import com.oxymium.si2gassistant.ui.theme.Suggestions4
 import com.oxymium.si2gassistant.ui.theme.White
 import com.oxymium.si2gassistant.utils.DateUtils
+import com.oxymium.si2gassistant.utils.TimeMode
 
 @Composable
 fun SuggestionItem(
@@ -53,60 +57,79 @@ fun SuggestionItem(
     ){
 
         val submittedDate = DateUtils.convertMillisToDate(suggestion.submittedDate)
-        val submittedTime = DateUtils.convertMillisToTime(suggestion.submittedDate)
+        val submittedTime = DateUtils.convertMillisToTime(suggestion.submittedDate, TimeMode.SECONDS)
+
+        Row(
+            modifier = Modifier
+                .padding(2.dp)
+            ) {
+
+            Icon(
+                modifier = Modifier,
+                painter = painterResource(id = R.drawable.ic_blur),
+                contentDescription = null,
+                tint = White
+            )
+
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = "${suggestion.submittedBy}",
+                color = White,
+                textAlign = TextAlign.Center
+            )
+
+        }
+
         Text(
             modifier = Modifier
-                .padding(end = 8.dp, top = 8.dp)
+                .padding(4.dp)
                 .fillMaxWidth(),
-            text = "when: $submittedDate $submittedTime",
+            text = "$submittedDate ≡ $submittedTime",
             color = White,
             textAlign = TextAlign.End
         )
 
         Text(
             modifier = Modifier
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 4.dp)
                 .fillMaxWidth(),
-            text = "from: ${suggestion.submittedBy}",
-            color = White,
-            textAlign = TextAlign.End
-        )
-
-        Text(
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .fillMaxWidth(),
-            text = "academy: ${suggestion.submittedAcademy}",
-            color = White,
-            textAlign = TextAlign.End
-        )
-
-        Icon(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally),
-            painter = painterResource(id = R.drawable.ic_blur),
-            contentDescription = null,
-            tint = White
-        )
-
-        Text(
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .fillMaxWidth(),
-            text = "subject: ${suggestion.subject}",
+            text = "Academy: ${suggestion.submittedAcademy}",
             color = White,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Start
         )
-        
+
         Text(
             modifier = Modifier
-                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+                .padding(horizontal = 4.dp)
                 .fillMaxWidth(),
-            text = "body: ${suggestion.body}",
+            text = "Subject: ${suggestion.subject}",
             color = White,
+            fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Start
         )
+
+        Box(
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth()
+                .background(
+                    color = White,
+                    shape = RoundedCornerShape(8.dp)
+                )
+        ) {
+
+            Text(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                text = "${suggestion.body}",
+                color = Black,
+                textAlign = TextAlign.Start
+            )
+
+        }
 
     }
 

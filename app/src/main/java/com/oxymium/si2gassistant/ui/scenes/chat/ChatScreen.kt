@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -21,9 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -32,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
 import com.oxymium.si2gassistant.domain.entities.Message
 import com.oxymium.si2gassistant.ui.scenes.chat.components.MessageList
-import com.oxymium.si2gassistant.ui.theme.MenuAccent
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.TextAccent
@@ -66,6 +61,7 @@ fun ChatScreen(
                 // CONTENT
                 Box(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .background(
                             color = Neutral,
                         )
@@ -79,7 +75,8 @@ fun ChatScreen(
                             .padding(8.dp)
                     ) {
                         OutlinedTextField(
-                            modifier = Modifier,
+                            modifier = Modifier
+                                .fillMaxWidth(),
                             value = content,
                             onValueChange = {
                                 val contentTrimmed = it.trim()
@@ -96,7 +93,7 @@ fun ChatScreen(
                             ),
                             label = {
                                 Text(
-                                    text = "Write your message...",
+                                    text = if (state.isContentFieldError) "*cannot post empty field" else "Write your message...",
                                     color = White
                                 )
                             },
@@ -105,46 +102,34 @@ fun ChatScreen(
                                 keyboardType = KeyboardType.Email
                             ),
                             minLines = 3,
-                            maxLines = 3
+                            maxLines = 3,
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = {
+                                        event.invoke(ChatEvent.OnSubmitMessageButtonClick)
+                                        content = ""
+                                    }) {
+
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_plus_thick),
+                                        contentDescription = "submit message button",
+                                        tint = White
+                                    )
+
+                                }
+                            }
                         )
 
-                        if (state.isContentFieldError) {
-                            Text(
-                                text = "*cannot submit empty message",
-                                color = White
-                            )
-                        }
                     }
-
                 }
-
-                // PUSH BUTTON
-                Button(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(50.dp))
-                        .align(Alignment.CenterVertically)
-                        .background(
-                            color = Neutral
-                        ),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = MenuAccent,
-                        contentColor = White
-                    ),
-                    onClick = {
-                        event.invoke(ChatEvent.OnSubmitMessageButtonClick)
-                    },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_plus_thick),
-                        contentDescription = "submit message button"
-                    )
-                }
-
             }
+
+
 
             // MESSAGES
             MessageList(
-                state = state
+                state = state,
+                event = event
             )
 
         }

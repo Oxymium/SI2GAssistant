@@ -15,6 +15,6 @@ data class BugTicketsState(
     val bugTicketsFailedMessage: String? = null,
     // Update bug ticket state --------------
     val isUpdateBugTicketFailure: Boolean = false,
-    val isUpdateBugTicketFailureMessage: String? = null,
+    val updateBugTicketFailureMessage: String? = null,
     val isUpdateBugTicketLoading: Boolean = false
 )

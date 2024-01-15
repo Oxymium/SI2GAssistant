@@ -22,6 +22,7 @@ import com.oxymium.si2gassistant.ui.theme.Announcement5
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.White
 import com.oxymium.si2gassistant.utils.DateUtils
+import com.oxymium.si2gassistant.utils.TimeMode
 
 @Composable
 fun AnnouncementItem(
@@ -30,7 +31,8 @@ fun AnnouncementItem(
 ) {
 
     val colors = listOf(Announcement1, Announcement2, Announcement3, Announcement4, Announcement5)
-    val backgroundColor = colors[index % colors.size] // modulo to cycle through the colors based on index
+    val backgroundColor =
+        colors[index % colors.size] // modulo to cycle through the colors based on index
 
     Column(
         modifier = Modifier
@@ -43,8 +45,12 @@ fun AnnouncementItem(
             )
     ) {
 
-        val submittedDateConvertedToDate = DateUtils.convertMillisToDate(announcement.submittedDate)
-        val submittedDateConvertedToTime = DateUtils.convertMillisToTime(announcement.submittedDate)
+        val submittedDateConvertedToDate =
+            DateUtils.convertMillisToDate(announcement.submittedDate)
+        val submittedDateConvertedToTime =
+            DateUtils.convertMillisToTime(announcement.submittedDate, TimeMode.MINUTES)
+
+
         // TITLE
         Text(
             modifier = Modifier
@@ -52,7 +58,7 @@ fun AnnouncementItem(
                 .padding(
                     horizontal = 8.dp
                 ),
-            text = "■ $submittedDateConvertedToDate ≡ $submittedDateConvertedToTime",
+            text = "▣ $submittedDateConvertedToDate ≡ $submittedDateConvertedToTime",
             color = White,
             textAlign = TextAlign.End,
             minLines = 1,
@@ -66,7 +72,7 @@ fun AnnouncementItem(
                 .padding(
                     horizontal = 8.dp
                 ),
-            text = "■ ${announcement.title}",
+            text = "▣ ${announcement.title}",
             color = White,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Start,
@@ -79,7 +85,7 @@ fun AnnouncementItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            text = "■ ${announcement.content}",
+            text = "▣ ${announcement.content}",
             color = White,
             textAlign = TextAlign.Start,
             minLines = 1,
@@ -87,7 +93,6 @@ fun AnnouncementItem(
         )
 
     }
-
 }
 
 @Preview(showBackground = true)

@@ -33,9 +33,7 @@ class PersonsViewModel(
                     it.academy?.contains(filter.search ?: "", ignoreCase = true) == true ||
                             it.firstname?.contains(filter.search ?: "", ignoreCase = true) == true ||
                             it.lastname?.contains(filter.search ?: "", ignoreCase = true) == true ||
-                            it.role?.contains(filter.search ?: "", ignoreCase = true) == true ||
-                            it.userFirstname?.contains(filter.search ?: "", ignoreCase = true) == true ||
-                            it.userLastname?.contains(filter.search ?: "", ignoreCase = true) == true
+                            it.role?.contains(filter.search ?: "", ignoreCase = true) == true
                 }
             }
         )

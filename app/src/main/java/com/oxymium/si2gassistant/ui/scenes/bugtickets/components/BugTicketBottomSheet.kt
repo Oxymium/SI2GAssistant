@@ -76,7 +76,7 @@ fun BugTicketBottomSheet(
             }
         ) {
 
-            // PRE INFO
+            // BOX: CATEGORY
             Box(
                 modifier = Modifier
                     .padding(2.dp)
@@ -84,8 +84,7 @@ fun BugTicketBottomSheet(
                     .wrapContentHeight()
                     .align(Alignment.CenterHorizontally)
                     .background(
-                        color = NeutralLighter,
-                        shape = RoundedCornerShape(20.dp)
+                        color = NeutralLighter
                     )
             ) {
 
@@ -109,16 +108,7 @@ fun BugTicketBottomSheet(
 
             }
 
-            // SPACER
-            Icon(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally),
-                painter = painterResource(id = R.drawable.ic_blur),
-                tint = NeutralLighter,
-                contentDescription = "circle"
-            )
-
-            // PRE INFO
+            // BOX: PRIORITY
             Box(
                 modifier = Modifier
                     .padding(2.dp)
@@ -126,8 +116,7 @@ fun BugTicketBottomSheet(
                     .wrapContentHeight()
                     .align(Alignment.CenterHorizontally)
                     .background(
-                        color = backgroundColor,
-                        shape = RoundedCornerShape(20.dp)
+                        color = backgroundColor
                     )
             ) {
 
@@ -143,6 +132,38 @@ fun BugTicketBottomSheet(
                             .padding(2.dp)
                             .align(Alignment.CenterHorizontally),
                         text = "priority: ${state.selectedBugTicket.priority?.name}",
+                        color = White,
+                        textAlign = TextAlign.Center
+                    )
+
+                }
+
+            }
+
+            // BOX: SHORT DESCRIPTION
+            Box(
+                modifier = Modifier
+                    .padding(2.dp)
+                    .fillMaxWidth(0.9f)
+                    .wrapContentHeight()
+                    .align(Alignment.CenterHorizontally)
+                    .background(
+                        color = NeutralLighter
+                    )
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center)
+                ) {
+
+                    // SHORT DESCRIPTION
+                    Text(
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .align(Alignment.CenterHorizontally),
+                        text = state.selectedBugTicket.shortDescription ?: "",
                         color = White,
                         textAlign = TextAlign.Center
                     )
@@ -168,8 +189,7 @@ fun BugTicketBottomSheet(
                     .wrapContentHeight()
                     .align(Alignment.CenterHorizontally)
                     .background(
-                        color = NeutralLighter,
-                        shape = RoundedCornerShape(20.dp)
+                        color = NeutralLighter
                     )
             ) {
 
@@ -215,15 +235,6 @@ fun BugTicketBottomSheet(
 
             }
 
-            // SPACER
-            Icon(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally),
-                painter = painterResource(id = R.drawable.ic_blur),
-                tint = NeutralLighter,
-                contentDescription = "circle"
-            )
-
             // BODY
             Box(
                 modifier = Modifier
@@ -242,26 +253,6 @@ fun BugTicketBottomSheet(
                         .fillMaxWidth()
                         .align(Alignment.Center)
                 ) {
-
-                    // SHORT DESCRIPTION
-                    Text(
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .align(Alignment.CenterHorizontally),
-                        text = state.selectedBugTicket.shortDescription ?: "",
-                        color = White,
-                        textAlign = TextAlign.Center
-                    )
-
-                    // DESCRIPTION
-                    Text(
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .align(Alignment.CenterHorizontally),
-                        text = state.selectedBugTicket.description ?: "",
-                        color = White,
-                        textAlign = TextAlign.Center
-                    )
 
                 }
 
@@ -287,8 +278,7 @@ fun BugTicketBottomSheet(
                         .wrapContentHeight()
                         .align(Alignment.CenterHorizontally)
                         .background(
-                            color = ResolvedBugTicket,
-                            shape = RoundedCornerShape(20.dp)
+                            color = ResolvedBugTicket
                         )
                 ) {
 
@@ -334,8 +324,7 @@ fun BugTicketBottomSheet(
                         .wrapContentHeight()
                         .align(Alignment.CenterHorizontally)
                         .background(
-                            color = UnresolvedBugTicket,
-                            shape = RoundedCornerShape(20.dp)
+                            color = UnresolvedBugTicket
                         )
                 ) {
 
@@ -350,7 +339,7 @@ fun BugTicketBottomSheet(
                             modifier = Modifier
                                 .padding(2.dp)
                                 .align(Alignment.CenterHorizontally),
-                            text = "unresolved",
+                            text = "Not yet resolved",
                             color = White,
                             textAlign = TextAlign.Center
                         )

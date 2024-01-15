@@ -7,8 +7,12 @@ import com.oxymium.si2gassistant.domain.mock.provideRandomMessage
 import com.oxymium.si2gassistant.domain.repository.MessageRepository
 import com.oxymium.si2gassistant.utils.TestCoroutineRule
 import com.oxymium.si2gassistant.utils.observe
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -38,7 +42,7 @@ class ChatViewModelTest {
     fun `Test on message content change event`() = runTest {
         // GIVEN
         val message = chatViewModel.message.observe(this)
-        val givenString = "Test string"
+        val givenString = "Any string"
         every { messageRepository.getAllMessages() } returns flow { Result.Success(emptyList<List<Message>>()) }
 
         // WHEN
@@ -102,6 +106,24 @@ class ChatViewModelTest {
         )
 
         state.finish()
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `Test delete message`() = runTest {
+        // GIVEN
+        val givenMessage = provideRandomMessage()
+        every { messageRepository.getAllMessages() } returns flow { Result.Success(emptyList<List<Message>>()) }
+
+        // WHEN
+        chatViewModel.onEvent(
+            ChatEvent.OnDeleteMessageButtonClick(givenMessage)
+        )
+        advanceUntilIdle()
+
+        // THEN
+        coVerify { messageRepository.deleteMessage(givenMessage) }
+
     }
 
 }
