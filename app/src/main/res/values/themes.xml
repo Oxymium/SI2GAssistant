@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="Theme.Si2GAssistant" parent="android:Theme.Material.Light.NoActionBar" />
-
     <!-- Splash theme (app starts) -->
     <style name="Theme.Si2GAssistant.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/neutral</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.Si2GAssistant</item> <!-- Apply app theme after splash -->
     </style>
-
 </resources>

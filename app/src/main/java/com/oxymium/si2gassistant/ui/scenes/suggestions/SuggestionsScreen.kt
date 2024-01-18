@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.oxymium.si2gassistant.domain.mock.provideRandomSuggestion
 import com.oxymium.si2gassistant.domain.states.SuggestionsState
 import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
+import com.oxymium.si2gassistant.ui.scenes.animations.NothingAnimation
 import com.oxymium.si2gassistant.ui.scenes.suggestions.components.SuggestionList
 import com.oxymium.si2gassistant.ui.scenes.suggestions.components.SuggestionSearch
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
@@ -38,9 +39,17 @@ fun SuggestionsScreen(
 
         } else {
 
-            SuggestionList(
-                state = state
-            )
+            if (state.suggestions.isEmpty()) {
+
+                NothingAnimation()
+
+            } else {
+
+                SuggestionList(
+                    state = state
+                )
+
+            }
 
         }
 

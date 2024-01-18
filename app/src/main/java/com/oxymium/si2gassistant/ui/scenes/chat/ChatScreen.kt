@@ -26,7 +26,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.R
-import com.oxymium.si2gassistant.domain.entities.Message
+import com.oxymium.si2gassistant.domain.mock.provideRandomMessage
+import com.oxymium.si2gassistant.ui.scenes.animations.NothingAnimation
 import com.oxymium.si2gassistant.ui.scenes.chat.components.MessageList
 import com.oxymium.si2gassistant.ui.theme.Neutral
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
@@ -124,13 +125,19 @@ fun ChatScreen(
                 }
             }
 
+            if (state.messages.isEmpty()) {
 
+                NothingAnimation()
 
-            // MESSAGES
-            MessageList(
-                state = state,
-                event = event
-            )
+            } else {
+
+                // MESSAGES
+                MessageList(
+                    state = state,
+                    event = event
+                )
+
+            }
 
         }
     }
@@ -140,13 +147,8 @@ fun ChatScreen(
 @Composable
 fun ChatScreenPreview() {
     Si2GAssistantTheme {
-        val previewState = ChatState( listOf(
-            Message("",0L, "","Message1"),
-            Message("",0L, "","Message2"),
-            Message("",0L, "","Message3"),
-            Message("",0L, "","MEssage4"),
-            Message("",0L, "","Message5"),
-        )
+        val previewState = ChatState(
+            messages = List (10) { provideRandomMessage() }
         )
         ChatScreen(
             state = previewState

@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.bugtickets.components.BugTicketItem
 import com.oxymium.si2gassistant.domain.states.ReportBugState
+import com.oxymium.si2gassistant.ui.scenes.animations.NothingAnimation
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.White
 
@@ -31,25 +32,34 @@ fun BugTicketsScreen(
 
     } else {
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = White)
-        ) {
+        if (state.bugTickets.isEmpty()) {
 
-            LazyColumn(
+            NothingAnimation()
+
+        } else {
+
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .background(color = White)
             ) {
-                items(state.bugTickets) { bugTicket ->
-                    BugTicketItem(
-                        bugTicket = bugTicket
-                    ) {
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(state.bugTickets) { bugTicket ->
+                        BugTicketItem(
+                            bugTicket = bugTicket
+                        ) {
+                        }
                     }
                 }
+
             }
+
         }
 
     }

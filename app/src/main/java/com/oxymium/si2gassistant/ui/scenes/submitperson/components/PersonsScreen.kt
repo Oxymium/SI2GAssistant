@@ -17,6 +17,7 @@ import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.persons.components.PersonItem
 import com.oxymium.si2gassistant.ui.scenes.submitperson.SubmitPersonEvent
 import com.oxymium.si2gassistant.domain.states.SubmitPersonState
+import com.oxymium.si2gassistant.ui.scenes.animations.NothingAnimation
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 import com.oxymium.si2gassistant.ui.theme.White
 
@@ -47,21 +48,29 @@ fun PersonsScreen_Nu(
 
         } else {
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                itemsIndexed(state.persons) { index, person ->
+            if (state.persons.isEmpty()) {
 
-                    PersonItem(
-                        index = index,
-                        person = person,
-                        event = event
-                    )
+                NothingAnimation()
 
+            } else {
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    itemsIndexed(state.persons) { index, person ->
+
+                        PersonItem(
+                            index = index,
+                            person = person,
+                            event = event
+                        )
+
+                    }
                 }
+
             }
 
         }

@@ -9,6 +9,7 @@ import com.oxymium.si2gassistant.domain.mock.provideRandomPerson
 import com.oxymium.si2gassistant.ui.scenes.animations.LoadingAnimation
 import com.oxymium.si2gassistant.ui.scenes.persons.components.PersonList
 import com.oxymium.si2gassistant.domain.states.PersonListState
+import com.oxymium.si2gassistant.ui.scenes.animations.NothingAnimation
 import com.oxymium.si2gassistant.ui.scenes.persons.components.PersonSearch
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 
@@ -37,9 +38,17 @@ fun PersonsScreen(
 
         } else {
 
-            PersonList(
-                state = state
-            )
+            if (state.persons.isEmpty()) {
+
+                NothingAnimation()
+
+            } else {
+
+                PersonList(
+                    state = state
+                )
+
+            }
 
         }
 
@@ -50,7 +59,7 @@ fun PersonsScreen(
 @Composable
 fun PersonsScreenPreview() {
     val statePreview = PersonListState(
-        persons = List (10) { provideRandomPerson() }
+        persons = List (5) { provideRandomPerson() }
     )
     Si2GAssistantTheme {
         PersonsScreen(
