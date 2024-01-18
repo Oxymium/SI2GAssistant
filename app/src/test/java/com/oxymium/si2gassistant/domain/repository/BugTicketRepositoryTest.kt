@@ -1,6 +1,5 @@
 package com.oxymium.si2gassistant.domain.repository
 
-import android.app.DownloadManager
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -19,19 +18,16 @@ import com.oxymium.si2gassistant.domain.entities.BugTicket
 import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreCollections
 import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreFields
 import com.oxymium.si2gassistant.domain.entities.Result
-import com.oxymium.si2gassistant.domain.entities.User
 import com.oxymium.si2gassistant.domain.mock.provideRandomBugTicket
 import com.oxymium.si2gassistant.utils.observe
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.invoke
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import junit.framework.TestCase.assertFalse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -136,8 +132,8 @@ class BugTicketRepositoryTest {
 
         val callbackSlot = slot<EventListener<QuerySnapshot>>()
         every { firebaseFirestore.collection(any()) } returns bugTicketCollectionMock
-        every { bugTicketCollectionMock.whereEqualTo(FirebaseFirestoreCollections.BUG_TICKETS, givenMail) } returns bugTicketQuery
-        every { bugTicketCollectionMock.addSnapshotListener(capture(callbackSlot)) } answers {
+        every { bugTicketCollectionMock.whereEqualTo(FirebaseFirestoreFields.SUBMITTED_BY, givenMail) } returns bugTicketQuery
+        every { bugTicketQuery.addSnapshotListener(capture(callbackSlot)) } answers {
             callbackSlot.captured.onEvent(null, exception)
             registration
         }
@@ -160,22 +156,24 @@ class BugTicketRepositoryTest {
     fun getBugTicketsByUserSuccessTest() = runTest {
         // GIVEN
         val givenMail = "mock@gmail.test"
+        val givenTicket = provideRandomBugTicket().copy(submittedBy = givenMail)
         val firebaseFirestore = mockk<FirebaseFirestore>()
         val bugTicketCollectionMock = mockk<CollectionReference>()
         val bugTicketRepository = FirebaseFirestoreBugTicketsImpl(firebaseFirestore)
         val bugTicketQuery = mockk<Query>()
+        val bugTicketQuerySnapshot = mockk<QuerySnapshot>()
+        val documentSnapshot = mockk<DocumentSnapshot>()
         val registration = mockk<ListenerRegistration> {
             every { remove() } just Runs
-        }
-        val exception = mockk<FirebaseFirestoreException> {
-            every { message } returns "exception"
         }
 
         val callbackSlot = slot<EventListener<QuerySnapshot>>()
         every { firebaseFirestore.collection(any()) } returns bugTicketCollectionMock
-        every { bugTicketCollectionMock.whereEqualTo(FirebaseFirestoreCollections.BUG_TICKETS, givenMail) } returns bugTicketQuery
-        every { bugTicketCollectionMock.addSnapshotListener(capture(callbackSlot)) } answers {
-            callbackSlot.captured.onEvent(null, exception)
+        every { bugTicketCollectionMock.whereEqualTo(FirebaseFirestoreFields.SUBMITTED_BY, givenMail) } returns bugTicketQuery
+        every { bugTicketQuerySnapshot.query  } returns bugTicketQuery
+        every { documentSnapshot.toObject(BugTicket::class.java) } returns givenTicket
+        every { bugTicketQuery.addSnapshotListener(capture(callbackSlot)) } answers {
+            callbackSlot.captured.onEvent(bugTicketQuerySnapshot, null)
             registration
         }
 
@@ -186,7 +184,7 @@ class BugTicketRepositoryTest {
         // THEN
         Truth.assertThat(flow.values).containsExactly(
             Result.Loading<List<BugTicket>>(),
-            Result.Success<String>("exception")
+            Result.Success(givenTicket)
         )
 
         flow.finish()
@@ -304,7 +302,7 @@ class BugTicketRepositoryTest {
         val givenBugTicket = provideRandomBugTicket()
         val firebaseFirestore = mockk<FirebaseFirestore>()
         val bugTicketRepository = FirebaseFirestoreBugTicketsImpl(firebaseFirestore)
-        // Mocking the failure scenario
+        // Mocking the success scenario
         val onSuccessListenerSlot = slot<OnSuccessListener<Void>>()
         coEvery {
             firebaseFirestore

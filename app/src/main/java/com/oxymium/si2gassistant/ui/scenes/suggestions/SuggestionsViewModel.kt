@@ -2,9 +2,8 @@ package com.oxymium.si2gassistant.ui.scenes.suggestions
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.common.annotations.VisibleForTesting
 import com.oxymium.si2gassistant.domain.entities.Result
-import com.oxymium.si2gassistant.domain.entities.Suggestion
-import com.oxymium.si2gassistant.domain.mock.provideRandomSuggestion
 import com.oxymium.si2gassistant.domain.repository.SuggestionRepository
 import com.oxymium.si2gassistant.domain.states.SuggestionsState
 import com.oxymium.si2gassistant.loadingInMillis
@@ -44,68 +43,45 @@ class SuggestionsViewModel(
         getAllSuggestions()
     }
 
-    private fun updateState(suggestionState: SuggestionsState) {
-        viewModelScope.launch {
-            _state.emit(suggestionState)
-        }
-    }
-
-    private fun getAllSuggestions() {
+    @VisibleForTesting
+    fun getAllSuggestions() {
         viewModelScope.launch {
             suggestionRepository.getAllSuggestions().collect {
                 when (it) {
                     // FAILURE
-                    is Result.Failed ->
-                        updateState(
+                    is Result.Failed -> {
+                        _state.value =
                             state.value.copy(
                                 isSuggestionsFailure = true,
                                 suggestionsFailureMessage = it.errorMessage
                             )
-                        )
+                    }
                     // LOADING
                     is Result.Loading -> {
-                        updateState(
+                        _state.value =
                             state.value.copy(
                                 isSuggestionsLoading = true
                             )
-                        )
                         delay(loadingInMillis)
                     }
                     // SUCCESS
-                    is Result.Success ->
-                        updateState(
+                    is Result.Success -> {
+                        _state.value =
                             state.value.copy(
                                 isSuggestionsLoading = false,
                                 isSuggestionsFailure = false,
                                 suggestions = it.data
                             )
-                        )
+                    }
 
                 }
             }
         }
     }
 
-
-    private fun updateSuggestionFilter(suggestionFilter: SuggestionFilter) {
-        viewModelScope.launch {
-            _filter.emit(suggestionFilter)
-        }
-    }
-
-    private fun pushRandomSuggestion(suggestion: Suggestion) {
-        viewModelScope.launch {
-            suggestionRepository.submitSuggestion(suggestion)
-        }
-    }
-
     fun onEvent(event: SuggestionsEvent) {
         when (event) {
-            is SuggestionsEvent.OnSearchTextChange -> updateSuggestionFilter(SuggestionFilter.Search(event.search))
-            SuggestionsEvent.OnRandomSuggestionButtonClick -> pushRandomSuggestion(
-                provideRandomSuggestion()
-            )
-
+            is SuggestionsEvent.OnSearchTextChange -> _filter.value = SuggestionFilter.Search(event.search)
         }
 
     }

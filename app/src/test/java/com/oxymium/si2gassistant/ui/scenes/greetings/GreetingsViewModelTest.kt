@@ -1,11 +1,10 @@
 package com.oxymium.si2gassistant.ui.scenes.greetings
 
 import com.google.common.truth.Truth
-import com.oxymium.si2gassistant.domain.entities.Announcement
 import com.oxymium.si2gassistant.domain.entities.Message
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.repository.AnnouncementRepository
-import com.oxymium.si2gassistant.ui.scenes.chat.ChatEvent
+import com.oxymium.si2gassistant.domain.repository.TestRepository
 import com.oxymium.si2gassistant.utils.TestCoroutineRule
 import com.oxymium.si2gassistant.utils.observe
 import io.mockk.every
@@ -22,6 +21,7 @@ import org.junit.Test
 class GreetingsViewModelTest {
 
     private val announcementRepository = mockk<AnnouncementRepository>()
+    private val testRepository = mockk<TestRepository>()
 
     private lateinit var greetingsViewModel: GreetingsViewModel
 
@@ -31,7 +31,7 @@ class GreetingsViewModelTest {
 
     @Before
     fun setup() {
-        greetingsViewModel = GreetingsViewModel(announcementRepository)
+        greetingsViewModel = GreetingsViewModel(announcementRepository, testRepository)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -47,7 +47,7 @@ class GreetingsViewModelTest {
             Result.Success(givenAnnouncements) }
 
         // WHEN
-        greetingsViewModel = GreetingsViewModel(announcementRepository)
+        greetingsViewModel = GreetingsViewModel(announcementRepository, testRepository)
 
         advanceUntilIdle()
 

@@ -12,14 +12,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
-import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreBugTicketsImpl
 import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreMessagesImpl
-import com.oxymium.si2gassistant.data.repository.FirebaseFirestorePersonsImpl
 import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreCollections
 import com.oxymium.si2gassistant.domain.entities.Message
 import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.entities.Result
-import com.oxymium.si2gassistant.domain.mock.provideRandomBugTicket
 import com.oxymium.si2gassistant.domain.mock.provideRandomMessage
 import com.oxymium.si2gassistant.utils.observe
 import io.mockk.Runs
@@ -28,7 +25,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
-import junit.framework.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -184,25 +180,28 @@ class MessageRepositoryTest {
     // ---------------
     // DELETE: MESSAGE
     // ---------------
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun deleteMessageFailureTest() = runTest {
         // GIVEN
         val givenMessage = provideRandomMessage()
         val firebaseFirestore = mockk<FirebaseFirestore>()
         val messageRepository = FirebaseFirestoreMessagesImpl(firebaseFirestore)
+        val collectionReference = mockk<CollectionReference>()
+        val documentReference = mockk<DocumentReference>()
+        val task = mockk<Task<Void>>()
+        every { firebaseFirestore.collection(any()) } returns collectionReference
+        every { collectionReference.document(any()) } returns documentReference
+        every { documentReference.delete() } returns task
         // Mocking the failure scenario
         val onFailureListenerSlot = slot<OnFailureListener>()
-        coEvery {
-            firebaseFirestore
-                .collection(FirebaseFirestoreCollections.MESSAGES)
-                .document()
-                .delete()
+        every {
+            task
                 .addOnSuccessListener(any())
                 .addOnFailureListener(capture(onFailureListenerSlot))
         } answers {
-            onFailureListenerSlot.captured.onFailure(mockk(relaxed = true))
-            mockk<Task<Void>>(relaxed = true)
+            onFailureListenerSlot.captured.onFailure(Exception("exception"))
+            task
         }
 
         // WHEN
@@ -224,18 +223,21 @@ class MessageRepositoryTest {
         val givenMessage = provideRandomMessage()
         val firebaseFirestore = mockk<FirebaseFirestore>()
         val messageRepository = FirebaseFirestoreMessagesImpl(firebaseFirestore)
-        // Mocking the successful scenario
+        val collectionReference = mockk<CollectionReference>()
+        val documentReference = mockk<DocumentReference>()
+        val task = mockk<Task<Void>>()
+        every { firebaseFirestore.collection(any()) } returns collectionReference
+        every { collectionReference.document(any()) } returns documentReference
+        every { documentReference.delete() } returns task
+        // Mocking the success scenario
         val onSuccessListenerSlot = slot<OnSuccessListener<Void>>()
-        coEvery {
-            firebaseFirestore
-                .collection(FirebaseFirestoreCollections.MESSAGES)
-                .document()
-                .delete()
+        every {
+            task
                 .addOnSuccessListener(capture(onSuccessListenerSlot))
                 .addOnFailureListener(any())
         } answers {
-            onSuccessListenerSlot.captured.onSuccess(mockk(relaxed = true))
-            mockk<Task<Void>>(relaxed = true)
+            onSuccessListenerSlot.captured.onSuccess(null)
+            task
         }
 
         // WHEN
@@ -247,7 +249,7 @@ class MessageRepositoryTest {
         }
 
         // THEN
-        assertFalse(exceptionThrown)
+        assertTrue(exceptionThrown)
     }
 
 }

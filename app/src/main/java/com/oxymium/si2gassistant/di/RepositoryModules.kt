@@ -11,6 +11,7 @@ import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreModulesImpl
 import com.oxymium.si2gassistant.data.repository.FirebaseFirestorePersonsImpl
 import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreSuggestionsImpl
 import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreUsersImpl
+import com.oxymium.si2gassistant.data.repository.TestRepositoryImpl
 import com.oxymium.si2gassistant.domain.repository.AcademyRepository
 import com.oxymium.si2gassistant.domain.repository.AnnouncementRepository
 import com.oxymium.si2gassistant.domain.repository.AuthRepository
@@ -19,6 +20,7 @@ import com.oxymium.si2gassistant.domain.repository.MessageRepository
 import com.oxymium.si2gassistant.domain.repository.ModuleRepository
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
 import com.oxymium.si2gassistant.domain.repository.SuggestionRepository
+import com.oxymium.si2gassistant.domain.repository.TestRepository
 import com.oxymium.si2gassistant.domain.repository.UserRepository
 import org.koin.dsl.module
 
@@ -52,4 +54,7 @@ val repositoryModules = module {
 
     // REPO: DataStore
     single<DataStoreRepository> { DataStoreRepositoryImpl(context = get() ) }
+
+    // REPO: Testing
+    single<TestRepository> { TestRepositoryImpl(firebaseFirestore = get() ) }
 }

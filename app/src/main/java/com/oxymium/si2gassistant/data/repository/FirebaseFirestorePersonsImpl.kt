@@ -89,9 +89,6 @@ class FirebaseFirestorePersonsImpl(val firebaseFirestore: FirebaseFirestore): Pe
                 // Failure
                 continuation.resumeWithException(it)
             }
-        continuation.invokeOnCancellation {
-            // Handle cancellation if needed
-        }
     }
 
 
@@ -110,9 +107,6 @@ class FirebaseFirestorePersonsImpl(val firebaseFirestore: FirebaseFirestore): Pe
                 continuation.resumeWithException(it)
             }
 
-        continuation.invokeOnCancellation {
-            // Handle cancellation if needed
-        }
     }
 
 }

@@ -9,4 +9,6 @@ data class GreetingsState(
     val isAnnouncementsFailure: Boolean = false,
     val announcementsFailureMessage: String? = null,
     val isAnnouncementsLoading: Boolean = false,
+    val isGreetingsMode: Boolean = true, // initial value
+    val isTestingMode: Boolean = false
 )

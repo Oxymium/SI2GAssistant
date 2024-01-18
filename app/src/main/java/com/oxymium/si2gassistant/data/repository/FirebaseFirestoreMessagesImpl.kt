@@ -4,13 +4,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreCollections
 import com.oxymium.si2gassistant.domain.entities.Message
 import com.oxymium.si2gassistant.domain.entities.Result
-import com.oxymium.si2gassistant.domain.entities.pushError
 import com.oxymium.si2gassistant.domain.repository.MessageRepository
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -62,10 +59,6 @@ class FirebaseFirestoreMessagesImpl(
                 .addOnFailureListener {
                     continuation.resumeWithException(it)
                 }
-            // Success
-        continuation.invokeOnCancellation {
-            // Handle cancellation if needed
-        }
     }
 
     // DELETE: MESSAGE
@@ -82,10 +75,6 @@ class FirebaseFirestoreMessagesImpl(
                 // Failure
                 continuation.resumeWithException(it)
             }
-
-        continuation.invokeOnCancellation {
-            // Handle cancellation if needed
-        }
     }
 
 }

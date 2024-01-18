@@ -3,6 +3,7 @@ package com.oxymium.si2gassistant.domain.mock
 import com.oxymium.si2gassistant.domain.entities.Academy
 
 val ALL_ACADEMIES = listOf(
+    Academy( "000", "Centrale (Paris)", "Centrale"),
     Academy("001", "Académie de Clermont-Ferrand", "Clermont-Ferrand"),
     Academy("002", "Académie de Grenoble", "Grenoble"),
     Academy("003", "Académie de Lyon", "Lyon"),

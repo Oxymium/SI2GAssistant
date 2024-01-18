@@ -13,13 +13,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreBugTicketsImpl
 import com.oxymium.si2gassistant.data.repository.FirebaseFirestorePersonsImpl
 import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreCollections
 import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreFields
 import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.entities.Result
-import com.oxymium.si2gassistant.domain.mock.provideRandomBugTicket
 import com.oxymium.si2gassistant.domain.mock.provideRandomPerson
 import com.oxymium.si2gassistant.utils.observe
 import io.mockk.Runs
@@ -28,7 +26,6 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
-import junit.framework.Assert.assertFalse
 import junit.framework.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -119,7 +116,40 @@ class PersonRepositoryTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllPersonsByUserIdFailureTest() = runTest {}
+    fun getAllPersonsByUserIdFailureTest() = runTest {
+        // GIVEN
+        val givenMail = "mock@gmail.test"
+        val firebaseFirestore = mockk<FirebaseFirestore>()
+        val personCollectionMock = mockk<CollectionReference>()
+        val personRepository = FirebaseFirestorePersonsImpl(firebaseFirestore)
+        val personQuery = mockk<Query>()
+        val registration = mockk<ListenerRegistration> {
+            every { remove() } just Runs
+        }
+        val exception = mockk<FirebaseFirestoreException> {
+            every { message } returns "exception"
+        }
+
+        val callbackSlot = slot<EventListener<QuerySnapshot>>()
+        every { firebaseFirestore.collection(any()) } returns personCollectionMock
+        every { personCollectionMock.whereEqualTo(FirebaseFirestoreFields.USER_ID, givenMail) } returns personQuery
+        every { personQuery.addSnapshotListener(capture(callbackSlot)) } answers {
+            callbackSlot.captured.onEvent(null, exception)
+            registration
+        }
+
+        // WHEN
+        val flow = personRepository.getAllPersonsByUserId(givenMail).observe(this)
+        advanceUntilIdle()
+
+        // THEN
+        Truth.assertThat(flow.values).containsExactly(
+            Result.Loading<List<Person>>(),
+            Result.Failed<String>("exception")
+        )
+
+        flow.finish()
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
@@ -294,7 +324,7 @@ class PersonRepositoryTest {
         }
 
         // THEN
-        assertFalse(exceptionThrown)
+        TestCase.assertFalse(exceptionThrown)
     }
 
 }

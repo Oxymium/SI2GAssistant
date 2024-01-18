@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.oxymium.si2gassistant.ui.navigation.NavHost
-
 import com.oxymium.si2gassistant.ui.theme.Si2GAssistantTheme
 
 class MainActivity : ComponentActivity() {
@@ -14,7 +13,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         installSplashScreen() // needs to be called before setContent()
+
         setContent {
+
             Si2GAssistantTheme {
                 val navHostController = rememberNavController()
 
@@ -24,5 +25,6 @@ class MainActivity : ComponentActivity() {
 
             }
         }
+
     }
 }

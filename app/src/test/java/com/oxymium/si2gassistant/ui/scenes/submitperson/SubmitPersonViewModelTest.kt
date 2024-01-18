@@ -1,13 +1,11 @@
 package com.oxymium.si2gassistant.ui.scenes.submitperson
 
 import com.google.common.truth.Truth
-import com.oxymium.si2gassistant.domain.entities.Message
 import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.entities.Result
+import com.oxymium.si2gassistant.domain.mock.provideRandomPerson
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
 import com.oxymium.si2gassistant.domain.states.SubmitPersonState
-import com.oxymium.si2gassistant.ui.scenes.chat.ChatEvent
-import com.oxymium.si2gassistant.ui.scenes.chat.ChatState
 import com.oxymium.si2gassistant.utils.TestCoroutineRule
 import com.oxymium.si2gassistant.utils.observe
 import io.mockk.every
@@ -158,6 +156,28 @@ class SubmitPersonViewModelTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
+    fun `Test on person select event`() = runTest {
+        // GIVEN
+        val givenPerson = provideRandomPerson()
+        val state = submitPersonViewModel.state.observe(this)
+        every { personRepository.getAllPersons() } returns flow { Result.Success(emptyList<List<Person>>()) }
+
+        // WHEN
+        submitPersonViewModel.onEvent(
+            SubmitPersonEvent.OnPersonSelect(givenPerson)
+        )
+        advanceUntilIdle()
+
+        // THEN
+        Truth.assertThat(state.values).containsExactly(
+            SubmitPersonState(),
+            SubmitPersonState(isSelectedPersonDetailsOpen = true)
+        )
+        state.finish()
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
     fun `Test on dismiss person details sheet event`() = runTest {
         // GIVEN
         val state = submitPersonViewModel.state.observe(this)
@@ -194,17 +214,14 @@ class SubmitPersonViewModelTest {
 
         // THEN
         Truth.assertThat(state.values).containsExactly(
+            SubmitPersonState(),
             SubmitPersonState(
-                selectedPerson = null
+                isRoleFieldError = true,
+                isFirstnameFieldError = true,
+                isLastnameFieldError = true
             )
         )
 
         state.finish()
     }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun `Test on person modules switch toggle event`() = runTest {
-    }
-
 }

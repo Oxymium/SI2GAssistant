@@ -2,6 +2,7 @@ package com.oxymium.si2gassistant.domain.repository
 
 import com.google.common.truth.Truth
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
@@ -96,11 +97,77 @@ class UserRepositoryTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getUserByUidFailureTest() = runTest {  }
+    fun getUserByUidFailureTest() = runTest {
+        // GIVEN
+        val givenUid = "ixOZa46Ew"
+        val firebaseFirestore = mockk<FirebaseFirestore>()
+        val userCollectionMock = mockk<CollectionReference>()
+        val userRepository = FirebaseFirestoreUsersImpl(firebaseFirestore)
+        val userDocumentReference = mockk<DocumentReference>()
+        val registration = mockk<ListenerRegistration> {
+            every { remove() } just Runs
+        }
+        val exception = mockk<FirebaseFirestoreException> {
+            every { message } returns "exception"
+        }
+
+        val callbackSlot = slot<EventListener<DocumentSnapshot>>()
+        every { firebaseFirestore.collection(any()) } returns userCollectionMock
+        every { userCollectionMock.document(givenUid) } returns userDocumentReference
+        every { userDocumentReference.addSnapshotListener(capture(callbackSlot)) } answers {
+            callbackSlot.captured.onEvent(null, exception)
+            registration
+        }
+
+        // WHEN
+        val flow = userRepository.getUserByUid(givenUid).observe(this)
+        advanceUntilIdle()
+
+        // THEN
+        Truth.assertThat(flow.values).containsExactly(
+            Result.Loading<User>(),
+            Result.Failed<String>("exception")
+        )
+
+        flow.finish()
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getUserByUidSuccessTest() = runTest {}
+    fun getUserByUidSuccessTest() = runTest {
+        // GIVEN
+        val givenUid = "xEA496tXo01"
+        val givenUser = User().apply { id = givenUid }
+        val firebaseFirestore = mockk<FirebaseFirestore>()
+        val userCollectionMock = mockk<CollectionReference>()
+        val documentSnapshot = mockk<DocumentSnapshot>()
+        val userRepository = FirebaseFirestoreUsersImpl(firebaseFirestore)
+        val userDocumentReference = mockk<DocumentReference>()
+        val registration = mockk<ListenerRegistration> {
+            every { remove() } just Runs
+        }
+
+        val callbackSlot = slot<EventListener<DocumentSnapshot>>()
+        every { firebaseFirestore.collection(any()) } returns userCollectionMock
+        every { userCollectionMock.document(givenUid) } returns userDocumentReference
+        every { documentSnapshot.toObject(User::class.java) } returns givenUser
+        every { userDocumentReference.addSnapshotListener(capture(callbackSlot)) } answers {
+            callbackSlot.captured.onEvent(documentSnapshot, null)
+            registration
+        }
+
+        // WHEN
+        val flow = userRepository.getUserByUid(givenUid).observe(this)
+        advanceUntilIdle()
+
+        // THEN
+        Truth.assertThat(flow.values).containsExactly(
+            Result.Loading<User>(),
+            Result.Success(givenUser)
+        )
+
+        flow.finish()
+    }
 
 
 }

@@ -1,13 +1,10 @@
 package com.oxymium.si2gassistant.ui.scenes.submitsuggestion
 
 import com.google.common.truth.Truth
-import com.oxymium.si2gassistant.domain.entities.BugTicket
-import com.oxymium.si2gassistant.domain.entities.BugTicketCategory
-import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.Suggestion
 import com.oxymium.si2gassistant.domain.repository.SuggestionRepository
-import com.oxymium.si2gassistant.ui.scenes.reportbug.ReportBugEvent
+import com.oxymium.si2gassistant.domain.states.SubmitSuggestionState
 import com.oxymium.si2gassistant.utils.TestCoroutineRule
 import com.oxymium.si2gassistant.utils.observe
 import io.mockk.every
@@ -83,6 +80,28 @@ class SubmitSuggestionViewModelTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `Test on submit suggestion button click event`() = runTest {}
+    fun `Test on submit suggestion button click event`() = runTest {
+        // GIVEN
+        val state = submitSuggestionViewModel.state.observe(this)
+        every { suggestionRepository.getAllSuggestions() } returns flow { Result.Success(emptyList<List<Suggestion>>()) }
+
+        // WHEN
+        submitSuggestionViewModel.onEvent(
+            SubmitSuggestionEvent.OnSubmitSuggestionButtonClick
+        )
+        advanceUntilIdle()
+
+        // THEN
+        Truth.assertThat(state.values).containsExactly(
+            SubmitSuggestionState(),
+            SubmitSuggestionState(
+                isSubjectFieldError = true,
+                isBodyFieldError = true
+            )
+        )
+
+        state.finish()
+
+    }
 
 }

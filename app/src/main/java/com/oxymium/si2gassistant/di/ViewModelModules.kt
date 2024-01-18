@@ -22,7 +22,7 @@ val viewModelModules = module {
     viewModel { SplashViewModel( get() ) }
 
     // WM: Greetings
-    viewModel { GreetingsViewModel( get() ) }
+    viewModel { GreetingsViewModel( get(), get() ) }
 
     // WM : Metrics
     viewModel { MetricsViewModel( get(), get(), get(), get(), get(), get() ) }
@@ -47,4 +47,5 @@ val viewModelModules = module {
 
     // VM: Chat
     viewModel { ChatViewModel( get() ) }
+
 }

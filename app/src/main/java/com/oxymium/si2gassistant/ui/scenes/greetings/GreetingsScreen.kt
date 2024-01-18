@@ -42,154 +42,187 @@ fun GreetingsScreen(
     state: GreetingsState,
     appState: AppState,
     appEvent: (AppEvent) -> Unit,
+    event: (GreetingsEvent) -> Unit
 ) {
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                color = Neutral
-            )
-    ) {
+    if (state.isGreetingsMode) {
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(
+                    color = Neutral
+                )
         ) {
 
-            // LOGOUT BUTTON
             Box(
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
+                    .fillMaxSize()
             ) {
 
-                Button(
+                // LOGOUT BUTTON
+                Box(
                     modifier = Modifier
-                        .align(Alignment.Center),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MenuAccent
-                    ),
-                    onClick = { appEvent.invoke(AppEvent.OnLogoutButtonClick) }
+                        .align(Alignment.TopCenter)
                 ) {
 
-                    Icon(
+                    Button(
                         modifier = Modifier
-                            .background(MenuAccent)
-                            .size(24.dp),
-                        painter = painterResource(id = R.drawable.ic_login_variant),
-                        contentDescription = "Logout button",
-                        tint = White
-                    )
+                            .align(Alignment.Center),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MenuAccent
+                        ),
+                        onClick = { appEvent.invoke(AppEvent.OnLogoutButtonClick) }
+                    ) {
+
+                        Icon(
+                            modifier = Modifier
+                                .background(MenuAccent)
+                                .size(24.dp),
+                            painter = painterResource(id = R.drawable.ic_login_variant),
+                            contentDescription = "Logout button",
+                            tint = White
+                        )
+                    }
+
                 }
 
-            }
-
-            // GREETINGS ANIMATION
-            Box(
-                modifier = Modifier
-                    .align(Alignment.Center)
-            ) {
-                GreetingsAnimation()
-            }
-
-
-            // GREETINGS TEXT
-            Box(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .wrapContentSize(Alignment.Center)
-                    .align(Alignment.Center)
-            ) {
-
-                Column(
+                // HIDDEN FOR DEBUG PURPOSES
+                // TESTING BUTTON
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .align(Alignment.TopEnd)
+                ) {
+
+                    Button(
+                        modifier = Modifier
+                            .align(Alignment.Center),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Neutral
+                        ),
+                        onClick = { event.invoke(GreetingsEvent.OnTestingButtonClick) }
+                    ) {
+
+                        Icon(
+                            modifier = Modifier
+                                .background(Neutral)
+                                .size(24.dp),
+                            painter = painterResource(id = R.drawable.ic_login_variant),
+                            contentDescription = "Logout button",
+                            tint = Neutral
+                        )
+                    }
+
+                }
+
+                // GREETINGS ANIMATION
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                ) {
+                    GreetingsAnimation()
+                }
+
+
+                // GREETINGS TEXT
+                Box(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .wrapContentSize(Alignment.Center)
                         .align(Alignment.Center)
                 ) {
 
-                    val todayInMillis =
-                        DateUtils.convertMillisToDate(Calendar.getInstance().timeInMillis)
-
-                    Text(
+                    Column(
                         modifier = Modifier
-                            .padding(12.dp)
-                            .align(Alignment.CenterHorizontally),
-                        text = todayInMillis,
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                            .fillMaxWidth()
+                            .align(Alignment.Center)
+                    ) {
 
-                    Text(
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .align(Alignment.CenterHorizontally),
-                        text = "Welcome, ${appState.currentUser?.firstname} ${appState.currentUser?.lastname}",
-                        textAlign = TextAlign.Center,
-                        color = Color.White,
-                        fontSize = 38.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Text(
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .align(Alignment.CenterHorizontally),
-                        text = "${appState.currentUser?.mail}",
-                        color = Color.White,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Text(
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .align(Alignment.CenterHorizontally),
-                        text = "${appState.currentUser?.academy}",
-                        color = Color.White,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                }
-
-            }
-
-            // ANNOUNCEMENT TAPE
-            Box(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-            ) {
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-
-                    // ANNOUNCEMENT FEED
-                    if (state.isAnnouncementsLoading) {
-
-                        LoadingAnimation(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        )
-
-                    } else {
+                        val todayInMillis =
+                            DateUtils.convertMillisToDate(Calendar.getInstance().timeInMillis)
 
                         Text(
                             modifier = Modifier
-                                .padding(
-                                    horizontal = 8.dp
-                                ),
-                            text = "Announcement feed",
-                            color = White
+                                .padding(12.dp)
+                                .align(Alignment.CenterHorizontally),
+                            text = todayInMillis,
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
                         )
 
-                        AnnouncementFeed(
-                            state = state
+                        Text(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .align(Alignment.CenterHorizontally),
+                            text = "Welcome, ${appState.currentUser?.firstname} ${appState.currentUser?.lastname}",
+                            textAlign = TextAlign.Center,
+                            color = Color.White,
+                            fontSize = 38.sp,
+                            fontWeight = FontWeight.Bold
                         )
+
+                        Text(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .align(Alignment.CenterHorizontally),
+                            text = "${appState.currentUser?.mail}",
+                            color = Color.White,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Text(
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .align(Alignment.CenterHorizontally),
+                            text = "${appState.currentUser?.academy}",
+                            color = Color.White,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                    }
+
+                }
+
+                // ANNOUNCEMENT TAPE
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                ) {
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+
+                        // ANNOUNCEMENT FEED
+                        if (state.isAnnouncementsLoading) {
+
+                            LoadingAnimation(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+
+                        } else {
+
+                            Text(
+                                modifier = Modifier
+                                    .padding(
+                                        horizontal = 8.dp
+                                    ),
+                                text = "Announcement feed",
+                                color = White
+                            )
+
+                            AnnouncementFeed(
+                                state = state
+                            )
+
+                        }
 
                     }
 
@@ -199,6 +232,12 @@ fun GreetingsScreen(
 
         }
 
+    }
+
+    if (state.isTestingMode) {
+        TestingScreen(
+            event = event
+        )
     }
 
 }
@@ -221,7 +260,8 @@ fun GreetingsScreenPreview() {
         GreetingsScreen(
             state = greetingsState,
             appState = appStatePreview,
-            appEvent = {}
+            appEvent = {},
+            event =  {}
         )
     }
 }

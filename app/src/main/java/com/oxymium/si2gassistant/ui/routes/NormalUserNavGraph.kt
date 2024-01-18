@@ -68,7 +68,8 @@ fun NormalUserNavGraph(
                         GreetingsScreen(
                             state = state.value,
                             appState = appState,
-                            appEvent = appEvent
+                            appEvent = appEvent,
+                            event = viewModel::onEvent
                         )
                     }
 

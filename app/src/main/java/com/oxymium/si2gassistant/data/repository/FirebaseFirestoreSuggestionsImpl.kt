@@ -59,10 +59,6 @@ class FirebaseFirestoreSuggestionsImpl(val firebaseFirestore: FirebaseFirestore)
             .addOnFailureListener {
                 continuation.resumeWithException(it)
             }
-        // Success
-        continuation.invokeOnCancellation {
-            // Handle cancellation if needed
-        }
     }
 
 }
