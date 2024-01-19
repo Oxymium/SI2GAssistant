@@ -1,6 +1,12 @@
 package com.oxymium.si2gassistant.ui.scenes.metrics
 
 import com.google.common.truth.Truth.assertThat
+import com.oxymium.si2gassistant.domain.entities.Academy
+import com.oxymium.si2gassistant.domain.entities.BugTicket
+import com.oxymium.si2gassistant.domain.entities.Module
+import com.oxymium.si2gassistant.domain.entities.Person
+import com.oxymium.si2gassistant.domain.entities.Suggestion
+import com.oxymium.si2gassistant.domain.entities.User
 import com.oxymium.si2gassistant.domain.repository.AcademyRepository
 import com.oxymium.si2gassistant.domain.repository.BugTicketRepository
 import com.oxymium.si2gassistant.domain.repository.ModuleRepository
@@ -10,8 +16,10 @@ import com.oxymium.si2gassistant.domain.repository.UserRepository
 import com.oxymium.si2gassistant.domain.states.MetricsState
 import com.oxymium.si2gassistant.utils.TestCoroutineRule
 import com.oxymium.si2gassistant.utils.observe
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -51,7 +59,12 @@ class MetricsViewModelTest{
     fun `Test on bug ticket clicked event`() = runTest {
         // GIVEN
         val state = metricsViewModel.state.observe(this)
-
+       coEvery { bugTicketRepository.getAllBugTickets() } returns flow { emptyList<BugTicket>() }
+       coEvery { academyRepository.getAllAcademies() } returns flow { emptyList<Academy>() }
+       coEvery { moduleRepository.getAllModules() } returns flow { emptyList<Module>() }
+       coEvery { userRepository.getAllUsers() } returns flow { emptyList<User>() }
+       coEvery { personRepository.getAllPersons() } returns flow { emptyList<Person>() }
+       coEvery { suggestionRepository.getAllSuggestions() } returns flow { emptyList<Suggestion>() }
         // WHEN
         metricsViewModel.onEvent(
             MetricsScreenEvent.OnBugTicketsButtonClick
@@ -62,12 +75,12 @@ class MetricsViewModelTest{
         // THEN
         assertThat(state.values).containsExactly(
             MetricsState(
-                isBugTicketMetricsScreen = false,
+                isBugTicketMetricsScreen = true,
                 isOverallMetricsScreen = false
             ),
             MetricsState(
-                isBugTicketMetricsScreen = true,
-                isOverallMetricsScreen = false
+                isBugTicketMetricsScreen = false,
+                isOverallMetricsScreen = true
             )
         )
         state.finish()

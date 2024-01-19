@@ -96,10 +96,6 @@ class FirebaseFirestoreBugTicketsImpl(val firebaseFirestore: FirebaseFirestore):
                 // FAILURE
                 continuation.resumeWithException(it)
             }
-
-        continuation.invokeOnCancellation {
-            // Handle cancellation if needed
-        }
     }
 
     // UPDATE: BUG TICKET
@@ -120,9 +116,6 @@ class FirebaseFirestoreBugTicketsImpl(val firebaseFirestore: FirebaseFirestore):
                 // FAILURE
                 continuation.resumeWithException(it)
             }
-        continuation.invokeOnCancellation {
-            // Handle cancellation if needed
-        }
     }
 
 }

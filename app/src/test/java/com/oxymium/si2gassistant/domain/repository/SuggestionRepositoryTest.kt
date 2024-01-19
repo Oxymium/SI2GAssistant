@@ -12,14 +12,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
-import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreMessagesImpl
-import com.oxymium.si2gassistant.data.repository.FirebaseFirestorePersonsImpl
 import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreSuggestionsImpl
 import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreCollections
-import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.entities.Result
 import com.oxymium.si2gassistant.domain.entities.Suggestion
-import com.oxymium.si2gassistant.domain.mock.provideRandomMessage
 import com.oxymium.si2gassistant.domain.mock.provideRandomSuggestion
 import com.oxymium.si2gassistant.utils.observe
 import io.mockk.Runs
@@ -28,11 +24,11 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
-import junit.framework.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SuggestionRepositoryTest {
@@ -158,7 +154,8 @@ class SuggestionRepositoryTest {
         // Mocking the successful scenario
         val onSuccessListenerSlot = slot<OnSuccessListener<DocumentReference>>()
         coEvery {
-            firebaseFirestore.collection(FirebaseFirestoreCollections.PERSONS)
+            firebaseFirestore
+                .collection(FirebaseFirestoreCollections.SUGGESTIONS)
                 .add(any())
                 .addOnSuccessListener(capture(onSuccessListenerSlot))
                 .addOnFailureListener(any())
@@ -170,13 +167,13 @@ class SuggestionRepositoryTest {
         // WHEN
         val exceptionThrown = try {
             suggestionRepository.submitSuggestion(givenSuggestion)
-            true
-        } catch (e: Exception) {
             false
+        } catch (e: Exception) {
+            true
         }
-
         // THEN
-        TestCase.assertFalse(exceptionThrown)
+        assertFalse(exceptionThrown)
+
     }
 
 }

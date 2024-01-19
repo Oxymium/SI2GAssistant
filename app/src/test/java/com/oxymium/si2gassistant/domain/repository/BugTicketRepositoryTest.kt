@@ -155,6 +155,7 @@ class BugTicketRepositoryTest {
     @Test
     fun getBugTicketsByUserSuccessTest() = runTest {
         // GIVEN
+        val documentId = "documentId"
         val givenMail = "mock@gmail.test"
         val givenTicket = provideRandomBugTicket().copy(submittedBy = givenMail)
         val firebaseFirestore = mockk<FirebaseFirestore>()
@@ -167,11 +168,13 @@ class BugTicketRepositoryTest {
             every { remove() } just Runs
         }
 
-        val callbackSlot = slot<EventListener<QuerySnapshot>>()
         every { firebaseFirestore.collection(any()) } returns bugTicketCollectionMock
         every { bugTicketCollectionMock.whereEqualTo(FirebaseFirestoreFields.SUBMITTED_BY, givenMail) } returns bugTicketQuery
-        every { bugTicketQuerySnapshot.query  } returns bugTicketQuery
+        every { bugTicketQuerySnapshot.documents  } returns listOf(documentSnapshot)
+        every { documentSnapshot.id } returns documentId
         every { documentSnapshot.toObject(BugTicket::class.java) } returns givenTicket
+
+        val callbackSlot = slot<EventListener<QuerySnapshot>>()
         every { bugTicketQuery.addSnapshotListener(capture(callbackSlot)) } answers {
             callbackSlot.captured.onEvent(bugTicketQuerySnapshot, null)
             registration
@@ -184,7 +187,7 @@ class BugTicketRepositoryTest {
         // THEN
         Truth.assertThat(flow.values).containsExactly(
             Result.Loading<List<BugTicket>>(),
-            Result.Success(givenTicket)
+            Result.Success(listOf(givenTicket.copy(id = documentId)))
         )
 
         flow.finish()
@@ -234,7 +237,8 @@ class BugTicketRepositoryTest {
         // Mocking the successful scenario
         val onSuccessListenerSlot = slot<OnSuccessListener<DocumentReference>>()
         coEvery {
-            firebaseFirestore.collection(FirebaseFirestoreCollections.BUG_TICKETS)
+            firebaseFirestore
+                .collection(FirebaseFirestoreCollections.BUG_TICKETS)
                 .add(any())
                 .addOnSuccessListener(capture(onSuccessListenerSlot))
                 .addOnFailureListener(any())
@@ -270,7 +274,7 @@ class BugTicketRepositoryTest {
         coEvery {
             firebaseFirestore
                 .collection(FirebaseFirestoreCollections.BUG_TICKETS)
-                .document()
+                .document(any())
                 .update(
                     FirebaseFirestoreFields.RESOLVED, givenBugTicket.isResolved,
                     FirebaseFirestoreFields.RESOLVED_COMMENT, givenBugTicket.resolvedComment,
@@ -302,12 +306,12 @@ class BugTicketRepositoryTest {
         val givenBugTicket = provideRandomBugTicket()
         val firebaseFirestore = mockk<FirebaseFirestore>()
         val bugTicketRepository = FirebaseFirestoreBugTicketsImpl(firebaseFirestore)
-        // Mocking the success scenario
+        // Mocking the successful scenario
         val onSuccessListenerSlot = slot<OnSuccessListener<Void>>()
         coEvery {
             firebaseFirestore
                 .collection(FirebaseFirestoreCollections.BUG_TICKETS)
-                .document()
+                .document(any())
                 .update(
                     FirebaseFirestoreFields.RESOLVED, givenBugTicket.isResolved,
                     FirebaseFirestoreFields.RESOLVED_COMMENT, givenBugTicket.resolvedComment,
@@ -323,9 +327,9 @@ class BugTicketRepositoryTest {
         // WHEN
         val exceptionThrown = try {
             bugTicketRepository.updateBugTicket(givenBugTicket)
-            true
-        } catch (e: Exception) {
             false
+        } catch (e: Exception) {
+            true
         }
 
         // THEN

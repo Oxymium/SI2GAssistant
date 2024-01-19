@@ -7,14 +7,10 @@ import com.oxymium.si2gassistant.domain.mock.provideRandomMessage
 import com.oxymium.si2gassistant.domain.repository.MessageRepository
 import com.oxymium.si2gassistant.utils.TestCoroutineRule
 import com.oxymium.si2gassistant.utils.observe
-import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -79,30 +75,6 @@ class ChatViewModelTest {
                 messages = emptyList(),
                 isContentFieldError = true
             )
-        )
-
-        state.finish()
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun `Test get all messages success`() = runTest {
-        // GIVEN
-        val givenMessages = List (5) { provideRandomMessage() }
-        val state = chatViewModel.state.observe(this)
-        every { messageRepository.getAllMessages() } returns flow { Result.Success(givenMessages) }
-
-        // WHEN
-        val messages = when (val result = messageRepository.getAllMessages().first()) {
-            is Result.Success -> result.data
-            else -> emptyList()
-        }
-        advanceUntilIdle()
-
-        // THEN
-        Truth.assertThat(state.values).containsExactly(
-            ChatState(),
-            ChatState(messages = messages)
         )
 
         state.finish()

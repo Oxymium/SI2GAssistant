@@ -9,7 +9,6 @@ import com.oxymium.si2gassistant.ui.routes.AppScreen
 import com.oxymium.si2gassistant.utils.TestCoroutineRule
 import com.oxymium.si2gassistant.utils.observe
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -56,6 +55,8 @@ class AppViewModelTest {
                 currentUser = null
             )
         )
+
+        state.finish()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -78,6 +79,8 @@ class AppViewModelTest {
                 currentScreen = givenAppScreen
             )
         )
+
+        state.finish()
 
     }
 

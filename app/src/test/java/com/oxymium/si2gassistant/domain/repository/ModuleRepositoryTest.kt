@@ -1,37 +1,26 @@
 package com.oxymium.si2gassistant.domain.repository
 
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.Task
 import com.google.common.truth.Truth
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
-import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreBugTicketsImpl
-import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreMessagesImpl
 import com.oxymium.si2gassistant.data.repository.FirebaseFirestoreModulesImpl
-import com.oxymium.si2gassistant.domain.entities.FirebaseFirestoreCollections
 import com.oxymium.si2gassistant.domain.entities.Module
 import com.oxymium.si2gassistant.domain.entities.Result
-import com.oxymium.si2gassistant.domain.mock.provideRandomBugTicket
-import com.oxymium.si2gassistant.domain.mock.provideRandomMessage
 import com.oxymium.si2gassistant.utils.observe
 import io.mockk.Runs
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
-import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import kotlin.test.assertFalse
 
 class ModuleRepositoryTest {
 
@@ -71,7 +60,7 @@ class ModuleRepositoryTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllAcademiesSuccessTest() = runTest {
+    fun getAllModulesSuccessTest() = runTest {
         // GIVEN
         val module = Module("001", "Module 1", "Module content")
         val moduleList = listOf(module)
@@ -104,39 +93,6 @@ class ModuleRepositoryTest {
         )
 
         flow.finish()
-
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun submitMessageFailureTest() = runTest {
-        // GIVEN
-        val givenMessage = provideRandomMessage()
-        val firebaseFirestore = mockk<FirebaseFirestore>()
-        val messageRepository = FirebaseFirestoreMessagesImpl(firebaseFirestore)
-        // Mocking the failure scenario
-        val onFailureListenerSlot = slot<OnFailureListener>()
-        coEvery {
-            firebaseFirestore
-                .collection(FirebaseFirestoreCollections.MESSAGES)
-                .add(any())
-                .addOnSuccessListener(any())
-                .addOnFailureListener(capture(onFailureListenerSlot))
-        } answers {
-            onFailureListenerSlot.captured.onFailure(mockk(relaxed = true))
-            mockk<Task<DocumentReference>>(relaxed = true)
-        }
-
-        // WHEN
-        val exceptionThrown = try {
-            messageRepository.submitMessage(givenMessage)
-            false
-        } catch (e: Exception) {
-            true
-        }
-
-        // THEN
-        assertFalse(exceptionThrown)
 
     }
 

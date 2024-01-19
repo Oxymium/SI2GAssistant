@@ -155,39 +155,39 @@ class PersonRepositoryTest {
     @Test
     fun getAllPersonsByUserIdSuccessTest() = runTest {
         // GIVEN
-        val person = provideRandomPerson()
-        val documentId = "XdbERRcDFg"
-        val givenMail = "mock@gmail.test"
+        val documentId = "documentId"
+        val givenId = "xZ04EdEgg"
+        val givenPerson = provideRandomPerson().copy(userId = givenId)
         val firebaseFirestore = mockk<FirebaseFirestore>()
         val personCollectionMock = mockk<CollectionReference>()
         val personRepository = FirebaseFirestorePersonsImpl(firebaseFirestore)
+        val personQuery = mockk<Query>()
+        val personQuerySnapshot = mockk<QuerySnapshot>()
+        val documentSnapshot = mockk<DocumentSnapshot>()
         val registration = mockk<ListenerRegistration> {
             every { remove() } just Runs
         }
-        val snapshot = mockk<QuerySnapshot>()
-        val documentSnapshot = mockk<DocumentSnapshot>()
-        every { snapshot.documents } returns listOf(documentSnapshot)
+
+        every { firebaseFirestore.collection(any()) } returns personCollectionMock
+        every { personCollectionMock.whereEqualTo(FirebaseFirestoreFields.USER_ID, givenId) } returns personQuery
+        every { personQuerySnapshot.documents  } returns listOf(documentSnapshot)
         every { documentSnapshot.id } returns documentId
-        every { documentSnapshot.toObject<Person>(any()) } returns person
+        every { documentSnapshot.toObject(Person::class.java) } returns givenPerson
 
         val callbackSlot = slot<EventListener<QuerySnapshot>>()
-        every { firebaseFirestore
-            .collection(FirebaseFirestoreCollections.PERSONS)
-            .whereEqualTo(FirebaseFirestoreFields.USER_ID, person.userId)
-        } returns personCollectionMock
-        every { personCollectionMock.addSnapshotListener(capture(callbackSlot)) } answers {
-            callbackSlot.captured.onEvent(snapshot, null)
+        every { personQuery.addSnapshotListener(capture(callbackSlot)) } answers {
+            callbackSlot.captured.onEvent(personQuerySnapshot, null)
             registration
         }
 
         // WHEN
-        val flow = personRepository.getAllPersonsByUserId(givenMail).observe(this)
+        val flow = personRepository.getAllPersonsByUserId(givenId).observe(this)
         advanceUntilIdle()
 
         // THEN
         Truth.assertThat(flow.values).containsExactly(
             Result.Loading<List<Person>>(),
-            Result.Success(listOf(person.copy(id = documentId)))
+            Result.Success(listOf(givenPerson.copy(id = documentId)))
         )
 
         flow.finish()
@@ -274,7 +274,7 @@ class PersonRepositoryTest {
         coEvery {
             firebaseFirestore
                 .collection(FirebaseFirestoreCollections.PERSONS)
-                .document()
+                .document(any())
                 .update(FirebaseFirestoreFields.VALIDATED_MODULES, givenPerson.validatedModules)
                 .addOnSuccessListener(any())
                 .addOnFailureListener(capture(onFailureListenerSlot))
@@ -303,12 +303,13 @@ class PersonRepositoryTest {
         val firebaseFirestore = mockk<FirebaseFirestore>()
         val personRepository = FirebaseFirestorePersonsImpl(firebaseFirestore)
         // Mocking the successful scenario
-        val onSuccessListenerSlot = slot<OnSuccessListener<DocumentReference>>()
+        val onSuccessListenerSlot = slot<OnSuccessListener<Void>>()
         coEvery {
             firebaseFirestore
                 .collection(FirebaseFirestoreCollections.PERSONS)
-                .document()
+                .document(any())
                 .update(FirebaseFirestoreFields.VALIDATED_MODULES, givenPerson.validatedModules)
+                .addOnSuccessListener(capture(onSuccessListenerSlot))
                 .addOnFailureListener(any())
         } answers {
             onSuccessListenerSlot.captured.onSuccess(mockk(relaxed = true))
@@ -318,9 +319,9 @@ class PersonRepositoryTest {
         // WHEN
         val exceptionThrown = try {
             personRepository.updatePerson(givenPerson)
-            true
-        } catch (e: Exception) {
             false
+        } catch (e: Exception) {
+            true
         }
 
         // THEN

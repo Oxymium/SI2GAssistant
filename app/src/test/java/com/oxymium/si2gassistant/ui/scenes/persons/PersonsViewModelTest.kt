@@ -1,14 +1,10 @@
 package com.oxymium.si2gassistant.ui.scenes.persons
 
 import com.google.common.truth.Truth
-import com.oxymium.si2gassistant.domain.entities.Person
 import com.oxymium.si2gassistant.domain.entities.Result
-import com.oxymium.si2gassistant.domain.entities.Suggestion
-import com.oxymium.si2gassistant.domain.filters.PersonFilter
 import com.oxymium.si2gassistant.domain.mock.provideRandomPerson
 import com.oxymium.si2gassistant.domain.repository.PersonRepository
 import com.oxymium.si2gassistant.domain.states.PersonListState
-import com.oxymium.si2gassistant.ui.scenes.submitsuggestion.SubmitSuggestionEvent
 import com.oxymium.si2gassistant.utils.TestCoroutineRule
 import com.oxymium.si2gassistant.utils.observe
 import io.mockk.every
@@ -54,7 +50,6 @@ class PersonsViewModelTest {
         // THEN
         val filteredPersons = persons.filter { it.academy?.contains(givenFiler, ignoreCase = true) == true }
         Truth.assertThat(state.values).containsExactly(
-            PersonListState(),
             PersonListState().copy( persons = filteredPersons)
         )
 

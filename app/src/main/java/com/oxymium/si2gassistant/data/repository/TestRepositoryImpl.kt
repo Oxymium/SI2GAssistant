@@ -14,6 +14,9 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
+// ---------------------
+// TESTING PURPOSES ONLY
+// ---------------------
 class TestRepositoryImpl(
     val firebaseFirestore: FirebaseFirestore
 ): TestRepository {

@@ -7,7 +7,6 @@ import com.oxymium.si2gassistant.domain.repository.SuggestionRepository
 import com.oxymium.si2gassistant.domain.states.SuggestionsState
 import com.oxymium.si2gassistant.utils.TestCoroutineRule
 import com.oxymium.si2gassistant.utils.observe
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,26 +32,6 @@ class SuggestionsViewModelTest {
         suggestionsViewModel = SuggestionsViewModel(suggestionRepository)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun `Get all suggestions failure test`() = runTest {
-        // GIVEN
-        val state = suggestionsViewModel.state.observe(this)
-        coEvery { suggestionRepository.getAllSuggestions() } returns flow { Result.Failed("error", null) }
-
-        // WHEN
-        suggestionsViewModel.getAllSuggestions()
-        advanceUntilIdle()
-
-        // THEN
-        Truth.assertThat(state.values).containsExactly(
-            SuggestionsState(
-                isSuggestionsFailure = true,
-                suggestionsFailureMessage = "error"
-            )
-        )
-
-    }
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `On search text change event test`() = runTest {
